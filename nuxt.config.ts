@@ -13,7 +13,7 @@ export default defineNuxtConfig({
   hub: {
     database: true,
     kv: true,
-    blob: true,
+    blob: false,
     cache: true,
   },
   nitro: {
