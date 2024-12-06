@@ -1,0 +1,14 @@
+{
+  "editor.formatOnSave": true,
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  "editor.quickSuggestions": {
+    "strings": true
+  },
+  "tailwindCSS.experimental.classRegex": [
+    "tw`(.*?)`",
+    "tw\\('(.*?)'\\)",
+    "tw\\(\\s*('(.*?)'|\"(.*?)\")\\s*\\)"
+  ]
+}
