@@ -13,6 +13,8 @@ export default defineNuxtConfig({
     "@nuxt/eslint",
     "@nuxtjs/tailwindcss",
     "@primevue/nuxt-module",
+    "nuxt-time",
+    "dayjs-nuxt",
   ],
   hub: {
     database: true,
@@ -34,5 +36,12 @@ export default defineNuxtConfig({
         preset: Aura,
       },
     },
+  },
+  runtimeConfig: {
+    bzToken: "",
+    cacheTime: 300,
+  },
+  dayjs: {
+    plugins: ["duration"],
   },
 });

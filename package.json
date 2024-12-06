@@ -16,7 +16,9 @@
     "@nuxthub/core": "^0.8.7",
     "@nuxtjs/tailwindcss": "6.12.2",
     "@primevue/themes": "^4.2.4",
+    "dayjs-nuxt": "2.1.11",
     "nuxt": "^3.14.1592",
+    "nuxt-time": "1.0.3",
     "primevue": "^4.2.4",
     "tailwindcss-primeui": "^0.3.4"
   },

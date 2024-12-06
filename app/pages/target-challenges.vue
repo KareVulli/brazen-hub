@@ -1,5 +1,5 @@
 <template>
   <main>
-    <h1>Target Challenges!</h1>
+    <h1 class="mb-4 text-lg">Target Challenges - Coming soon!</h1>
   </main>
 </template>
