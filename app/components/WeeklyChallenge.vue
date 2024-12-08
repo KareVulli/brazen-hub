@@ -1,14 +1,29 @@
 <template>
   <div v-if="eventInfo?.event">
     <p class="my-4">
-      Ends
-      <NuxtTime :datetime="new Date(eventInfo.event.endsAt * 1000)" relative />
+      <template v-if="eventInfo.event.endsAt * 1000 > Date.now()">
+        Currently live! Ends
+        <NuxtTime
+          :datetime="new Date(eventInfo.event.endsAt * 1000)"
+          relative
+        />.
+      </template>
+    </p>
+    <p class="my-4">
+      <NuxtTime
+        :datetime="
+          $dayjs(eventInfo.event.endsAt * 1000)
+            .subtract(7, 'days')
+            .toDate()
+        "
+        date-style="full"
+        time-style="short"
+      />
       -
       <NuxtTime
         :datetime="new Date(eventInfo.event.endsAt * 1000)"
         date-style="full"
         time-style="short"
-        :hour12="false"
       />
     </p>
     <LeaderboardTable :entries="eventInfo.event.leaderboard" />
@@ -23,5 +38,10 @@
 </template>
 
 <script setup lang="ts">
-const { data: eventInfo } = await useFetch("/api/weekly");
+const props = defineProps<{
+  eventId?: string;
+}>();
+const { data: eventInfo } = await useFetch(
+  props?.eventId ? `/api/weekly/${props.eventId}` : "/api/weekly"
+);
 </script>

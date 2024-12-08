@@ -1,11 +1,11 @@
 export interface EventListItem {
   eventId: number;
+  eventName: string;
   endsAt: number;
   createdAt: number;
 }
 
 export async function getEventsList(): Promise<EventListItem[]> {
-  console.log("ysy");
   const weeklies = await useDrizzle()
     .select({
       eventId: tables.weekly.eventId,
@@ -16,8 +16,10 @@ export async function getEventsList(): Promise<EventListItem[]> {
     .groupBy(tables.weekly.eventId)
     .orderBy(desc(tables.weekly.endsAt), desc(tables.weekly.createdAt));
 
-  return weeklies.map((weekly) => ({
+  const count = weeklies.length;
+  return weeklies.map((weekly, index) => ({
     eventId: weekly.eventId,
+    eventName: `Week ${count - index + 1}`,
     endsAt: weekly.endsAt,
     createdAt: weekly.createdAt,
   }));

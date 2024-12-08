@@ -3,6 +3,7 @@ import type {
   EventInfoDto,
   EventLeaderboardDto,
 } from "./brazen-api/getEventInfo";
+import { WeeklyScore } from "./drizzle";
 
 export interface BrazenUser {
   name: string;
@@ -122,30 +123,78 @@ export async function getLatestFromDB(
   maxAgeMs: number
 ): Promise<EventInfo | null> {
   console.log("Getting event from database...");
-  const weekly = await useDrizzle().query.weekly.findFirst({
-    where: gt(tables.weekly.createdAt, new Date(Date.now() - maxAgeMs)),
-    orderBy: [desc(tables.weekly.createdAt)],
-    with: {
-      worldRecord: {
-        with: {
-          user: true,
+  const weekly: DBEventInfo | undefined =
+    await useDrizzle().query.weekly.findFirst({
+      where: gt(tables.weekly.createdAt, new Date(Date.now() - maxAgeMs)),
+      orderBy: [desc(tables.weekly.createdAt)],
+      with: {
+        worldRecord: {
+          with: {
+            user: true,
+          },
         },
-      },
-      weeklyScores: {
-        with: {
-          score: {
-            with: {
-              user: true,
+        weeklyScores: {
+          with: {
+            score: {
+              with: {
+                user: true,
+              },
             },
           },
         },
       },
-    },
-  });
+    });
 
   if (weekly === undefined) {
     return null;
   }
+  return eventInfoFromDB(weekly);
+}
+
+export async function getEventInfoByEventId(
+  eventId: number
+): Promise<EventInfo | null> {
+  const weekly: DBEventInfo | undefined =
+    await useDrizzle().query.weekly.findFirst({
+      where: eq(tables.weekly.eventId, eventId),
+      orderBy: [desc(tables.weekly.createdAt)],
+      with: {
+        worldRecord: {
+          with: {
+            user: true,
+          },
+        },
+        weeklyScores: {
+          with: {
+            score: {
+              with: {
+                user: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+  if (weekly === undefined) {
+    return null;
+  }
+  return eventInfoFromDB(weekly);
+}
+
+interface DBEventInfo extends Weekly {
+  worldRecord:
+    | (Score & {
+        user: User;
+      })
+    | null;
+  weeklyScores: (WeeklyScore & {
+    score: Score & {
+      user: User;
+    };
+  })[];
+}
+function eventInfoFromDB(weekly: DBEventInfo): EventInfo {
   let worldRecord: LeaderboardEntry | null = null;
   if (weekly.worldRecord) {
     worldRecord = {
