@@ -1,7 +1,11 @@
 <template>
   <DataTable :value="entries">
     <Column field="place" header="Place" />
-    <Column field="username" header="Username" />
+    <Column field="username" header="Username">
+      <template #body="slotProps">
+        {{ slotProps.data.user.name }}
+      </template>
+    </Column>
     <Column field="time" header="Time">
       <template #body="slotProps">
         {{
