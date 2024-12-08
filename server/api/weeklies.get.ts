@@ -6,7 +6,6 @@ export default cachedEventHandler(
     return { events: await getEventsList() };
   },
   {
-    shouldBypassCache: () => true,
     maxAge: 300,
     swr: false,
   }

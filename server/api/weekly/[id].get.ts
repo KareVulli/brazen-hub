@@ -23,8 +23,7 @@ export default cachedEventHandler(
     return { event: data };
   },
   {
-    shouldBypassCache: () => true,
-    maxAge: 60,
+    maxAge: 300,
     swr: false,
   }
 );
