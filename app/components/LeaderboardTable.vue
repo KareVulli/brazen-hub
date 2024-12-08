@@ -11,7 +11,7 @@
         {{
           $dayjs
             .duration(slotProps.data.time, "milliseconds")
-            .format("mm:ss.sss")
+            .format("mm:ss.SSS")
         }}
       </template>
     </Column>
