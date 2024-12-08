@@ -16,7 +16,7 @@
       </template>
     </Column>
     <Column field="score" header="Score" />
-    <Column field="attempts" header="Attempts" />
+    <Column field="attempts" header="Attempts (inaccurate)" />
   </DataTable>
 </template>
 
