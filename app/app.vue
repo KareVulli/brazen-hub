@@ -34,9 +34,8 @@
 
 <script setup lang="ts">
 useSeoMeta({
-  title: "NuxtHub Starter",
-  description:
-    "A Nuxt template to build your full-stack application on the edge.",
+  title: "Brazen Hub",
+  description: "Statistics about Brazen Blaze",
 });
 
 const items = ref([
@@ -47,6 +46,10 @@ const items = ref([
   {
     label: "Target challenges",
     route: "/target-challenges",
+  },
+  {
+    label: "Round Team Match",
+    route: "/rtm",
   },
 ]);
 </script>

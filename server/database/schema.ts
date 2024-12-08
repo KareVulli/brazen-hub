@@ -30,9 +30,7 @@ export const scoreRelations = relations(score, ({ one }) => ({
 export const weekly = sqliteTable("weekly", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   eventId: integer("event_id").notNull(),
-  worldRecordId: integer("world_record_score_id")
-    .references(() => score.id)
-    .notNull(),
+  worldRecordId: integer("world_record_score_id").references(() => score.id),
   endsAt: integer("ends_at").notNull(),
   raw: text("raw", { mode: "json" }).notNull(),
   createdAt: integer("created_at", { mode: "timestamp" })

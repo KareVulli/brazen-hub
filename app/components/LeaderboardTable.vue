@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import type { LeaderboardEntry } from "~~/server/api/weekly/index.get";
+import type { LeaderboardEntry } from "~~/server/utils/eventInfo";
 
 defineProps<{
   entries: LeaderboardEntry[];
