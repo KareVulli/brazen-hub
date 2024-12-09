@@ -2,7 +2,7 @@
   <div class="container mx-auto px-4 py-4">
     <Menubar :model="items">
       <template #start>
-        <div class="font-bold mx-4">Brazen Hub</div>
+        <span class="font-bold mx-4">Brazen Hub</span>
       </template>
       <template #item="{ item, props }">
         <NuxtLink v-slot="{ href, navigate, isActive }" :to="item.route" custom>
@@ -27,9 +27,8 @@
 
 <script setup lang="ts">
 useSeoMeta({
-  title: "NuxtHub Starter",
-  description:
-    "A Nuxt template to build your full-stack application on the edge.",
+  title: "Brazen Hub",
+  description: "Statistics about Brazen Blaze",
 });
 
 const items = ref([
