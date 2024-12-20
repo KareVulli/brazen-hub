@@ -26,6 +26,7 @@ export interface EventInfo {
   leaderboard: LeaderboardEntry[];
   worldRecord: LeaderboardEntry | null;
   updatedAt: number;
+  ruleId: number | null;
 }
 
 export async function writeToDB(
@@ -72,6 +73,7 @@ export async function writeToDB(
     .insert(tables.weekly)
     .values({
       eventId: event.eventId,
+      ruleId: event.ruleId,
       worldRecordId: worldRecordId,
       endsAt: event.endsAt,
       raw: raw,
@@ -224,6 +226,7 @@ function eventInfoFromDB(weekly: DBEventInfo): EventInfo {
 
   return {
     eventId: weekly.eventId,
+    ruleId: weekly.ruleId,
     endsAt: weekly.endsAt,
     leaderboard: weekly.weeklyScores.map((row) => {
       return {
@@ -265,7 +268,7 @@ export function previousEventInfoFromDto(data: EventInfoDto): EventInfo | null {
   return null;
 }
 
-function eventInfoFromDto(
+export function eventInfoFromDto(
   event: EventDto,
   leaderboard: EventLeaderboardDto | null
 ): EventInfo {
@@ -287,6 +290,7 @@ function eventInfoFromDto(
 
   return {
     eventId: event.event_id,
+    ruleId: event.requirements.rule_id,
     endsAt: event.end_at,
     leaderboard: (leaderboard?.list_data || []).map((row) => {
       return {

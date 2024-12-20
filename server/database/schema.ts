@@ -1,5 +1,8 @@
 import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
-import { relations, sql } from "drizzle-orm";
+import { relations } from "drizzle-orm";
+import { rule } from "./rule";
+
+export { rule } from "./rule";
 
 export const user = sqliteTable("user", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -36,6 +39,7 @@ export const weekly = sqliteTable("weekly", {
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .$default(() => new Date()),
+  ruleId: integer("rule_id"),
 });
 
 export const weeklyRelations = relations(weekly, ({ one, many }) => ({
@@ -44,6 +48,10 @@ export const weeklyRelations = relations(weekly, ({ one, many }) => ({
     references: [score.id],
   }),
   weeklyScores: many(weeklyScore),
+  rule: one(rule, {
+    fields: [weekly.ruleId],
+    references: [rule.id],
+  }),
 }));
 
 export const weeklyScore = sqliteTable("weekly_score", {

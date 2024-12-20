@@ -12,11 +12,18 @@ export interface SoloScoreGameRecordEntryDto {
   timestamp: number;
 }
 
+export interface EventRequirements {
+  character_id: number;
+  rule_id: number;
+  sub_weapon_id: number;
+}
+
 export interface EventDto {
   event_id: number;
   end_at: number;
   world_record: SoloScoreGameRecordEntryDto | null;
   world_record_holder: UserDto | null;
+  requirements: EventRequirements;
 }
 
 export interface EventLeaderboardDto {
