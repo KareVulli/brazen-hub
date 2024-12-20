@@ -23,7 +23,7 @@ export default cachedEventHandler(
     return { event: data };
   },
   {
-    maxAge: 300,
+    maxAge: 60,
     swr: false,
   }
 );

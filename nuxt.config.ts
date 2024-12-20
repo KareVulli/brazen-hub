@@ -39,6 +39,7 @@ export default defineNuxtConfig({
     bzToken: "",
     cacheTime: 60,
     refreshTime: 600,
+    updateToken: "",
   },
   dayjs: {
     plugins: ["duration"],

@@ -119,13 +119,20 @@ export async function writeToDB(raw: EventInfoDto, event: EventInfo) {
   console.log(`Created weekly ${weeklyId} to database.`);
 }
 
-export async function getLatestFromDB(
-  maxAgeMs: number
-): Promise<EventInfo | null> {
-  console.log("Getting event from database...");
+export async function hasRecentEntry(maxAgeMs: number): Promise<boolean> {
+  const weekly = await useDrizzle().query.weekly.findFirst({
+    where: gt(tables.weekly.createdAt, new Date(Date.now() - maxAgeMs)),
+  });
+
+  if (weekly === undefined) {
+    return false;
+  }
+  return true;
+}
+
+export async function getLatest(): Promise<EventInfo | null> {
   const weekly: DBEventInfo | undefined =
     await useDrizzle().query.weekly.findFirst({
-      where: gt(tables.weekly.createdAt, new Date(Date.now() - maxAgeMs)),
       orderBy: [desc(tables.weekly.createdAt)],
       with: {
         worldRecord: {
@@ -144,10 +151,10 @@ export async function getLatestFromDB(
         },
       },
     });
-
   if (weekly === undefined) {
     return null;
   }
+  console.log("Got latest! ID:", weekly.id);
   return eventInfoFromDB(weekly);
 }
 
