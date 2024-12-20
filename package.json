@@ -13,23 +13,23 @@
     "db:generate": "drizzle-kit generate"
   },
   "dependencies": {
-    "@nuxt/eslint": "^0.7.2",
-    "@nuxthub/core": "^0.8.7",
+    "@nuxt/eslint": "^0.7.4",
+    "@nuxthub/core": "^0.8.10",
     "@nuxtjs/tailwindcss": "6.12.2",
-    "@primevue/themes": "^4.2.4",
+    "@primevue/themes": "^4.2.5",
     "dayjs-nuxt": "2.1.11",
-    "drizzle-orm": "^0.37.0",
+    "drizzle-orm": "^0.38.2",
     "nuxt": "^3.14.1592",
     "nuxt-time": "1.0.3",
-    "primevue": "^4.2.4",
+    "primevue": "^4.2.5",
     "tailwindcss-primeui": "^0.3.4",
-    "zod": "^3.23.8"
+    "zod": "^3.24.1"
   },
   "devDependencies": {
-    "@nuxt/eslint-config": "^0.7.2",
-    "@primevue/nuxt-module": "^4.2.4",
+    "@nuxt/eslint-config": "^0.7.4",
+    "@primevue/nuxt-module": "^4.2.5",
     "drizzle-kit": "^0.29.1",
-    "eslint": "^9.16.0",
+    "eslint": "^9.17.0",
     "vue-tsc": "^2.1.10",
     "wrangler": "3.92.0"
   },
