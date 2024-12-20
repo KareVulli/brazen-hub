@@ -3,7 +3,7 @@ import type {
   EventInfoDto,
   EventLeaderboardDto,
 } from "./brazen-api/getEventInfo";
-import { WeeklyScore } from "./drizzle";
+import type { WeeklyScore } from "./drizzle";
 
 export interface BrazenUser {
   name: string;
@@ -25,9 +25,13 @@ export interface EventInfo {
   endsAt: number;
   leaderboard: LeaderboardEntry[];
   worldRecord: LeaderboardEntry | null;
+  updatedAt: number;
 }
 
-export async function writeToDB(raw: EventInfoDto, event: EventInfo) {
+export async function writeToDB(
+  raw: EventInfoDto,
+  event: Omit<EventInfo, "updatedAt">
+) {
   const worldRecord = event.worldRecord;
   let worldRecordId: number | null = null;
   if (worldRecord) {
@@ -236,10 +240,13 @@ function eventInfoFromDB(weekly: DBEventInfo): EventInfo {
       };
     }),
     worldRecord: worldRecord,
+    updatedAt: weekly.createdAt.getTime(),
   };
 }
 
-export function currentEventInfoFromDto(data: EventInfoDto): EventInfo | null {
+export function currentEventInfoFromDto(
+  data: EventInfoDto
+): Omit<EventInfo, "updatedAt"> | null {
   if (data.current_event) {
     return eventInfoFromDto(data.current_event, data.current_event_leaderboard);
   }
@@ -296,5 +303,6 @@ function eventInfoFromDto(
       };
     }),
     worldRecord: worldRecord,
+    updatedAt: Date.now(),
   };
 }
