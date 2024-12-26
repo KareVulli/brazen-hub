@@ -19,7 +19,7 @@
       </template>
     </Menubar>
   </div>
-  <div class="container mx-auto px-4">
+  <div class="container mx-auto px-4 mb-4">
     <NuxtLoadingIndicator />
     <NuxtPage />
   </div>

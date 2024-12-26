@@ -4,6 +4,7 @@ import type {
   EventLeaderboardDto,
 } from "./brazen-api/getEventInfo";
 import type { WeeklyScore } from "./drizzle";
+import type { RuleDto } from "./rule";
 
 export interface BrazenUser {
   name: string;
@@ -26,13 +27,18 @@ export interface EventInfo {
   leaderboard: LeaderboardEntry[];
   worldRecord: LeaderboardEntry | null;
   updatedAt: number;
+  rule: RuleDto | null;
+}
+
+export interface BrazenApiEventInfo {
+  eventId: number;
+  endsAt: number;
+  leaderboard: LeaderboardEntry[];
+  worldRecord: LeaderboardEntry | null;
   ruleId: number | null;
 }
 
-export async function writeToDB(
-  raw: EventInfoDto,
-  event: Omit<EventInfo, "updatedAt">
-) {
+export async function writeToDB(raw: EventInfoDto, event: BrazenApiEventInfo) {
   const worldRecord = event.worldRecord;
   let worldRecordId: number | null = null;
   if (worldRecord) {
@@ -155,6 +161,7 @@ export async function getLatest(): Promise<EventInfo | null> {
             },
           },
         },
+        rule: true,
       },
     });
   if (weekly === undefined) {
@@ -186,6 +193,7 @@ export async function getEventInfoByEventId(
             },
           },
         },
+        rule: true,
       },
     });
 
@@ -206,6 +214,7 @@ interface DBEventInfo extends Weekly {
       user: User;
     };
   })[];
+  rule: Rule | null;
 }
 function eventInfoFromDB(weekly: DBEventInfo): EventInfo {
   let worldRecord: LeaderboardEntry | null = null;
@@ -226,7 +235,7 @@ function eventInfoFromDB(weekly: DBEventInfo): EventInfo {
 
   return {
     eventId: weekly.eventId,
-    ruleId: weekly.ruleId,
+    rule: weekly.rule,
     endsAt: weekly.endsAt,
     leaderboard: weekly.weeklyScores.map((row) => {
       return {
@@ -249,7 +258,7 @@ function eventInfoFromDB(weekly: DBEventInfo): EventInfo {
 
 export function currentEventInfoFromDto(
   data: EventInfoDto
-): Omit<EventInfo, "updatedAt"> | null {
+): BrazenApiEventInfo | null {
   if (data.current_event) {
     return eventInfoFromDto(data.current_event, data.current_event_leaderboard);
   }
@@ -257,7 +266,9 @@ export function currentEventInfoFromDto(
   return null;
 }
 
-export function previousEventInfoFromDto(data: EventInfoDto): EventInfo | null {
+export function previousEventInfoFromDto(
+  data: EventInfoDto
+): BrazenApiEventInfo | null {
   if (data.previous_event) {
     return eventInfoFromDto(
       data.previous_event,
@@ -271,7 +282,7 @@ export function previousEventInfoFromDto(data: EventInfoDto): EventInfo | null {
 export function eventInfoFromDto(
   event: EventDto,
   leaderboard: EventLeaderboardDto | null
-): EventInfo {
+): BrazenApiEventInfo {
   let worldRecord: LeaderboardEntry | null = null;
   if (event.world_record && event.world_record_holder) {
     worldRecord = {
@@ -307,6 +318,5 @@ export function eventInfoFromDto(
       };
     }),
     worldRecord: worldRecord,
-    updatedAt: Date.now(),
   };
 }

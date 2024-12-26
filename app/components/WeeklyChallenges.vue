@@ -32,10 +32,10 @@
       </template>
     </Menu>
     <div class="flex-grow">
-      <h1 class="mb-4 text-lg">
-        Weekly Challenge - {{ selectedEvent ? selectedEvent.eventName : "" }}
-      </h1>
-      <WeeklyChallenge :event-id="props.eventId" />
+      <WeeklyChallenge
+        :event-name="selectedEvent?.eventName"
+        :event-id="props.eventId"
+      />
     </div>
   </div>
 </template>

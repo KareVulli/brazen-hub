@@ -1,10 +1,10 @@
 import { checkAllowedToUpdate } from "~~/server/utils/auth";
 import { getEventInfo } from "~~/server/utils/brazen-api/getEventInfo";
-import type { EventInfo } from "~~/server/utils/eventInfo";
+import type { BrazenApiEventInfo } from "~~/server/utils/eventInfo";
 import { previousEventInfoFromDto, writeToDB } from "~~/server/utils/eventInfo";
 
 export default eventHandler(
-  async (event): Promise<{ event: EventInfo | null }> => {
+  async (event): Promise<{ event: BrazenApiEventInfo | null }> => {
     const config = useRuntimeConfig(event);
 
     checkAllowedToUpdate(event);
