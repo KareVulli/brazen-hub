@@ -20,7 +20,6 @@ const requestSchema = z.object({
 });
 export default eventHandler(async (event): Promise<void> => {
   checkAllowedToUpdate(event);
-  await migrateRuleIds();
   const rules = await readValidatedBody(event, requestSchema.parse);
   await replaceRulesInDB(rules.soloRules);
 });
