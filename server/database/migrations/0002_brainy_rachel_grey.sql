@@ -1,0 +1,1 @@
+ALTER TABLE `rule` ADD `stage_thumbnail` text;

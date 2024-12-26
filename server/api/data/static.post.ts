@@ -2,7 +2,6 @@ import { z } from "zod";
 import { checkAllowedToUpdate } from "~~/server/utils/auth";
 import type { RuleDto } from "../../utils/rule";
 import { replaceRulesInDB } from "../../utils/rule";
-import { migrateRuleIds } from "~~/server/plugins/migrations";
 
 const ruleSchema = z.object({
   id: z.coerce.number().positive().int(),
@@ -12,6 +11,7 @@ const ruleSchema = z.object({
   subRuleId: z.coerce.number().positive().int(),
   stageId: z.coerce.number().positive().int(),
   stageName: z.coerce.string(),
+  stageThumbnail: z.coerce.string(),
   subRuleType: z.coerce.string(),
 }) satisfies z.ZodType<RuleDto>;
 

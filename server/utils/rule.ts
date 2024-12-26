@@ -6,6 +6,7 @@ export interface RuleDto {
   subRuleId: number;
   stageId: number;
   stageName: string;
+  stageThumbnail: string | null;
   subRuleType: string;
 }
 
@@ -26,6 +27,7 @@ export async function writeRuleToDB(rule: RuleDto) {
     subRuleId: rule.subRuleId,
     stageId: rule.stageId,
     stageName: rule.stageName,
+    stageThumbnail: rule.stageThumbnail,
     subRuleType: rule.subRuleType,
   });
 }

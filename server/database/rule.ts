@@ -8,5 +8,6 @@ export const rule = sqliteTable("rule", {
   subRuleId: integer("sub_rule_id").notNull(),
   stageId: integer("stage_id").notNull(),
   stageName: text("stage_name").notNull(),
+  stageThumbnail: text("stage_thumbnail"),
   subRuleType: text("sub_rule_type").notNull(),
 });
