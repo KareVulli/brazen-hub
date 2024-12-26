@@ -6,7 +6,7 @@ export interface RuleDto {
   subRuleId: number;
   stageId: number;
   stageName: string;
-  stageThumbnail: string | null;
+  stageThumbnail: string;
   subRuleType: string;
 }
 
