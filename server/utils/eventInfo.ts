@@ -1,4 +1,5 @@
 import {
+  characterTable,
   scoreTable,
   userTable,
   weeklyScoreTable,
@@ -9,7 +10,15 @@ import type {
   EventInfoDto,
   EventLeaderboardDto,
 } from "./brazen-api/getEventInfo";
-import type { Rule, Score, User, Weekly, WeeklyScore } from "./drizzle";
+import type { Character } from "./character";
+import { characterFromDB } from "./character";
+import type {
+  DBRule,
+  DBScore,
+  DBUser,
+  DBWeekly,
+  DBWeeklyScore,
+} from "./drizzle";
 import type { RuleDto } from "./rule";
 
 export interface BrazenUser {
@@ -34,6 +43,7 @@ export interface EventInfo {
   worldRecord: LeaderboardEntry | null;
   updatedAt: number;
   rule: RuleDto | null;
+  character: CharacterDto | null;
 }
 
 export interface BrazenApiEventInfo {
@@ -207,23 +217,24 @@ export async function getEventInfoByEventId(
   if (weekly === undefined) {
     return null;
   }
-  return eventInfoFromDB(weekly);
+  return await eventInfoFromDB(weekly);
 }
 
-interface DBEventInfo extends Weekly {
+interface DBEventInfo extends DBWeekly {
   worldRecord:
-    | (Score & {
-        user: User;
+    | (DBScore & {
+        user: DBUser;
       })
     | null;
-  weeklyScores: (WeeklyScore & {
-    score: Score & {
-      user: User;
+  weeklyScores: (DBWeeklyScore & {
+    score: DBScore & {
+      user: DBUser;
     };
   })[];
-  rule: Rule | null;
+  rule: DBRule | null;
+  characterId: number | null;
 }
-function eventInfoFromDB(weekly: DBEventInfo): EventInfo {
+async function eventInfoFromDB(weekly: DBEventInfo): Promise<EventInfo> {
   let worldRecord: LeaderboardEntry | null = null;
   if (weekly.worldRecord) {
     worldRecord = {
@@ -240,9 +251,21 @@ function eventInfoFromDB(weekly: DBEventInfo): EventInfo {
     };
   }
 
+  let character: Character | null = null;
+  if (weekly.characterId !== null && weekly.characterId > 0) {
+    const dbCharacter = await useDrizzle().query.characterTable.findFirst({
+      where: eq(characterTable.characterId, weekly.characterId),
+      orderBy: [desc(characterTable.gameVersion)],
+    });
+    if (dbCharacter) {
+      character = characterFromDB(dbCharacter);
+    }
+  }
+
   return {
     eventId: weekly.eventId,
     rule: weekly.rule,
+    character: character,
     endsAt: weekly.endsAt,
     leaderboard: weekly.weeklyScores.map((row) => {
       return {

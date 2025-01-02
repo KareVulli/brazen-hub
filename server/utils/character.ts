@@ -1,7 +1,30 @@
 import { characterTable } from "../database/schema/character";
+import type { DBCharacter } from "./drizzle";
 
 export interface CharacterDto {
   id: number;
+  name: string;
+  displayName: string;
+  hp: number;
+  largeIconName: string;
+  boostRecovery: number;
+  boostMax: number;
+  skillName: string;
+  skillDescription: string;
+  skillRange: number;
+  skillRecastTime: number;
+  ultimateName: string;
+  ultimateDescription: string;
+  ultimateRange: number;
+  ultimatePoints: number;
+  ultimatePointsDamageMultiplier: number;
+  ultimatePointsAttackMultiplier: number;
+}
+
+export interface Character {
+  id: number;
+  characterId: number;
+  gameVersion: string;
   name: string;
   displayName: string;
   hp: number;
@@ -57,4 +80,28 @@ export async function writeCharacterToDB(
     ultimatePointsDamageMultiplier: characterDto.ultimatePointsDamageMultiplier,
     ultimatePointsAttackMultiplier: characterDto.ultimatePointsAttackMultiplier,
   });
+}
+
+export function characterFromDB(character: DBCharacter): Character {
+  return {
+    id: character.id,
+    characterId: character.characterId,
+    name: character.name,
+    displayName: character.displayName,
+    gameVersion: character.gameVersion,
+    hp: character.hp,
+    largeIconName: character.largeIconName,
+    boostRecovery: character.boostRecovery,
+    boostMax: character.boostMax,
+    skillName: character.skillName,
+    skillDescription: character.skillDescription,
+    skillRange: character.skillRange,
+    skillRecastTime: character.skillRecastTime,
+    ultimateName: character.ultimateName,
+    ultimateDescription: character.ultimateDescription,
+    ultimateRange: character.ultimateRange,
+    ultimatePoints: character.ultimatePoints,
+    ultimatePointsDamageMultiplier: character.ultimatePointsDamageMultiplier,
+    ultimatePointsAttackMultiplier: character.ultimatePointsAttackMultiplier,
+  };
 }

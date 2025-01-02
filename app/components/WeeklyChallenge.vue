@@ -55,6 +55,10 @@
           {{ eventInfo.event.rule.name.toLowerCase() }}
         </p>
         <p>{{ eventInfo.event.rule.stageName }}</p>
+        <p>
+          Runner:
+          {{ eventInfo.event.character?.displayName || "Any" }}
+        </p>
       </Panel>
     </div>
     <p class="mb-4">Leaderboard:</p>

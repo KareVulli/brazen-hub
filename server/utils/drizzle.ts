@@ -6,8 +6,9 @@ export function useDrizzle() {
   return drizzle(hubDatabase(), { schema: schema });
 }
 
-export type User = typeof schema.userTable.$inferSelect;
-export type Score = typeof schema.scoreTable.$inferSelect;
-export type Weekly = typeof schema.weeklyTable.$inferSelect;
-export type WeeklyScore = typeof schema.weeklyScoreTable.$inferSelect;
-export type Rule = typeof schema.ruleTable.$inferSelect;
+export type DBUser = typeof schema.userTable.$inferSelect;
+export type DBScore = typeof schema.scoreTable.$inferSelect;
+export type DBWeekly = typeof schema.weeklyTable.$inferSelect;
+export type DBWeeklyScore = typeof schema.weeklyScoreTable.$inferSelect;
+export type DBRule = typeof schema.ruleTable.$inferSelect;
+export type DBCharacter = typeof schema.characterTable.$inferSelect;
