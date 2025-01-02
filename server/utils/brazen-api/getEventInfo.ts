@@ -51,8 +51,8 @@ export async function getEventInfo(token: string): Promise<EventInfoDto> {
         Accept: "application/json",
         Authorization: `Bearer ${token}`,
         "Asset-Version":
-          "2024122301/steam-pc/434ed045ab87775ffc846faa4f9a691b3771b742",
-        "Client-Version": "1.10.0",
+          "2024122500/steam-pc/9528e9bf7756e5c414fb4cc37992f2967449624b",
+        "Client-Version": "1.10.1",
         Platform: "steam_pc",
       },
     }
