@@ -42,6 +42,8 @@ export interface BrazenApiEventInfo {
   leaderboard: LeaderboardEntry[];
   worldRecord: LeaderboardEntry | null;
   ruleId: number | null;
+  characterId: number | null;
+  subWeaponId: number | null;
 }
 
 export async function writeToDB(raw: EventInfoDto, event: BrazenApiEventInfo) {
@@ -86,6 +88,8 @@ export async function writeToDB(raw: EventInfoDto, event: BrazenApiEventInfo) {
     .values({
       eventId: event.eventId,
       ruleId: event.ruleId,
+      characterId: event.characterId,
+      subWeaponId: event.subWeaponId,
       worldRecordId: worldRecordId,
       endsAt: event.endsAt,
       raw: raw,
@@ -305,6 +309,8 @@ export function eventInfoFromDto(
   return {
     eventId: event.event_id,
     ruleId: event.requirements.rule_id,
+    characterId: event.requirements.character_id,
+    subWeaponId: event.requirements.sub_weapon_id,
     endsAt: event.end_at,
     leaderboard: (leaderboard?.list_data || []).map((row) => {
       return {
