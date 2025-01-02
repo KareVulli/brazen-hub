@@ -1,14 +1,13 @@
-import * as schema from "../database/schema";
 import { drizzle } from "drizzle-orm/d1";
+import * as schema from "../database/schema";
 export { sql, eq, and, or, desc, lt, gt } from "drizzle-orm";
 
-export const tables = schema;
-
 export function useDrizzle() {
-  return drizzle(hubDatabase(), { schema });
+  return drizzle(hubDatabase(), { schema: schema });
 }
 
-export type User = typeof schema.user.$inferSelect;
-export type Score = typeof schema.score.$inferSelect;
-export type Weekly = typeof schema.weekly.$inferSelect;
-export type WeeklyScore = typeof schema.weeklyScore.$inferSelect;
+export type User = typeof schema.userTable.$inferSelect;
+export type Score = typeof schema.scoreTable.$inferSelect;
+export type Weekly = typeof schema.weeklyTable.$inferSelect;
+export type WeeklyScore = typeof schema.weeklyScoreTable.$inferSelect;
+export type Rule = typeof schema.ruleTable.$inferSelect;

@@ -1,9 +1,15 @@
+import {
+  scoreTable,
+  userTable,
+  weeklyScoreTable,
+  weeklyTable,
+} from "../database/schema";
 import type {
   EventDto,
   EventInfoDto,
   EventLeaderboardDto,
 } from "./brazen-api/getEventInfo";
-import type { WeeklyScore } from "./drizzle";
+import type { Rule, Score, User, Weekly, WeeklyScore } from "./drizzle";
 import type { RuleDto } from "./rule";
 
 export interface BrazenUser {
@@ -44,7 +50,7 @@ export async function writeToDB(raw: EventInfoDto, event: BrazenApiEventInfo) {
   if (worldRecord) {
     const worldRecordUser = worldRecord.user;
     const [{ worldRecordUserId }] = await useDrizzle()
-      .insert(tables.user)
+      .insert(userTable)
       .values({
         userKey: worldRecordUser.userKey,
         name: worldRecordUser.name,
@@ -52,17 +58,17 @@ export async function writeToDB(raw: EventInfoDto, event: BrazenApiEventInfo) {
         iconFrameId: worldRecordUser.iconFrameId,
       })
       .onConflictDoUpdate({
-        target: tables.user.userKey,
+        target: userTable.userKey,
         set: {
           name: worldRecordUser.name,
           iconId: worldRecordUser.iconId,
           iconFrameId: worldRecordUser.iconFrameId,
         },
       })
-      .returning({ worldRecordUserId: tables.user.id });
+      .returning({ worldRecordUserId: userTable.id });
 
     const result = await useDrizzle()
-      .insert(tables.score)
+      .insert(scoreTable)
       .values({
         userId: worldRecordUserId,
         place: worldRecord.place,
@@ -70,13 +76,13 @@ export async function writeToDB(raw: EventInfoDto, event: BrazenApiEventInfo) {
         score: worldRecord.score,
         attempts: worldRecord.attempts,
       })
-      .returning({ worldRecordId: tables.score.id });
+      .returning({ worldRecordId: scoreTable.id });
 
     worldRecordId = result[0].worldRecordId;
   }
 
   const [{ weeklyId }] = await useDrizzle()
-    .insert(tables.weekly)
+    .insert(weeklyTable)
     .values({
       eventId: event.eventId,
       ruleId: event.ruleId,
@@ -84,14 +90,14 @@ export async function writeToDB(raw: EventInfoDto, event: BrazenApiEventInfo) {
       endsAt: event.endsAt,
       raw: raw,
     })
-    .returning({ weeklyId: tables.weekly.id });
+    .returning({ weeklyId: weeklyTable.id });
 
   for (let i = 0; i < event.leaderboard.length; i++) {
     const score = event.leaderboard[i];
     const scoreUser = score.user;
 
     const [{ scoreUserId }] = await useDrizzle()
-      .insert(tables.user)
+      .insert(userTable)
       .values({
         userKey: scoreUser.userKey,
         name: scoreUser.name,
@@ -99,17 +105,17 @@ export async function writeToDB(raw: EventInfoDto, event: BrazenApiEventInfo) {
         iconFrameId: scoreUser.iconFrameId,
       })
       .onConflictDoUpdate({
-        target: tables.user.userKey,
+        target: userTable.userKey,
         set: {
           name: scoreUser.name,
           iconId: scoreUser.iconId,
           iconFrameId: scoreUser.iconFrameId,
         },
       })
-      .returning({ scoreUserId: tables.user.id });
+      .returning({ scoreUserId: userTable.id });
 
     const [{ scoreId }] = await useDrizzle()
-      .insert(tables.score)
+      .insert(scoreTable)
       .values({
         userId: scoreUserId,
         place: score.place,
@@ -117,23 +123,20 @@ export async function writeToDB(raw: EventInfoDto, event: BrazenApiEventInfo) {
         score: score.score,
         attempts: score.attempts,
       })
-      .returning({ scoreId: tables.score.id });
+      .returning({ scoreId: scoreTable.id });
 
-    await useDrizzle()
-      .insert(tables.weeklyScore)
-      .values({
-        weeklyId: weeklyId,
-        scoreId: scoreId,
-      })
-      .returning({ weeklyScoreId: tables.score.id });
+    await useDrizzle().insert(weeklyScoreTable).values({
+      weeklyId: weeklyId,
+      scoreId: scoreId,
+    });
   }
 
   console.log(`Created weekly ${weeklyId} to database.`);
 }
 
 export async function hasRecentEntry(maxAgeMs: number): Promise<boolean> {
-  const weekly = await useDrizzle().query.weekly.findFirst({
-    where: gt(tables.weekly.createdAt, new Date(Date.now() - maxAgeMs)),
+  const weekly = await useDrizzle().query.weeklyTable.findFirst({
+    where: gt(weeklyTable.createdAt, new Date(Date.now() - maxAgeMs)),
   });
 
   if (weekly === undefined) {
@@ -144,8 +147,8 @@ export async function hasRecentEntry(maxAgeMs: number): Promise<boolean> {
 
 export async function getLatest(): Promise<EventInfo | null> {
   const weekly: DBEventInfo | undefined =
-    await useDrizzle().query.weekly.findFirst({
-      orderBy: [desc(tables.weekly.createdAt)],
+    await useDrizzle().query.weeklyTable.findFirst({
+      orderBy: [desc(weeklyTable.createdAt)],
       with: {
         worldRecord: {
           with: {
@@ -175,9 +178,9 @@ export async function getEventInfoByEventId(
   eventId: number
 ): Promise<EventInfo | null> {
   const weekly: DBEventInfo | undefined =
-    await useDrizzle().query.weekly.findFirst({
-      where: eq(tables.weekly.eventId, eventId),
-      orderBy: [desc(tables.weekly.createdAt)],
+    await useDrizzle().query.weeklyTable.findFirst({
+      where: eq(weeklyTable.eventId, eventId),
+      orderBy: [desc(weeklyTable.createdAt)],
       with: {
         worldRecord: {
           with: {

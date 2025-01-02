@@ -1,6 +1,6 @@
 import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 
-export const rule = sqliteTable("rule", {
+export const ruleTable = sqliteTable("rule", {
   id: integer("id").primaryKey(),
   name: text("name").notNull(),
   colorCode: text("color_code").notNull(),

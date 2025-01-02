@@ -1,3 +1,5 @@
+import { weeklyTable } from "../database/schema";
+
 export interface EventListItem {
   eventId: number;
   eventName: string;
@@ -8,13 +10,13 @@ export interface EventListItem {
 export async function getEventsList(): Promise<EventListItem[]> {
   const weeklies = await useDrizzle()
     .select({
-      eventId: tables.weekly.eventId,
-      endsAt: sql<number>`max(${tables.weekly.endsAt})`,
-      createdAt: sql<number>`max(${tables.weekly.createdAt})`,
+      eventId: weeklyTable.eventId,
+      endsAt: sql<number>`max(${weeklyTable.endsAt})`,
+      createdAt: sql<number>`max(${weeklyTable.createdAt})`,
     })
-    .from(tables.weekly)
-    .groupBy(tables.weekly.eventId)
-    .orderBy(desc(tables.weekly.endsAt), desc(tables.weekly.createdAt));
+    .from(weeklyTable)
+    .groupBy(weeklyTable.eventId)
+    .orderBy(desc(weeklyTable.endsAt), desc(weeklyTable.createdAt));
 
   const count = weeklies.length;
   return weeklies.map((weekly, index) => ({

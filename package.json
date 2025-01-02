@@ -18,7 +18,7 @@
     "@nuxtjs/tailwindcss": "6.12.2",
     "@primevue/themes": "^4.2.5",
     "dayjs-nuxt": "2.1.11",
-    "drizzle-orm": "^0.38.2",
+    "drizzle-orm": "^0.38.3",
     "nuxt": "^3.14.1592",
     "nuxt-time": "1.0.3",
     "primevue": "^4.2.5",

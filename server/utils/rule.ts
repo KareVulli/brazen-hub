@@ -1,3 +1,5 @@
+import { ruleTable } from "../database/schema";
+
 export interface RuleDto {
   id: number;
   name: string;
@@ -11,7 +13,7 @@ export interface RuleDto {
 }
 
 export async function replaceRulesInDB(rules: RuleDto[]) {
-  await useDrizzle().delete(tables.rule);
+  await useDrizzle().delete(ruleTable);
   for (let i = 0; i < rules.length; i++) {
     const rule = rules[i];
     await writeRuleToDB(rule);
@@ -19,7 +21,7 @@ export async function replaceRulesInDB(rules: RuleDto[]) {
 }
 
 export async function writeRuleToDB(rule: RuleDto) {
-  await useDrizzle().insert(tables.rule).values({
+  await useDrizzle().insert(ruleTable).values({
     id: rule.id,
     name: rule.name,
     colorCode: rule.colorCode,
