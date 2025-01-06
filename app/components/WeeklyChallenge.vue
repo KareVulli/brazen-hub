@@ -59,6 +59,10 @@
           Runner:
           {{ eventInfo.event.character?.displayName || "Any" }}
         </p>
+        <p>
+          Sub-Weapon:
+          {{ eventInfo.event.subWeapon?.name || "Any" }}
+        </p>
       </Panel>
     </div>
     <p class="mb-4">Leaderboard:</p>

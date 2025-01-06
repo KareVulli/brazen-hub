@@ -55,3 +55,14 @@ export function itemFromDB(item: DBItem): Item {
     count: item.count,
   };
 }
+
+export async function getItemByItemId(itemId: number): Promise<Item | null> {
+  const dbItem = await useDrizzle().query.itemTable.findFirst({
+    where: eq(itemTable.itemId, itemId),
+    orderBy: [desc(itemTable.gameVersion)],
+  });
+  if (dbItem) {
+    return itemFromDB(dbItem);
+  }
+  return null;
+}

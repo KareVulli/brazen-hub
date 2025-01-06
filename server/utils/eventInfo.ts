@@ -1,5 +1,4 @@
 import {
-  characterTable,
   scoreTable,
   userTable,
   weeklyScoreTable,
@@ -11,7 +10,7 @@ import type {
   EventLeaderboardDto,
 } from "./brazen-api/getEventInfo";
 import type { Character } from "./character";
-import { characterFromDB } from "./character";
+import { getCharacterByCharacterId } from "./character";
 import type {
   DBRule,
   DBScore,
@@ -19,6 +18,7 @@ import type {
   DBWeekly,
   DBWeeklyScore,
 } from "./drizzle";
+import { getItemByItemId } from "./item";
 import type { RuleDto } from "./rule";
 
 export interface BrazenUser {
@@ -44,6 +44,7 @@ export interface EventInfo {
   updatedAt: number;
   rule: RuleDto | null;
   character: CharacterDto | null;
+  subWeapon: ItemDto | null;
 }
 
 export interface BrazenApiEventInfo {
@@ -233,6 +234,7 @@ interface DBEventInfo extends DBWeekly {
   })[];
   rule: DBRule | null;
   characterId: number | null;
+  subWeaponId: number | null;
 }
 async function eventInfoFromDB(weekly: DBEventInfo): Promise<EventInfo> {
   let worldRecord: LeaderboardEntry | null = null;
@@ -253,19 +255,19 @@ async function eventInfoFromDB(weekly: DBEventInfo): Promise<EventInfo> {
 
   let character: Character | null = null;
   if (weekly.characterId !== null && weekly.characterId > 0) {
-    const dbCharacter = await useDrizzle().query.characterTable.findFirst({
-      where: eq(characterTable.characterId, weekly.characterId),
-      orderBy: [desc(characterTable.gameVersion)],
-    });
-    if (dbCharacter) {
-      character = characterFromDB(dbCharacter);
-    }
+    character = await getCharacterByCharacterId(weekly.characterId);
+  }
+
+  let subWeapon: Item | null = null;
+  if (weekly.subWeaponId !== null && weekly.subWeaponId > 0) {
+    subWeapon = await getItemByItemId(weekly.subWeaponId);
   }
 
   return {
     eventId: weekly.eventId,
     rule: weekly.rule,
     character: character,
+    subWeapon: subWeapon,
     endsAt: weekly.endsAt,
     leaderboard: weekly.weeklyScores.map((row) => {
       return {

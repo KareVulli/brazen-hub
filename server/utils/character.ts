@@ -105,3 +105,16 @@ export function characterFromDB(character: DBCharacter): Character {
     ultimatePointsAttackMultiplier: character.ultimatePointsAttackMultiplier,
   };
 }
+
+export async function getCharacterByCharacterId(
+  characterId: number
+): Promise<Character | null> {
+  const dbCharacter = await useDrizzle().query.characterTable.findFirst({
+    where: eq(characterTable.characterId, characterId),
+    orderBy: [desc(characterTable.gameVersion)],
+  });
+  if (dbCharacter) {
+    return characterFromDB(dbCharacter);
+  }
+  return null;
+}
