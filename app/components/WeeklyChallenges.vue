@@ -1,36 +1,7 @@
 <template>
   <h1 class="mb-4 text-lg">Weekly Challenges</h1>
   <div class="flex flex-col lg:flex-row gap-4">
-    <Menu :model="items">
-      <template #item="{ item, props }">
-        <NuxtLink
-          v-if="item.route"
-          v-slot="{ href, navigate, isActive }"
-          :to="item.route"
-          exact-active-class="p-menu-item-active"
-          custom
-        >
-          <a
-            v-ripple
-            :class="isActive ? 'p-menu-item-active rounded-md' : ''"
-            :href="href"
-            v-bind="props.action"
-            @click="navigate"
-          >
-            <span>{{ item.label }}</span>
-          </a>
-        </NuxtLink>
-        <a
-          v-else
-          v-ripple
-          :href="item.url"
-          :target="item.target"
-          v-bind="props.action"
-        >
-          <span>{{ item.label }}</span>
-        </a>
-      </template>
-    </Menu>
+    <SideMenu :items="items" />
     <div class="flex-grow">
       <WeeklyChallenge
         :event-name="selectedEvent?.eventName"
@@ -72,11 +43,3 @@ const items = computed(() =>
   })
 );
 </script>
-
-<style>
-/* Create custom classes for the active element */
-.p-menu-item-active {
-  color: var(--p-menu-item-focus-color) !important;
-  background: var(--p-menu-item-focus-background) !important;
-}
-</style>
