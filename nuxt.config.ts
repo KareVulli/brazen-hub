@@ -14,6 +14,25 @@ export default defineNuxtConfig({
     "nuxt-time",
     "dayjs-nuxt",
   ],
+  app: {
+    head: {
+      link: [
+        {
+          rel: "icon",
+          type: "image/png",
+          sizes: "96x96",
+          href: "/favicon-96x96.png",
+        },
+        {
+          rel: "apple-touch-icon",
+          sizes: "180x180",
+          href: "/apple-touch-icon.png",
+        },
+        { rel: "shortcut icon", href: "/favicon.ico" },
+        { rel: "manifest", href: "/site.webmanifest" },
+      ],
+    },
+  },
   hub: {
     database: true,
     kv: true,
