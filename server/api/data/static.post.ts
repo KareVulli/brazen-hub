@@ -3,6 +3,7 @@ import { checkAllowedToUpdate } from "~~/server/utils/auth";
 import type { RuleDto } from "../../utils/rule";
 import { replaceRulesInDB } from "../../utils/rule";
 import type { CharacterDto } from "../../utils/character";
+import type { ItemDto } from "~~/server/utils/item";
 
 const ruleSchema = z.object({
   id: z.coerce.number().positive().int(),
@@ -36,14 +37,25 @@ const characterSchema = z.object({
   ultimatePointsAttackMultiplier: z.coerce.number(),
 }) satisfies z.ZodType<CharacterDto>;
 
+const itemSchema = z.object({
+  id: z.coerce.number().positive().int(),
+  name: z.coerce.string(),
+  description: z.coerce.string(),
+  icon: z.coerce.string(),
+  hudIcon: z.coerce.string(),
+  count: z.coerce.number().int(),
+}) satisfies z.ZodType<ItemDto>;
+
 const requestSchema = z.object({
   gameVersion: z.coerce.string(),
   soloRules: z.array(ruleSchema),
   characters: z.array(characterSchema),
+  items: z.array(itemSchema),
 });
 export default eventHandler(async (event): Promise<void> => {
   checkAllowedToUpdate(event);
   const staticData = await readValidatedBody(event, requestSchema.parse);
   await replaceRulesInDB(staticData.soloRules);
   await replaceCharactersInDB(staticData.gameVersion, staticData.characters);
+  await replaceitemsInDB(staticData.gameVersion, staticData.items);
 });
