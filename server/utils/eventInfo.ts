@@ -1,3 +1,4 @@
+import { asc } from "drizzle-orm";
 import {
   scoreTable,
   userTable,
@@ -20,13 +21,6 @@ import type {
 } from "./drizzle";
 import { getItemByItemId } from "./item";
 import type { RuleDto } from "./rule";
-
-export interface BrazenUser {
-  name: string;
-  userKey: string;
-  iconId: number;
-  iconFrameId: number;
-}
 
 export interface LeaderboardEntry {
   place: number;

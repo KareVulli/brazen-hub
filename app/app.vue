@@ -44,6 +44,10 @@ const items = ref([
     label: "Round team matches",
     route: "/rtm",
   },
+  {
+    label: "Player search",
+    route: "/search-user",
+  },
 ]);
 </script>
 

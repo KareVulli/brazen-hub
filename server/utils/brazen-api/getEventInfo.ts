@@ -1,3 +1,5 @@
+import { brazenApiClient } from "./client";
+
 export interface UserDto {
   name: string;
   user_key: string;
@@ -42,19 +44,10 @@ export interface EventInfoDto {
 }
 
 export async function getEventInfo(token: string): Promise<EventInfoDto> {
-  return await $fetch<EventInfoDto>(
-    "https://api.prod.brazenblaze.com/solo_score_game/v1/event_info",
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${token}`,
-        "Asset-Version":
-          "2025011501/steam-pc/4b52858e0ec1ca8e0f39013e2763d2c86a329788",
-        "Client-Version": "1.11.0",
-        Platform: "steam_pc",
-      },
-    }
-  );
+  return await brazenApiClient<EventInfoDto>("solo_score_game/v1/event_info", {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 }

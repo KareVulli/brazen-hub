@@ -1,12 +1,8 @@
 <template>
-  <DataTable :value="entries">
+  <DataTable :value="scores">
     <template #empty>No scores found</template>
-    <Column field="place" header="Place" />
-    <Column field="user" header="User">
-      <template #body="slotProps">
-        <UserName :user="slotProps.data.user" />
-      </template>
-    </Column>
+    <Column field="name" header="Rule" />
+    <Column field="stageName" header="Stage" />
     <Column field="time" header="Time">
       <template #body="slotProps">
         {{
@@ -17,14 +13,13 @@
       </template>
     </Column>
     <Column field="score" header="Score" />
-    <Column field="attempts" header="Attempts" />
   </DataTable>
 </template>
 
 <script setup lang="ts">
-import type { LeaderboardEntry } from "~~/server/utils/eventInfo";
+import type { TopScore } from "~~/server/api/search-user.get";
 
 defineProps<{
-  entries: LeaderboardEntry[];
+  scores: TopScore[];
 }>();
 </script>
