@@ -65,7 +65,12 @@
         </p>
       </Panel>
     </div>
-    <p class="mb-4">Leaderboard:</p>
+    <WeeklyChallengeChart
+      v-if="showChart"
+      :event-id="eventInfo.event.eventId"
+    />
+    <p class="my-4">Leaderboard:</p>
+
     <LeaderboardTable :entries="eventInfo.event.leaderboard" />
     <template v-if="eventInfo.event.worldRecord !== null">
       <h3 class="my-4">All time world record:</h3>
@@ -78,9 +83,12 @@
 </template>
 
 <script setup lang="ts">
+import WeeklyChallengeChart from "./WeeklyChallengeChart.vue";
+
 const props = defineProps<{
   eventId?: string;
   eventName?: string;
+  showChart: boolean;
 }>();
 const { data: eventInfo } = await useFetch(
   props?.eventId ? `/api/weekly/${props.eventId}` : "/api/weekly"

@@ -2,7 +2,7 @@
   <WeeklyChallenges
     v-if="eventList"
     :events="eventList.events"
-    :show-chart="false"
+    :show-chart="true"
   />
 </template>
 

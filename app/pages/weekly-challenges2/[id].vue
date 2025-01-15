@@ -3,7 +3,7 @@
     v-if="eventList"
     :events="eventList.events"
     :event-id="eventId"
-    :show-chart="false"
+    :show-chart="true"
   />
 </template>
 

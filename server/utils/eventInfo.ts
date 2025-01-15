@@ -221,6 +221,108 @@ export async function getEventInfoByEventId(
   return await eventInfoFromDB(weekly);
 }
 
+export interface LeaderboardGraph {
+  eventId: number;
+  timestamps: number[];
+  players: LeaderboardGraphPlayer[];
+}
+
+interface LeaderboardGraphPlayer {
+  name: string;
+  scores: (LeaderboardGraphScore | null)[];
+}
+
+interface LeaderboardGraphScore {
+  place: number;
+  score: number;
+  time: number;
+}
+
+interface HistoryItem {
+  leaderboardId: number | null;
+  eventId: number | null;
+  createdAt: Date | null;
+  place: number | null;
+  time: number | null;
+  score: number | null;
+  player: string | null;
+}
+
+export async function getLeaderboardHistoryByEventId(
+  eventId: number
+): Promise<LeaderboardGraph> {
+  const history: HistoryItem[] = await useDrizzle()
+    .select({
+      leaderboardId: weeklyTable.id,
+      eventId: weeklyTable.eventId,
+      createdAt: weeklyTable.createdAt,
+      place: scoreTable.place,
+      time: scoreTable.time,
+      score: scoreTable.score,
+      player: userTable.name,
+    })
+    .from(weeklyScoreTable)
+    .leftJoin(weeklyTable, eq(weeklyTable.id, weeklyScoreTable.weeklyId))
+    .leftJoin(scoreTable, eq(scoreTable.id, weeklyScoreTable.scoreId))
+    .leftJoin(userTable, eq(userTable.id, scoreTable.userId))
+    .orderBy(
+      desc(weeklyTable.eventId),
+      asc(weeklyTable.createdAt),
+      asc(scoreTable.place)
+    )
+    .where(eq(weeklyTable.eventId, eventId));
+
+  const playerNames: string[] = [
+    ...new Set(history.map((item) => item.player)),
+  ].filter((item) => item !== null);
+
+  const players: LeaderboardGraphPlayer[] = playerNames.map((name) => ({
+    name: name,
+    scores: [],
+  }));
+
+  const snapshots = history.reduce<Record<string, HistoryItem[]>>(
+    (groups, item) => {
+      const key = "" + item.leaderboardId;
+      const group = groups[key] || [];
+      group.push(item);
+      groups[key] = group;
+      return groups;
+    },
+    {}
+  );
+
+  Object.values(snapshots).forEach((snapshot) => {
+    players.forEach((player) => {
+      const historyItem = snapshot.find(
+        (history) => history.player === player.name
+      );
+      if (
+        historyItem &&
+        historyItem.place !== null &&
+        historyItem.score !== null &&
+        historyItem.time !== null
+      ) {
+        player.scores.push({
+          place: historyItem.place,
+          score: historyItem.score,
+          time: historyItem.time,
+        });
+      } else {
+        player.scores.push(null);
+      }
+    });
+  });
+
+  return {
+    eventId: eventId,
+    timestamps: [
+      ...new Set(history.map((item) => item.createdAt?.getTime() || -1)),
+    ],
+    players: players,
+  };
+}
+
 interface DBEventInfo extends DBWeekly {
   worldRecord:
     | (DBScore & {

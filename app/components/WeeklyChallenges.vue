@@ -6,6 +6,7 @@
       <WeeklyChallenge
         :event-name="selectedEvent?.eventName"
         :event-id="props.eventId"
+        :show-chart="showChart"
       />
     </div>
   </div>
@@ -17,6 +18,7 @@ import type { EventListItem } from "~~/server/utils/eventsList";
 const props = defineProps<{
   events: EventListItem[];
   eventId?: string;
+  showChart: boolean;
 }>();
 
 const selectedEvent = computed(() => {
