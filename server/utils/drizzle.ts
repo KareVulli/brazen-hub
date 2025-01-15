@@ -1,6 +1,6 @@
 import { drizzle } from "drizzle-orm/d1";
 import * as schema from "../database/schema";
-export { sql, eq, and, or, desc, lt, gt } from "drizzle-orm";
+export { sql, eq, and, or, desc, asc, lt, gt } from "drizzle-orm";
 
 export function useDrizzle() {
   return drizzle(hubDatabase(), { schema: schema });
