@@ -20,7 +20,7 @@ export default cachedEventHandler(
     return data;
   },
   {
-    maxAge: 0,
+    maxAge: 900,
     swr: false,
   }
 );
