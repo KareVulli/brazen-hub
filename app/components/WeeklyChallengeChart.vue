@@ -14,53 +14,19 @@
       <ToggleSwitch v-model="omitNoChanges" />
       <span>Show only score changes</span>
     </div>
-    <ClientOnly fallback-tag="span" fallback="Loading chart...">
-      <Chart
-        ref="chart"
-        type="line"
-        :data="chartData"
-        :options="chartOptions"
-        :plugins="[zoomPlugin]"
-        class="h-96"
-      />
-      <div class="flex gap-2 mt-2">
-        <ButtonGroup>
-          <Button
-            label="Select all players"
-            size="small"
-            severity="secondary"
-            @click="setPlayersVisibility(true)"
-          />
-          <Button
-            label="Deselect all players"
-            size="small"
-            severity="secondary"
-            @click="setPlayersVisibility(false)"
-          />
-        </ButtonGroup>
-        <Button
-          label="Reset zoom"
-          size="small"
-          severity="secondary"
-          @click="resetChartZoom"
-        />
-      </div>
+    <ClientOnly>
+      <AppChart :chart-data="chartData" :scales="chartScaleOptions" />
     </ClientOnly>
   </Panel>
 </template>
 
 <script setup lang="ts">
-import type { Chart } from "chart.js";
 import { ref } from "vue";
 import type { LeaderboardGraphScore } from "~~/server/utils/eventInfo";
-import "chartjs-adapter-dayjs-4/dist/chartjs-adapter-dayjs-4.esm";
-import zoomPlugin from "chartjs-plugin-zoom";
 
 const props = defineProps<{
   eventId: number;
 }>();
-
-const chart = useTemplateRef("chart");
 
 const dataOptions = [
   {
@@ -86,7 +52,7 @@ const { data } = useFetch(`/api/weekly-graph/${props.eventId}`);
 
 const chartData = computed(() => {
   if (!data.value) {
-    return undefined;
+    return {};
   }
   const result = {
     datasets: data.value.players.map((player) => {
@@ -134,9 +100,9 @@ const chartData = computed(() => {
   };
   return result;
 });
-const chartOptions = computed(() => {
+
+const chartScaleOptions = computed(() => {
   const documentStyle = getComputedStyle(document.documentElement);
-  const textColor = documentStyle.getPropertyValue("--p-text-color");
   const textColorSecondary = documentStyle.getPropertyValue(
     "--p-text-muted-color"
   );
@@ -145,89 +111,34 @@ const chartOptions = computed(() => {
   );
 
   return {
-    maintainAspectRatio: false,
-    aspectRatio: 0.6,
-    plugins: {
-      legend: {
-        position: "bottom",
-        title: {
-          color: textColor,
-          display: true,
-          text: "Players",
-          font: {
-            size: 16,
-          },
-        },
-        labels: {
-          color: textColor,
-        },
+    x: {
+      type: "time",
+      time: {
+        unit: "day",
       },
-      zoom: {
-        limits: {
-          x: { min: "original", max: "original" },
-          y: { min: "original", max: "original" },
-        },
-        zoom: {
-          drag: {
-            enabled: true,
-          },
-          wheel: {
-            enabled: true,
-          },
-          mode: "xy",
-        },
+      ticks: {
+        color: textColorSecondary,
+      },
+      grid: {
+        color: surfaceBorder,
       },
     },
-    layout: {},
-    transitions: {
-      zoom: {
-        animation: {
-          duration: 200,
-          easing: "easeOutCubic",
+    y: {
+      reverse: ["place"].includes(chartYData.value),
+      type: chartYData.value === "time" ? "time" : "linear",
+      time: {
+        unit: "second",
+        displayFormats: {
+          second: "mm:ss.SSS",
         },
       },
-    },
-    scales: {
-      x: {
-        type: "time",
-        time: {
-          unit: "day",
-        },
-        ticks: {
-          color: textColorSecondary,
-        },
-        grid: {
-          color: surfaceBorder,
-        },
+      ticks: {
+        color: textColorSecondary,
       },
-      y: {
-        reverse: ["place"].includes(chartYData.value),
-        type: chartYData.value === "time" ? "time" : "linear",
-        time: {
-          unit: "second",
-          displayFormats: {
-            second: "mm:ss.SSS",
-          },
-        },
-        ticks: {
-          color: textColorSecondary,
-        },
-        grid: {
-          color: surfaceBorder,
-        },
+      grid: {
+        color: surfaceBorder,
       },
     },
   };
 });
-
-function resetChartZoom() {
-  chart.value?.getChart().resetZoom();
-}
-function setPlayersVisibility(show: boolean) {
-  if (chart.value) {
-    const chartInstance: Chart = chart.value.getChart();
-    chartInstance.data.datasets.forEach((dataset) => (dataset.hidden = !show));
-    chartInstance.update();
-  }
-}
 </script>
