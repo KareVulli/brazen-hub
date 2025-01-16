@@ -224,6 +224,7 @@ export interface LeaderboardGraph {
 interface LeaderboardGraphPlayer {
   name: string;
   scores: (LeaderboardGraphScore | null)[];
+  lastKnownPosition: number;
 }
 
 export interface LeaderboardGraphScore {
@@ -274,6 +275,7 @@ export async function getLeaderboardHistoryByEventId(
   const players: LeaderboardGraphPlayer[] = playerNames.map((name) => ({
     name: name,
     scores: [],
+    lastKnownPosition: 99,
   }));
 
   const snapshots = history.reduce<Record<string, HistoryItem[]>>(
@@ -305,6 +307,7 @@ export async function getLeaderboardHistoryByEventId(
           time: historyItem.time,
           timestamp: historyItem.createdAt.getTime(),
         });
+        player.lastKnownPosition = historyItem.place;
       } else {
         player.scores.push(null);
       }
@@ -316,7 +319,9 @@ export async function getLeaderboardHistoryByEventId(
     timestamps: [
       ...new Set(history.map((item) => item.createdAt?.getTime() || -1)),
     ],
-    players: players,
+    players: players.toSorted(
+      (a, b) => a.lastKnownPosition - b.lastKnownPosition
+    ),
   };
 }
 
