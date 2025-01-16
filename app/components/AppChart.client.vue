@@ -22,12 +22,20 @@
         @click="setPlayersVisibility(false)"
       />
     </ButtonGroup>
-    <Button
-      label="Reset zoom"
-      size="small"
-      severity="secondary"
-      @click="resetChartZoom"
-    />
+    <ButtonGroup>
+      <Button
+        label="Reset zoom"
+        size="small"
+        severity="secondary"
+        @click="resetChartZoom"
+      />
+      <Button
+        label="Toggle points"
+        size="small"
+        severity="secondary"
+        @click="togglePoints"
+      />
+    </ButtonGroup>
   </div>
 </template>
 
@@ -50,6 +58,11 @@ const chartOptions = computed(() => {
   return {
     maintainAspectRatio: false,
     aspectRatio: 0.6,
+    elements: {
+      point: {
+        pointStyle: false,
+      },
+    },
     plugins: {
       legend: {
         position: "bottom",
@@ -93,14 +106,26 @@ const chartOptions = computed(() => {
     scales: props.scales,
   };
 });
-
+function getChart(): Chart | null {
+  return chart.value?.getChart() || null;
+}
 function resetChartZoom() {
   chart.value?.getChart().resetZoom();
 }
 function setPlayersVisibility(show: boolean) {
-  if (chart.value) {
-    const chartInstance: Chart = chart.value.getChart();
+  const chartInstance = getChart();
+  if (chartInstance) {
     chartInstance.data.datasets.forEach((dataset) => (dataset.hidden = !show));
+    chartInstance.update();
+  }
+}
+function togglePoints() {
+  const chartInstance = getChart();
+  if (chartInstance?.options.elements?.point) {
+    const oldStyle = chartInstance.options.elements?.point?.pointStyle;
+    chartInstance.options.elements.point.pointStyle = oldStyle
+      ? false
+      : "circle";
     chartInstance.update();
   }
 }
