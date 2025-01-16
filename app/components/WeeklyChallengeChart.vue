@@ -16,23 +16,51 @@
     </div>
     <ClientOnly fallback-tag="span" fallback="Loading chart...">
       <Chart
+        ref="chart"
         type="line"
         :data="chartData"
         :options="chartOptions"
+        :plugins="[zoomPlugin]"
         class="h-96"
       />
+      <div class="flex gap-2 mt-2">
+        <ButtonGroup>
+          <Button
+            label="Select all players"
+            size="small"
+            severity="secondary"
+            @click="setPlayersVisibility(true)"
+          />
+          <Button
+            label="Deselect all players"
+            size="small"
+            severity="secondary"
+            @click="setPlayersVisibility(false)"
+          />
+        </ButtonGroup>
+        <Button
+          label="Reset zoom"
+          size="small"
+          severity="secondary"
+          @click="resetChartZoom"
+        />
+      </div>
     </ClientOnly>
   </Panel>
 </template>
 
 <script setup lang="ts">
-import "chartjs-adapter-dayjs-4/dist/chartjs-adapter-dayjs-4.esm";
+import type { Chart } from "chart.js";
 import { ref } from "vue";
 import type { LeaderboardGraphScore } from "~~/server/utils/eventInfo";
+import "chartjs-adapter-dayjs-4/dist/chartjs-adapter-dayjs-4.esm";
+import zoomPlugin from "chartjs-plugin-zoom";
 
 const props = defineProps<{
   eventId: number;
 }>();
+
+const chart = useTemplateRef("chart");
 
 const dataOptions = [
   {
@@ -121,6 +149,7 @@ const chartOptions = computed(() => {
     aspectRatio: 0.6,
     plugins: {
       legend: {
+        position: "bottom",
         title: {
           color: textColor,
           display: true,
@@ -133,8 +162,31 @@ const chartOptions = computed(() => {
           color: textColor,
         },
       },
+      zoom: {
+        limits: {
+          x: { min: "original", max: "original" },
+          y: { min: "original", max: "original" },
+        },
+        zoom: {
+          drag: {
+            enabled: true,
+          },
+          wheel: {
+            enabled: true,
+          },
+          mode: "xy",
+        },
+      },
     },
     layout: {},
+    transitions: {
+      zoom: {
+        animation: {
+          duration: 200,
+          easing: "easeOutCubic",
+        },
+      },
+    },
     scales: {
       x: {
         type: "time",
@@ -167,4 +219,15 @@ const chartOptions = computed(() => {
     },
   };
 });
+
+function resetChartZoom() {
+  chart.value?.getChart().resetZoom();
+}
+function setPlayersVisibility(show: boolean) {
+  if (chart.value) {
+    const chartInstance: Chart = chart.value.getChart();
+    chartInstance.data.datasets.forEach((dataset) => (dataset.hidden = !show));
+    chartInstance.update();
+  }
+}
 </script>
