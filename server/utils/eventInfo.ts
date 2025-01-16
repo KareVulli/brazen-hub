@@ -226,10 +226,11 @@ interface LeaderboardGraphPlayer {
   scores: (LeaderboardGraphScore | null)[];
 }
 
-interface LeaderboardGraphScore {
+export interface LeaderboardGraphScore {
   place: number;
   score: number;
   time: number;
+  timestamp: number;
 }
 
 interface HistoryItem {
@@ -295,12 +296,14 @@ export async function getLeaderboardHistoryByEventId(
         historyItem &&
         historyItem.place !== null &&
         historyItem.score !== null &&
-        historyItem.time !== null
+        historyItem.time !== null &&
+        historyItem.createdAt !== null
       ) {
         player.scores.push({
           place: historyItem.place,
           score: historyItem.score,
           time: historyItem.time,
+          timestamp: historyItem.createdAt.getTime(),
         });
       } else {
         player.scores.push(null);

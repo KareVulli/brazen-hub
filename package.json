@@ -19,6 +19,7 @@
     "@primevue/forms": "^4.2.5",
     "@primevue/themes": "^4.2.5",
     "chart.js": "^4.4.7",
+    "chartjs-adapter-dayjs-4": "^1.0.4",
     "dayjs-nuxt": "2.1.11",
     "drizzle-orm": "^0.38.3",
     "nuxt": "^3.14.1592",
