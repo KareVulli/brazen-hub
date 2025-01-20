@@ -13,6 +13,8 @@ export default defineNuxtConfig({
     "@primevue/nuxt-module",
     "nuxt-time",
     "dayjs-nuxt",
+    ["nuxt-plotly", { inject: true }],
+    "@vueuse/nuxt",
   ],
   app: {
     head: {
@@ -62,5 +64,10 @@ export default defineNuxtConfig({
   },
   dayjs: {
     plugins: ["duration"],
+  },
+  vite: {
+    optimizeDeps: {
+      include: ["plotly.js-dist-min"],
+    },
   },
 });

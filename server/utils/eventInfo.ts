@@ -217,13 +217,12 @@ export async function getEventInfoByEventId(
 
 export interface LeaderboardGraph {
   eventId: number;
-  timestamps: number[];
   players: LeaderboardGraphPlayer[];
 }
 
-interface LeaderboardGraphPlayer {
+export interface LeaderboardGraphPlayer {
   name: string;
-  scores: (LeaderboardGraphScore | null)[];
+  scores: LeaderboardGraphScore[];
   lastKnownPosition: number;
 }
 
@@ -308,17 +307,12 @@ export async function getLeaderboardHistoryByEventId(
           timestamp: historyItem.createdAt.getTime(),
         });
         player.lastKnownPosition = historyItem.place;
-      } else {
-        player.scores.push(null);
       }
     });
   });
 
   return {
     eventId: eventId,
-    timestamps: [
-      ...new Set(history.map((item) => item.createdAt?.getTime() || -1)),
-    ],
     players: players.toSorted(
       (a, b) => a.lastKnownPosition - b.lastKnownPosition
     ),
