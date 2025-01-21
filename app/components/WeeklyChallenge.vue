@@ -1,9 +1,7 @@
 <template>
   <div v-if="eventInfo?.event">
     <div class="grid xl:grid-cols-2">
-      <h1 class="mb-4 text-lg">
-        Weekly Challenge - {{ eventName ? eventName : "" }}
-      </h1>
+      <PageTitle :title="`Weekly Challenge - ${eventName ? eventName : ''}`" />
       <p class="mb-4 xl:text-right">
         <template v-if="eventInfo.event.endsAt * 1000 > Date.now()">
           Last updated:

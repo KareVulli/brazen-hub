@@ -1,6 +1,16 @@
 <template>
   <main v-if="data">
-    <PageTitle title="Round Team Match" />
+    <div class="grid xl:grid-cols-2">
+      <PageTitle title="Round Team Match" />
+      <p class="mb-4 xl:text-right">
+        Last updated:
+        <NuxtTime
+          :datetime="$dayjs(data.updatedAt).toDate()"
+          date-style="full"
+          time-style="short"
+        />.
+      </p>
+    </div>
     <div class="grid gap-4 mb-4">
       <Panel header="Leaderboard period">
         <span>
