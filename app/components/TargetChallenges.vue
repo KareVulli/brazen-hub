@@ -1,5 +1,5 @@
 <template>
-  <h1 class="mb-4 text-lg">Target Challenges</h1>
+  <PageTitle title="Target Challenges" />
   <div class="flex flex-col lg:flex-row gap-4">
     <SideMenu :items="items" />
     <div class="flex-grow">

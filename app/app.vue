@@ -41,7 +41,7 @@ const items = ref([
     route: "/target-challenges",
   },
   {
-    label: "Round team matches",
+    label: "Round team match",
     route: "/rtm",
   },
   {

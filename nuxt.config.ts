@@ -16,6 +16,7 @@ export default defineNuxtConfig({
     ["nuxt-plotly", { inject: true }],
     "@vueuse/nuxt",
   ],
+  css: ["primeicons/primeicons.css"],
   app: {
     head: {
       link: [
