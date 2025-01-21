@@ -1,13 +1,13 @@
 <template>
-  <DataTable :value="entries">
+  <DataTable :value="entries" sort-field="place" :sort-order="1">
     <template #empty>No scores found</template>
-    <Column field="place" header="Place" />
-    <Column field="user" header="User">
+    <Column field="place" header="Place" sortable />
+    <Column field="user" header="User" sortable sort-field="user.name">
       <template #body="slotProps">
         <UserName :user="slotProps.data.user" />
       </template>
     </Column>
-    <Column field="time" header="Time">
+    <Column field="time" header="Time" sortable>
       <template #body="slotProps">
         {{
           $dayjs
@@ -16,8 +16,8 @@
         }}
       </template>
     </Column>
-    <Column field="score" header="Score" />
-    <Column field="attempts" header="Attempts" />
+    <Column field="score" header="Score" sortable />
+    <Column field="attempts" header="Attempts" sortable />
   </DataTable>
 </template>
 
