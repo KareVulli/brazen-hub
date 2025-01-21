@@ -55,7 +55,7 @@
         <Column field="place" header="Place" sortable />
         <Column field="user" header="User" sortable sort-field="user.name">
           <template #body="slotProps">
-            <UserName :user="slotProps.data.user" />
+            <LinkedUserName :user="slotProps.data.user" />
           </template>
         </Column>
         <Column field="wins" header="Wins" sortable />
