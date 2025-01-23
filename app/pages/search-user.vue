@@ -24,25 +24,8 @@
       </div>
       <Button type="submit" severity="secondary" label="Search" />
     </Form>
-    <Panel v-if="data" :header="`User ID: ${data.user.userKey}`">
-      <div class="flex items-center gap-2">
-        <UserName :user="data.user" />
-        <span>-</span>
-        <span
-          >Currently
-          <span
-            v-if="data.onlineStatus.online"
-            class="text-green-500 font-bold"
-          >
-            online
-          </span>
-          <span v-else>offline</span></span
-        >
-      </div>
-    </Panel>
-    <Panel v-if="data" header="Known best Target Challenge scores">
-      <TopScoreTable :scores="data.topScores" />
-    </Panel>
+    <UsersList v-if="data && 'users' in data" :users="data.users" />
+    <UserInfo v-if="data && 'user' in data" :user="data" />
     <p v-if="error">Did not find a user with specified query.</p>
   </div>
 </template>

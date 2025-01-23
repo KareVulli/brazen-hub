@@ -1,5 +1,8 @@
 import { checkAllowedToUpdate } from "~~/server/utils/auth";
-import { getEventInfo } from "~~/server/utils/brazen-api/getEventInfo";
+import {
+  eventInfoResponseFromDto,
+  getRawEventInfo,
+} from "~~/server/utils/brazen-api/getEventInfo";
 import { hasRecentEntry, writeToDB } from "~~/server/utils/eventInfo";
 
 enum UpdateStatus {
@@ -23,14 +26,14 @@ export default eventHandler(
 
     console.log("No recent data in db, getting from brazen api...");
 
-    const rawData = await getEventInfo(config.bzToken);
+    const rawData = await getRawEventInfo(config.bzToken);
 
-    const data = currentEventInfoFromDto(rawData);
-    if (data === null) {
+    const data = eventInfoResponseFromDto(rawData);
+    if (data.currentEvent === null) {
       console.info("No current event found from brazen api!");
       return { status: UpdateStatus.NO_NEW_EVENT };
     } else {
-      await writeToDB(rawData, data);
+      await writeToDB(rawData, data.currentEvent);
     }
 
     return { status: UpdateStatus.UPDATED };

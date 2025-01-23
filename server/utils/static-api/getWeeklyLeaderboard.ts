@@ -1,4 +1,4 @@
-import type { BrazenUser } from "../user";
+import type { BrazenAPIUser } from "../brazen-api/models/apiUser";
 import { staticApiClient } from "./client";
 
 interface RTMLeaderboardEntryDto {
@@ -27,7 +27,7 @@ interface RTMLeaderboardDto {
 
 export interface RTMLeaderboardEntry {
   place: number;
-  user: BrazenUser;
+  user: BrazenAPIUser;
   wins: number;
 }
 
@@ -75,7 +75,8 @@ function rtmLeaderboardFromDto(leaderboard: RTMLeaderboardDto): RTMLeaderboard {
 }
 
 export async function getWeeklyLeaderboard(): Promise<RTMLeaderboard> {
-  return rtmLeaderboardFromDto(
-    await staticApiClient<RTMLeaderboardDto>("/leaderboard/weekly/latest.json")
+  const response = await staticApiClient<RTMLeaderboardDto>(
+    "/leaderboard/weekly/latest.json"
   );
+  return rtmLeaderboardFromDto(response);
 }

@@ -2,7 +2,9 @@
   <div class="container mx-auto px-4 py-4">
     <Menubar :model="items">
       <template #start>
-        <span class="font-bold mx-4">Brazen Hub</span>
+        <NuxtLink to="/" class="font-bold mx-4 hover:text-red-600 transition"
+          >Brazen Hub</NuxtLink
+        >
       </template>
       <template #item="{ item, props }">
         <NuxtLink v-slot="{ href, navigate, isActive }" :to="item.route" custom>

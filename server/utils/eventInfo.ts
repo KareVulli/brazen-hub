@@ -5,11 +5,6 @@ import {
   weeklyScoreTable,
   weeklyTable,
 } from "../database/schema";
-import type {
-  EventDto,
-  EventInfoDto,
-  EventLeaderboardDto,
-} from "./brazen-api/getEventInfo";
 import type { Character } from "./character";
 import { getCharacterByCharacterId } from "./character";
 import type {
@@ -21,6 +16,10 @@ import type {
 } from "./drizzle";
 import { getItemByItemId } from "./item";
 import type { RuleDto } from "./rule";
+import type {
+  BrazenApiEventInfo,
+  EventInfoDto,
+} from "./brazen-api/getEventInfo";
 
 export interface LeaderboardEntry {
   place: number;
@@ -37,18 +36,8 @@ export interface EventInfo {
   worldRecord: LeaderboardEntry | null;
   updatedAt: number;
   rule: RuleDto | null;
-  character: CharacterDto | null;
+  character: Character | null;
   subWeapon: ItemDto | null;
-}
-
-export interface BrazenApiEventInfo {
-  eventId: number;
-  endsAt: number;
-  leaderboard: LeaderboardEntry[];
-  worldRecord: LeaderboardEntry | null;
-  ruleId: number | null;
-  characterId: number | null;
-  subWeaponId: number | null;
 }
 
 export async function writeToDB(raw: EventInfoDto, event: BrazenApiEventInfo) {
@@ -104,24 +93,7 @@ export async function writeToDB(raw: EventInfoDto, event: BrazenApiEventInfo) {
   for (let i = 0; i < event.leaderboard.length; i++) {
     const score = event.leaderboard[i];
     const scoreUser = score.user;
-
-    const [{ scoreUserId }] = await useDrizzle()
-      .insert(userTable)
-      .values({
-        userKey: scoreUser.userKey,
-        name: scoreUser.name,
-        iconId: scoreUser.iconId,
-        iconFrameId: scoreUser.iconFrameId,
-      })
-      .onConflictDoUpdate({
-        target: userTable.userKey,
-        set: {
-          name: scoreUser.name,
-          iconId: scoreUser.iconId,
-          iconFrameId: scoreUser.iconFrameId,
-        },
-      })
-      .returning({ scoreUserId: userTable.id });
+    const scoreUserId = await updateUserInDB(scoreUser);
 
     const [{ scoreId }] = await useDrizzle()
       .insert(scoreTable)
@@ -180,6 +152,35 @@ export async function getLatest(): Promise<EventInfo | null> {
     return null;
   }
   console.log("Got latest! ID:", weekly.id);
+  return eventInfoFromDB(weekly);
+}
+
+export async function getCurrentWeekly(): Promise<EventInfo | null> {
+  const weekly: DBEventInfo | undefined =
+    await useDrizzle().query.weeklyTable.findFirst({
+      orderBy: [desc(weeklyTable.createdAt)],
+      where: gt(weeklyTable.endsAt, Math.floor(Date.now() / 1000)),
+      with: {
+        worldRecord: {
+          with: {
+            user: true,
+          },
+        },
+        weeklyScores: {
+          with: {
+            score: {
+              with: {
+                user: true,
+              },
+            },
+          },
+        },
+        rule: true,
+      },
+    });
+  if (weekly === undefined) {
+    return null;
+  }
   return eventInfoFromDB(weekly);
 }
 
@@ -340,6 +341,7 @@ async function eventInfoFromDB(weekly: DBEventInfo): Promise<EventInfo> {
     worldRecord = {
       place: 1,
       user: {
+        id: weekly.worldRecord.user.id,
         name: weekly.worldRecord.user.name,
         userKey: weekly.worldRecord.user.userKey,
         iconFrameId: weekly.worldRecord.user.iconFrameId,
@@ -371,6 +373,7 @@ async function eventInfoFromDB(weekly: DBEventInfo): Promise<EventInfo> {
       return {
         place: row.score.place,
         user: {
+          id: row.score.user.id,
           name: row.score.user.name,
           userKey: row.score.user.userKey,
           iconFrameId: row.score.user.iconFrameId,
@@ -383,72 +386,5 @@ async function eventInfoFromDB(weekly: DBEventInfo): Promise<EventInfo> {
     }),
     worldRecord: worldRecord,
     updatedAt: weekly.createdAt.getTime(),
-  };
-}
-
-export function currentEventInfoFromDto(
-  data: EventInfoDto
-): BrazenApiEventInfo | null {
-  if (data.current_event) {
-    return eventInfoFromDto(data.current_event, data.current_event_leaderboard);
-  }
-
-  return null;
-}
-
-export function previousEventInfoFromDto(
-  data: EventInfoDto
-): BrazenApiEventInfo | null {
-  if (data.previous_event) {
-    return eventInfoFromDto(
-      data.previous_event,
-      data.previous_event_leaderboard
-    );
-  }
-
-  return null;
-}
-
-export function eventInfoFromDto(
-  event: EventDto,
-  leaderboard: EventLeaderboardDto | null
-): BrazenApiEventInfo {
-  let worldRecord: LeaderboardEntry | null = null;
-  if (event.world_record && event.world_record_holder) {
-    worldRecord = {
-      place: 1,
-      user: {
-        name: event.world_record_holder.name,
-        userKey: event.world_record_holder.user_key,
-        iconFrameId: event.world_record_holder.icon_frame_id,
-        iconId: event.world_record_holder.icon_id,
-      },
-      time: event.world_record.duration_millisecond,
-      score: event.world_record.total_score,
-      attempts: event.world_record.attempts_at_per_character_and_rule,
-    };
-  }
-
-  return {
-    eventId: event.event_id,
-    ruleId: event.requirements.rule_id,
-    characterId: event.requirements.character_id,
-    subWeaponId: event.requirements.sub_weapon_id,
-    endsAt: event.end_at,
-    leaderboard: (leaderboard?.list_data || []).map((row) => {
-      return {
-        place: row.place,
-        user: {
-          name: row.user.name,
-          userKey: row.user.user_key,
-          iconFrameId: row.user.icon_frame_id,
-          iconId: row.user.icon_id,
-        },
-        time: row.record.duration_millisecond,
-        score: row.record.total_score,
-        attempts: row.record.attempts_at_per_character_and_rule,
-      };
-    }),
-    worldRecord: worldRecord,
   };
 }

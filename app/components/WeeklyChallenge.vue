@@ -55,7 +55,11 @@
         <p>{{ eventInfo.event.rule.stageName }}</p>
         <p>
           Runner:
-          {{ eventInfo.event.character?.displayName || "Any" }}
+          <CharacterName
+            v-if="eventInfo.event.character"
+            :character="eventInfo.event.character"
+          />
+          <template v-else>Any</template>
         </p>
         <p>
           Sub-Weapon:

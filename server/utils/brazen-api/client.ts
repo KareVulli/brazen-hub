@@ -1,3 +1,5 @@
+import { $fetch } from "ofetch";
+
 export const brazenApiClient = $fetch.create({
   baseURL: "https://api.prod.brazenblaze.com",
   headers: {

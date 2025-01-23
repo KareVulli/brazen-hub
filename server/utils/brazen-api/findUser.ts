@@ -1,6 +1,7 @@
 import { brazenApiClient } from "./client";
+import type { BrazenAPIDetailedUser } from "./models/apiUser";
 
-export interface OnlineStatusDto {
+interface OnlineStatusDto {
   expired_at: number;
   is_online: boolean;
   state: string;
@@ -8,7 +9,7 @@ export interface OnlineStatusDto {
 }
 
 // Not all fields are defined
-export interface UsersSearchResultDto {
+interface UsersSearchResultDto {
   name: string;
   user_key: string;
   profile_icon_id: number;
@@ -16,11 +17,24 @@ export interface UsersSearchResultDto {
   online_status: OnlineStatusDto;
 }
 
-export interface UsersSearchDto {
+interface UsersSearchDto {
   users: UsersSearchResultDto[];
 }
 
-export async function findUser(
+function brazenApiUserFromDto(
+  user: UsersSearchResultDto
+): BrazenAPIDetailedUser {
+  return {
+    name: user.name,
+    userKey: user.user_key,
+    iconId: user.profile_icon_id,
+    iconFrameId: user.profile_icon_frame_id,
+    online: user.online_status.is_online,
+    updatedAt: user.online_status.updated_at,
+  };
+}
+
+async function searchUsers(
   token: string,
   query: string
 ): Promise<UsersSearchDto> {
@@ -38,10 +52,18 @@ export async function findUser(
 export async function findFirstUser(
   token: string,
   query: string
-): Promise<UsersSearchResultDto | null> {
-  const users = await findUser(token, query);
+): Promise<BrazenAPIDetailedUser | null> {
+  const users = await searchUsers(token, query);
   if (users.users.length) {
-    return users.users[0];
+    return brazenApiUserFromDto(users.users[0]);
   }
   return null;
+}
+
+export async function findUsers(
+  token: string,
+  query: string
+): Promise<BrazenAPIDetailedUser[]> {
+  const users = await searchUsers(token, query);
+  return users.users.map((user) => brazenApiUserFromDto(user));
 }

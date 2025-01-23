@@ -1,7 +1,10 @@
 import { checkAllowedToUpdate } from "~~/server/utils/auth";
-import { getEventInfo } from "~~/server/utils/brazen-api/getEventInfo";
-import type { BrazenApiEventInfo } from "~~/server/utils/eventInfo";
-import { previousEventInfoFromDto, writeToDB } from "~~/server/utils/eventInfo";
+import type { BrazenApiEventInfo } from "~~/server/utils/brazen-api/getEventInfo";
+import {
+  eventInfoResponseFromDto,
+  getRawEventInfo,
+} from "~~/server/utils/brazen-api/getEventInfo";
+import { writeToDB } from "~~/server/utils/eventInfo";
 
 export default eventHandler(
   async (event): Promise<{ event: BrazenApiEventInfo | null }> => {
@@ -9,17 +12,15 @@ export default eventHandler(
 
     checkAllowedToUpdate(event);
 
-    console.log("Getting last weeks event from brazen api...");
+    const rawData = await getRawEventInfo(config.bzToken);
 
-    const rawData = await getEventInfo(config.bzToken);
-
-    const data = previousEventInfoFromDto(rawData);
-    if (data === null) {
+    const data = eventInfoResponseFromDto(rawData);
+    if (data.previousEvent === null) {
       console.warn("No previous event found from brazen api!");
     } else {
-      await writeToDB(rawData, data);
+      await writeToDB(rawData, data.previousEvent);
     }
 
-    return { event: data };
+    return { event: data.previousEvent };
   }
 );

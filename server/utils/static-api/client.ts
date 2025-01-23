@@ -1,3 +1,5 @@
+import { $fetch } from "ofetch";
+
 export const staticApiClient = $fetch.create({
   baseURL: "https://static.prod.brazenblaze.com",
   headers: {
