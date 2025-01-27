@@ -1,8 +1,8 @@
-import type { BrazenApiPublicRoom } from "../utils/brazen-api/getPublicRooms";
-import { getPublicRooms } from "../utils/brazen-api/getPublicRooms";
-import { getCurrentWeekly } from "../utils/eventInfo";
-import type { BrazenUser } from "../utils/user";
-import { getUserFromDB } from "../utils/user";
+import type { BrazenApiPublicRoom } from "../../utils/brazen-api/getPublicRooms";
+import { getPublicRooms } from "../../utils/brazen-api/getPublicRooms";
+import { getCurrentWeekly } from "../../utils/eventInfo";
+import type { BrazenUser } from "../../utils/user";
+import { getUserFromDB } from "../../utils/user";
 
 export interface HomePublicRoom extends BrazenApiPublicRoom {
   user: BrazenUser | null;
