@@ -6,8 +6,8 @@ export const brazenApiClient = $fetch.create({
     "Content-Type": "application/json",
     Accept: "application/json",
     "Asset-Version":
-      "2025011501/steam-pc/4b52858e0ec1ca8e0f39013e2763d2c86a329788",
-    "Client-Version": "1.11.0",
+      "2025012901/steam-pc/f222621e545e6f22a27a49b12297e3b2c107b011",
+    "Client-Version": "1.12.0",
     Platform: "steam_pc",
   },
 });
