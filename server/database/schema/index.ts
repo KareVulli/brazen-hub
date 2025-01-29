@@ -5,3 +5,5 @@ export * from "./user";
 export * from "./weekly";
 export * from "./weeklyScore";
 export * from "./item";
+export * from "./gameRule";
+export * from "./stage";

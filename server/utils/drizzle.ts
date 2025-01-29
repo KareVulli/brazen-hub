@@ -13,3 +13,5 @@ export type DBWeeklyScore = typeof schema.weeklyScoreTable.$inferSelect;
 export type DBRule = typeof schema.ruleTable.$inferSelect;
 export type DBCharacter = typeof schema.characterTable.$inferSelect;
 export type DBItem = typeof schema.itemTable.$inferSelect;
+export type DBGameRule = typeof schema.gameRuleTable.$inferSelect;
+export type DBStage = typeof schema.stageTable.$inferSelect;
