@@ -27,6 +27,9 @@ export interface LeaderboardEntry {
   time: number;
   score: number;
   attempts: number;
+  setAt: number | null;
+  character: Character | null;
+  subWeapon: ItemDto | null;
 }
 
 export interface EventInfo {
@@ -71,6 +74,10 @@ export async function writeToDB(raw: EventInfoDto, event: BrazenApiEventInfo) {
         time: worldRecord.time,
         score: worldRecord.score,
         attempts: worldRecord.attempts,
+        setAt: worldRecord.setAt,
+        ruleId: worldRecord.ruleId,
+        characterId: worldRecord.characterId,
+        subWeaponId: worldRecord.subWeaponId,
       })
       .returning({ worldRecordId: scoreTable.id });
 
@@ -103,6 +110,10 @@ export async function writeToDB(raw: EventInfoDto, event: BrazenApiEventInfo) {
         time: score.time,
         score: score.score,
         attempts: score.attempts,
+        setAt: score.setAt,
+        ruleId: score.ruleId,
+        characterId: score.characterId,
+        subWeaponId: score.subWeaponId,
       })
       .returning({ scoreId: scoreTable.id });
 
@@ -134,6 +145,8 @@ export async function getLatest(): Promise<EventInfo | null> {
         worldRecord: {
           with: {
             user: true,
+            character: true,
+            subWeapon: true,
           },
         },
         weeklyScores: {
@@ -141,6 +154,8 @@ export async function getLatest(): Promise<EventInfo | null> {
             score: {
               with: {
                 user: true,
+                character: true,
+                subWeapon: true,
               },
             },
           },
@@ -164,6 +179,8 @@ export async function getCurrentWeekly(): Promise<EventInfo | null> {
         worldRecord: {
           with: {
             user: true,
+            character: true,
+            subWeapon: true,
           },
         },
         weeklyScores: {
@@ -171,6 +188,8 @@ export async function getCurrentWeekly(): Promise<EventInfo | null> {
             score: {
               with: {
                 user: true,
+                character: true,
+                subWeapon: true,
               },
             },
           },
@@ -195,6 +214,8 @@ export async function getEventInfoByEventId(
         worldRecord: {
           with: {
             user: true,
+            character: true,
+            subWeapon: true,
           },
         },
         weeklyScores: {
@@ -202,6 +223,8 @@ export async function getEventInfoByEventId(
             score: {
               with: {
                 user: true,
+                character: true,
+                subWeapon: true,
               },
             },
           },
@@ -320,16 +343,16 @@ export async function getLeaderboardHistoryByEventId(
   };
 }
 
+interface DBScoreWithMetadata extends DBScore {
+  user: DBUser;
+  character: DBCharacter | null;
+  subWeapon: DBItem | null;
+}
+
 interface DBEventInfo extends DBWeekly {
-  worldRecord:
-    | (DBScore & {
-        user: DBUser;
-      })
-    | null;
+  worldRecord: DBScoreWithMetadata | null;
   weeklyScores: (DBWeeklyScore & {
-    score: DBScore & {
-      user: DBUser;
-    };
+    score: DBScoreWithMetadata;
   })[];
   rule: DBRule | null;
   characterId: number | null;
@@ -350,6 +373,9 @@ async function eventInfoFromDB(weekly: DBEventInfo): Promise<EventInfo> {
       time: weekly.worldRecord.time,
       score: weekly.worldRecord.score,
       attempts: weekly.worldRecord.attempts,
+      setAt: weekly.worldRecord.setAt,
+      character: weekly.worldRecord.character,
+      subWeapon: weekly.worldRecord.subWeapon,
     };
   }
 
@@ -382,6 +408,9 @@ async function eventInfoFromDB(weekly: DBEventInfo): Promise<EventInfo> {
         time: row.score.time,
         score: row.score.score,
         attempts: row.score.attempts,
+        setAt: row.score.setAt,
+        character: row.score.character,
+        subWeapon: row.score.subWeapon,
       };
     }),
     worldRecord: worldRecord,

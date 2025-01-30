@@ -13,6 +13,9 @@ interface SoloScoreGameRecordEntryDto {
   duration_millisecond: number;
   total_score: number;
   timestamp: number;
+  rule_id: number;
+  character_id: number;
+  sub_weapon_id: number;
 }
 
 interface EventRequirements {
@@ -50,6 +53,10 @@ export interface BrazenApiLeaderboardEntry {
   time: number;
   score: number;
   attempts: number;
+  setAt: number;
+  ruleId: number;
+  characterId: number;
+  subWeaponId: number;
 }
 
 export interface BrazenApiEventInfo {
@@ -79,6 +86,10 @@ export function eventInfoFromDto(
       time: event.world_record.duration_millisecond,
       score: event.world_record.total_score,
       attempts: event.world_record.attempts_at_per_character_and_rule,
+      ruleId: event.world_record.rule_id,
+      characterId: event.world_record.character_id,
+      subWeaponId: event.world_record.sub_weapon_id,
+      setAt: event.world_record.timestamp,
     };
   }
 
@@ -100,6 +111,10 @@ export function eventInfoFromDto(
         time: row.record.duration_millisecond,
         score: row.record.total_score,
         attempts: row.record.attempts_at_per_character_and_rule,
+        ruleId: row.record.rule_id,
+        characterId: row.record.character_id,
+        subWeaponId: row.record.sub_weapon_id,
+        setAt: row.record.timestamp,
       };
     }),
     worldRecord: worldRecord,
