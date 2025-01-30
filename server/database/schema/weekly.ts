@@ -3,6 +3,7 @@ import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { ruleTable } from "./rule";
 import { scoreTable } from "./score";
 import { weeklyScoreTable } from "./weeklyScore";
+import { createdAt } from "./partials/createdAt";
 
 export const weeklyTable = sqliteTable("weekly", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -12,9 +13,7 @@ export const weeklyTable = sqliteTable("weekly", {
   ),
   endsAt: integer("ends_at").notNull(),
   raw: text("raw", { mode: "json" }).notNull(),
-  createdAt: integer("created_at", { mode: "timestamp" })
-    .notNull()
-    .$default(() => new Date()),
+  createdAt: createdAt,
   ruleId: integer("rule_id"),
   characterId: integer("character_id"),
   subWeaponId: integer("sub_weapon_id"),

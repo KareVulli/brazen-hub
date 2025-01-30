@@ -1,4 +1,6 @@
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { createdAt } from "./partials/createdAt";
+import { updatedAt } from "./partials/updatedAt";
 
 export const userTable = sqliteTable("user", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -6,11 +8,6 @@ export const userTable = sqliteTable("user", {
   userKey: text("user_key").unique().notNull(),
   iconId: integer("icon_id").notNull(),
   iconFrameId: integer("icon_frame_id").notNull(),
-  updatedAt: integer("updated_at", { mode: "timestamp" })
-    .notNull()
-    .$default(() => new Date())
-    .$onUpdate(() => new Date()),
-  createdAt: integer("created_at", { mode: "timestamp" })
-    .notNull()
-    .$default(() => new Date()),
+  updatedAt: updatedAt,
+  createdAt: createdAt,
 });

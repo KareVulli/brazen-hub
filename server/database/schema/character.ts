@@ -1,12 +1,11 @@
 import { integer, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { createdAt } from "./partials/createdAt";
 
 export const characterTable = sqliteTable("character", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   characterId: integer("character_id").notNull(),
   gameVersion: text("game_version").notNull(),
-  createdAt: integer("created_at", { mode: "timestamp" })
-    .notNull()
-    .$default(() => new Date()),
+  createdAt: createdAt,
   name: text("name").notNull(),
   displayName: text("display_name").notNull(),
   hp: integer("hp").notNull(),

@@ -1,6 +1,7 @@
-import { sqliteTable, integer } from "drizzle-orm/sqlite-core";
-import { userTable } from "./user";
 import { relations } from "drizzle-orm";
+import { integer, sqliteTable } from "drizzle-orm/sqlite-core";
+import { createdAt } from "./partials/createdAt";
+import { userTable } from "./user";
 
 export const scoreTable = sqliteTable("score", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -11,6 +12,11 @@ export const scoreTable = sqliteTable("score", {
   time: integer("time").notNull(),
   score: integer("score").notNull(),
   attempts: integer("attempts").notNull(),
+  ruleId: integer("rule_id"),
+  characterId: integer("character_id"),
+  subWeaponId: integer("sub_weapon_id"),
+  setAt: integer("set_at"),
+  createdAt: createdAt,
 });
 
 export const scoreRelations = relations(scoreTable, ({ one }) => ({
