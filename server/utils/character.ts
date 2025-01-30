@@ -118,3 +118,18 @@ export async function getCharacterByCharacterId(
   }
   return null;
 }
+
+export async function getCharactersByGameVersion(
+  gameVersion: string
+): Promise<Record<number, Character | undefined>> {
+  const dbCharacters = await useDrizzle().query.characterTable.findMany({
+    where: eq(characterTable.gameVersion, gameVersion),
+    orderBy: [asc(characterTable.characterId)],
+  });
+  return dbCharacters
+    .map((character) => characterFromDB(character))
+    .reduce<Record<number, Character>>((acc, character) => {
+      acc[character.characterId] = character;
+      return acc;
+    }, {});
+}

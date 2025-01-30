@@ -1,8 +1,8 @@
 <template>
   <div class="flex items-center gap-2">
-    <div v-if="!small" class="relative">
+    <div v-if="!small" class="relative flex-shrink-0">
       <img
-        class="h-8 flex-shrink-0"
+        class="h-8"
         :src="`https://static.prod.brazenblaze.com/public-assets/profile-icon/thumbnail/${user.iconId}.png`"
       />
       <img

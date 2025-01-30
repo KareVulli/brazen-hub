@@ -62,6 +62,9 @@ export default defineNuxtConfig({
     cacheTime: 60,
     refreshTime: 600,
     updateToken: "",
+    gameVersion: "",
+    gameVersionCode: "",
+    gameHash: "",
   },
   dayjs: {
     plugins: ["duration"],

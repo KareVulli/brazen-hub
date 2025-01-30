@@ -66,3 +66,18 @@ export async function getItemByItemId(itemId: number): Promise<Item | null> {
   }
   return null;
 }
+
+export async function getItemsByGameVersion(
+  gameVersion: string
+): Promise<Record<number, Item | undefined>> {
+  const dbItems = await useDrizzle().query.itemTable.findMany({
+    where: eq(itemTable.gameVersion, gameVersion),
+    orderBy: [desc(itemTable.gameVersion), asc(itemTable.itemId)],
+  });
+  return dbItems
+    .map((item) => itemFromDB(item))
+    .reduce<Record<number, Item>>((acc, item) => {
+      acc[item.itemId] = item;
+      return acc;
+    }, {});
+}

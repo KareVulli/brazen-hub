@@ -6,7 +6,10 @@ import {
   weeklyTable,
 } from "../database/schema";
 import type { Character } from "./character";
-import { getCharacterByCharacterId } from "./character";
+import {
+  getCharacterByCharacterId,
+  getCharactersByGameVersion,
+} from "./character";
 import type {
   DBRule,
   DBScore,
@@ -14,7 +17,7 @@ import type {
   DBWeekly,
   DBWeeklyScore,
 } from "./drizzle";
-import { getItemByItemId } from "./item";
+import { getItemByItemId, getItemsByGameVersion } from "./item";
 import type { RuleDto } from "./rule";
 import type {
   BrazenApiEventInfo,
@@ -145,8 +148,6 @@ export async function getLatest(): Promise<EventInfo | null> {
         worldRecord: {
           with: {
             user: true,
-            character: true,
-            subWeapon: true,
           },
         },
         weeklyScores: {
@@ -154,8 +155,6 @@ export async function getLatest(): Promise<EventInfo | null> {
             score: {
               with: {
                 user: true,
-                character: true,
-                subWeapon: true,
               },
             },
           },
@@ -166,7 +165,6 @@ export async function getLatest(): Promise<EventInfo | null> {
   if (weekly === undefined) {
     return null;
   }
-  console.log("Got latest! ID:", weekly.id);
   return eventInfoFromDB(weekly);
 }
 
@@ -179,8 +177,6 @@ export async function getCurrentWeekly(): Promise<EventInfo | null> {
         worldRecord: {
           with: {
             user: true,
-            character: true,
-            subWeapon: true,
           },
         },
         weeklyScores: {
@@ -188,8 +184,6 @@ export async function getCurrentWeekly(): Promise<EventInfo | null> {
             score: {
               with: {
                 user: true,
-                character: true,
-                subWeapon: true,
               },
             },
           },
@@ -214,8 +208,6 @@ export async function getEventInfoByEventId(
         worldRecord: {
           with: {
             user: true,
-            character: true,
-            subWeapon: true,
           },
         },
         weeklyScores: {
@@ -223,8 +215,6 @@ export async function getEventInfoByEventId(
             score: {
               with: {
                 user: true,
-                character: true,
-                subWeapon: true,
               },
             },
           },
@@ -345,8 +335,6 @@ export async function getLeaderboardHistoryByEventId(
 
 interface DBScoreWithMetadata extends DBScore {
   user: DBUser;
-  character: DBCharacter | null;
-  subWeapon: DBItem | null;
 }
 
 interface DBEventInfo extends DBWeekly {
@@ -360,6 +348,11 @@ interface DBEventInfo extends DBWeekly {
 }
 async function eventInfoFromDB(weekly: DBEventInfo): Promise<EventInfo> {
   let worldRecord: LeaderboardEntry | null = null;
+
+  const gameVersion = useRuntimeConfig().gameVersionCode;
+  const characters = await getCharactersByGameVersion(gameVersion);
+  const items = await getItemsByGameVersion(gameVersion);
+
   if (weekly.worldRecord) {
     worldRecord = {
       place: 1,
@@ -374,8 +367,8 @@ async function eventInfoFromDB(weekly: DBEventInfo): Promise<EventInfo> {
       score: weekly.worldRecord.score,
       attempts: weekly.worldRecord.attempts,
       setAt: weekly.worldRecord.setAt,
-      character: weekly.worldRecord.character,
-      subWeapon: weekly.worldRecord.subWeapon,
+      character: characters[weekly.worldRecord.characterId || 0] || null,
+      subWeapon: items[weekly.worldRecord.subWeaponId || 0] || null,
     };
   }
 
@@ -409,8 +402,8 @@ async function eventInfoFromDB(weekly: DBEventInfo): Promise<EventInfo> {
         score: row.score.score,
         attempts: row.score.attempts,
         setAt: row.score.setAt,
-        character: row.score.character,
-        subWeapon: row.score.subWeapon,
+        character: characters[row.score.characterId || 0] || null,
+        subWeapon: items[row.score.subWeaponId || 0] || null,
       };
     }),
     worldRecord: worldRecord,
