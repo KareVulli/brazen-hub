@@ -1,5 +1,4 @@
 PRAGMA defer_foreign_keys = ON;
-PRAGMA foreign_keys = OFF;
 --> statement-breakpoint
 CREATE TABLE `__new_score` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -48,4 +47,3 @@ ALTER TABLE `__new_score`
 	RENAME TO `score`;
 --> statement-breakpoint
 PRAGMA defer_foreign_keys = OFF;
-PRAGMA foreign_keys = ON;
