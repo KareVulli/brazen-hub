@@ -11,6 +11,7 @@ import type {
 } from "~~/server/utils/brazen-api/getEventInfo";
 import { eventInfoResponseFromDto } from "~~/server/utils/brazen-api/getEventInfo";
 import { writeLeaderboardToDB } from "~~/server/utils/eventInfo";
+import type { DBWeekly } from "~~/server/utils/drizzle";
 
 const requestSchema = z.object({
   start: z.number().positive(),
@@ -35,6 +36,54 @@ async function updateScore(
     .where(eq(scoreTable.id, id));
 }
 
+async function migrateWeekly(
+  weekly: DBWeekly & { worldRecord: DBScore | null }
+) {
+  const prefix = `[${weekly.id}]`;
+
+  const rawData = eventInfoResponseFromDto(weekly.raw as EventInfoDto);
+
+  let eventData: BrazenApiEventInfo;
+  if (rawData.currentEvent?.eventId === weekly.eventId) {
+    console.log(`${prefix} Using currentEvent`);
+    eventData = rawData.currentEvent;
+  } else if (rawData.previousEvent?.eventId === weekly.eventId) {
+    eventData = rawData.previousEvent;
+    console.log(`${prefix} Using previousEvent`);
+  } else {
+    throw createError({
+      statusCode: 400,
+      message: `Could not find raw data for eventId ${weekly.eventId} (row id: ${weekly.id})`,
+    });
+  }
+
+  const promises: Promise<unknown>[] = [];
+
+  if (weekly.worldRecordId && eventData.worldRecord) {
+    const { ruleId, characterId, subWeaponId, setAt } = eventData.worldRecord;
+    promises.push(
+      updateScore(weekly.worldRecordId, ruleId, characterId, subWeaponId, setAt)
+    );
+  }
+
+  const deletedScoreIds = await useDrizzle()
+    .delete(weeklyScoreTable)
+    .where(eq(weeklyScoreTable.weeklyId, weekly.id))
+    .returning({
+      scoreId: weeklyScoreTable.scoreId,
+    });
+  await useDrizzle()
+    .delete(scoreTable)
+    .where(
+      inArray(
+        scoreTable.id,
+        deletedScoreIds.map((item) => item.scoreId)
+      )
+    );
+  await writeLeaderboardToDB(weekly.id, eventData.leaderboard, false);
+  console.log(`${prefix}   Done`);
+}
+
 export default eventHandler(async (event): Promise<void> => {
   checkAllowedToUpdate(event);
   const request = await readValidatedBody(event, requestSchema.parse);
@@ -49,80 +98,25 @@ export default eventHandler(async (event): Promise<void> => {
       lte(weeklyTable.id, request.end)
     ),
     with: {
-      weeklyScores: true,
       worldRecord: true,
     },
     orderBy: [asc(weeklyTable.id), asc(weeklyScoreTable.id)],
   });
 
   const weeklyCount = weeklies.length;
-  for (let i = 0; i < weeklyCount; i++) {
-    const weekly = weeklies[i];
-    const prefix = `[${i + 1}/${weeklyCount}]`;
-    console.log(
-      `${prefix} Populating weekly id ${weekly.id} eventId: ${weekly.eventId}`
-    );
 
-    const rawData = eventInfoResponseFromDto(weekly.raw as EventInfoDto);
-
-    let eventData: BrazenApiEventInfo;
-    if (rawData.currentEvent?.eventId === weekly.eventId) {
-      console.log(`${prefix} Using currentEvent`);
-      eventData = rawData.currentEvent;
-    } else if (rawData.previousEvent?.eventId === weekly.eventId) {
-      eventData = rawData.previousEvent;
-      console.log(`${prefix} Using previousEvent`);
-    } else {
-      throw createError({
-        statusCode: 400,
-        message: `Could not find raw data for eventId ${weekly.eventId} (row id: ${weekly.id})`,
-      });
+  const chunkSize = 50;
+  for (let i = 0; i < weeklyCount; i += chunkSize) {
+    const prefix = `[${i} - ${i + chunkSize}]`;
+    const chunk = weeklies.slice(i, i + chunkSize);
+    const promises = [];
+    for (let j = 0; j < chunk.length; j++) {
+      const weekly = chunk[j];
+      promises.push(migrateWeekly(weekly));
     }
-
-    const promises: Promise<unknown>[] = [];
-
-    if (weekly.worldRecordId && eventData.worldRecord) {
-      const { score, ruleId, characterId, subWeaponId, setAt } =
-        eventData.worldRecord;
-      promises.push(
-        updateScore(
-          weekly.worldRecordId,
-          ruleId,
-          characterId,
-          subWeaponId,
-          setAt
-        )
-      );
-      console.log(
-        `${prefix}   Updated world record ${weekly.worldRecordId}. Original score ${weekly.worldRecord?.score} matching score: ${score}`
-      );
-    }
-
-    const deletedScoreIds = await useDrizzle()
-      .delete(weeklyScoreTable)
-      .where(eq(weeklyScoreTable.weeklyId, weekly.id))
-      .returning({
-        scoreId: weeklyScoreTable.scoreId,
-      });
-    await useDrizzle()
-      .delete(scoreTable)
-      .where(
-        inArray(
-          scoreTable.id,
-          deletedScoreIds.map((item) => item.scoreId)
-        )
-      );
-    console.log(
-      `${prefix}     Deleted existing ${deletedScoreIds.length} scores...`
-    );
-    const createdWeeklyScoreIds = await writeLeaderboardToDB(
-      weekly.id,
-      eventData.leaderboard,
-      false
-    );
-    console.log(
-      `${prefix}     Created ${createdWeeklyScoreIds.length} new scores...`
-    );
+    console.log(prefix + " Queued! Waiting for completion...");
+    await Promise.all(promises);
+    console.log(prefix + " Done!");
   }
 
   console.log("Migration: Done");
