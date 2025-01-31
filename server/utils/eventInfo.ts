@@ -21,6 +21,7 @@ import { getItemByItemId, getItemsByGameVersion } from "./item";
 import type { RuleDto } from "./rule";
 import type {
   BrazenApiEventInfo,
+  BrazenApiLeaderboardEntry,
   EventInfoDto,
 } from "./brazen-api/getEventInfo";
 
@@ -44,6 +45,58 @@ export interface EventInfo {
   rule: RuleDto | null;
   character: Character | null;
   subWeapon: ItemDto | null;
+}
+
+export async function writeLeaderboardToDB(
+  weeklyId: number,
+  leaderboard: BrazenApiLeaderboardEntry[],
+  updateUser: boolean = true
+): Promise<number[]> {
+  const scoresData: Omit<DBScore, "id" | "createdAt">[] = [];
+  for (let i = 0; i < leaderboard.length; i++) {
+    const score = leaderboard[i];
+    const scoreUser = score.user;
+    let scoreUserId: number;
+    if (updateUser) {
+      scoreUserId = await updateUserInDB(scoreUser);
+    } else {
+      const user = await getUserFromDB(score.user.userKey);
+      if (user === null) {
+        scoreUserId = await updateUserInDB(scoreUser);
+      } else {
+        scoreUserId = user.id;
+      }
+    }
+
+    scoresData.push({
+      userId: scoreUserId,
+      place: score.place,
+      time: score.time,
+      score: score.score,
+      attempts: score.attempts,
+      setAt: score.setAt,
+      ruleId: score.ruleId,
+      characterId: score.characterId,
+      subWeaponId: score.subWeaponId,
+    });
+  }
+
+  const scoreIds = await useDrizzle()
+    .insert(scoreTable)
+    .values(scoresData)
+    .returning({ scoreId: scoreTable.id });
+
+  const weeklyScoreIds = await useDrizzle()
+    .insert(weeklyScoreTable)
+    .values(
+      scoreIds.map(({ scoreId }) => ({
+        weeklyId: weeklyId,
+        scoreId: scoreId,
+      }))
+    )
+    .returning({ id: weeklyScoreTable.id });
+
+  return weeklyScoreIds.map((item) => item.id);
 }
 
 export async function writeToDB(raw: EventInfoDto, event: BrazenApiEventInfo) {
@@ -100,31 +153,7 @@ export async function writeToDB(raw: EventInfoDto, event: BrazenApiEventInfo) {
     })
     .returning({ weeklyId: weeklyTable.id });
 
-  for (let i = 0; i < event.leaderboard.length; i++) {
-    const score = event.leaderboard[i];
-    const scoreUser = score.user;
-    const scoreUserId = await updateUserInDB(scoreUser);
-
-    const [{ scoreId }] = await useDrizzle()
-      .insert(scoreTable)
-      .values({
-        userId: scoreUserId,
-        place: score.place,
-        time: score.time,
-        score: score.score,
-        attempts: score.attempts,
-        setAt: score.setAt,
-        ruleId: score.ruleId,
-        characterId: score.characterId,
-        subWeaponId: score.subWeaponId,
-      })
-      .returning({ scoreId: scoreTable.id });
-
-    await useDrizzle().insert(weeklyScoreTable).values({
-      weeklyId: weeklyId,
-      scoreId: scoreId,
-    });
-  }
+  await writeLeaderboardToDB(weeklyId, event.leaderboard);
 
   console.log(`Created weekly ${weeklyId} to database.`);
 }
