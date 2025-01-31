@@ -68,10 +68,10 @@ export async function getItemByItemId(itemId: number): Promise<Item | null> {
 }
 
 export async function getItemsByGameVersion(
-  gameVersion: string
+  gameVersion: string | number
 ): Promise<Record<number, Item | undefined>> {
   const dbItems = await useDrizzle().query.itemTable.findMany({
-    where: eq(itemTable.gameVersion, gameVersion),
+    where: eq(itemTable.gameVersion, gameVersion + ""),
     orderBy: [desc(itemTable.gameVersion), asc(itemTable.itemId)],
   });
   return dbItems

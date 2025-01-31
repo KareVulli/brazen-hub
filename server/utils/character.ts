@@ -120,10 +120,10 @@ export async function getCharacterByCharacterId(
 }
 
 export async function getCharactersByGameVersion(
-  gameVersion: string
+  gameVersion: string | number
 ): Promise<Record<number, Character | undefined>> {
   const dbCharacters = await useDrizzle().query.characterTable.findMany({
-    where: eq(characterTable.gameVersion, gameVersion),
+    where: eq(characterTable.gameVersion, gameVersion + ""),
     orderBy: [asc(characterTable.characterId)],
   });
   return dbCharacters
