@@ -74,7 +74,7 @@ export default cachedEventHandler(
     return { users: users };
   },
   {
-    maxAge: 60 * 10,
+    maxAge: 60,
     swr: false,
   }
 );
