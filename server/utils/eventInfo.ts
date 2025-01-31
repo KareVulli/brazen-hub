@@ -377,7 +377,11 @@ interface DBEventInfo extends DBWeekly {
 }
 async function eventInfoFromDB(weekly: DBEventInfo): Promise<EventInfo> {
   let worldRecord: LeaderboardEntry | null = null;
-
+  console.log(JSON.stringify(useRuntimeConfig()));
+  console.log(
+    process.env.NUXT_GAME_VERSION_CODE,
+    typeof process.env.NUXT_GAME_VERSION_CODE
+  );
   const gameVersion = useRuntimeConfig().gameVersionCode;
   const characters = await getCharactersByGameVersion(gameVersion);
   const items = await getItemsByGameVersion(gameVersion);
