@@ -25,22 +25,11 @@ import type {
   EventInfoDto,
 } from "./brazen-api/getEventInfo";
 
-export interface LeaderboardEntry {
-  place: number;
-  user: BrazenUser;
-  time: number;
-  score: number;
-  attempts: number;
-  setAt: number | null;
-  character: Character | null;
-  subWeapon: ItemDto | null;
-}
-
 export interface EventInfo {
   eventId: number;
   endsAt: number;
-  leaderboard: LeaderboardEntry[];
-  worldRecord: LeaderboardEntry | null;
+  leaderboard: Score[];
+  worldRecord: Score | null;
   updatedAt: number;
   rule: RuleDto | null;
   character: Character | null;
@@ -376,7 +365,7 @@ interface DBEventInfo extends DBWeekly {
   subWeaponId: number | null;
 }
 async function eventInfoFromDB(weekly: DBEventInfo): Promise<EventInfo> {
-  let worldRecord: LeaderboardEntry | null = null;
+  let worldRecord: Score | null = null;
   const characters = await getCharactersByGameVersion(
     process.env.NUXT_GAME_VERSION_CODE || "not-found"
   );

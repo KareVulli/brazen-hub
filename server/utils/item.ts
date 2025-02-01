@@ -1,3 +1,4 @@
+import { getColumns } from "../database/getColumns";
 import { itemTable } from "../database/schema/item";
 import type { DBItem } from "./drizzle";
 
@@ -81,4 +82,31 @@ export async function getItemsByGameVersion(
       acc[item.itemId] = item;
       return acc;
     }, {});
+}
+
+export function getLatestItemsSubquery() {
+  const subQuery = useDrizzle()
+    .$with("items_with_row_number")
+    .as(
+      useDrizzle()
+        .select({
+          ...getColumns(itemTable),
+          rowNumber: sql<number>`ROW_NUMBER() OVER (
+          PARTITION BY ${itemTable.itemId}
+          ORDER BY ${itemTable.gameVersion} DESC
+        )`.as("row_number"),
+        })
+        .from(itemTable)
+    );
+
+  const { rowNumber, ...subQueryColumns } = getColumns(subQuery);
+  return useDrizzle()
+    .$with("latest_items")
+    .as(
+      useDrizzle()
+        .with(subQuery)
+        .select(subQueryColumns)
+        .from(subQuery)
+        .where(eq(subQuery.rowNumber, 1))
+    );
 }

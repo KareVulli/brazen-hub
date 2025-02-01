@@ -1,3 +1,4 @@
+import { getColumns } from "../database/getColumns";
 import { characterTable } from "../database/schema/character";
 import type { DBCharacter } from "./drizzle";
 
@@ -132,4 +133,30 @@ export async function getCharactersByGameVersion(
       acc[character.characterId] = character;
       return acc;
     }, {});
+}
+
+export function getLatestCharactersSubquery() {
+  const subQuery = useDrizzle()
+    .$with("characters_with_row_number")
+    .as(
+      useDrizzle()
+        .select({
+          ...getColumns(characterTable),
+          rowNumber: sql<number>`ROW_NUMBER() OVER (
+          PARTITION BY ${characterTable.characterId}
+          ORDER BY ${characterTable.gameVersion} DESC
+        )`.as("row_number"),
+        })
+        .from(characterTable)
+    );
+  const { rowNumber, ...subQueryColumns } = getColumns(subQuery);
+  return useDrizzle()
+    .$with("latest_characters")
+    .as(
+      useDrizzle()
+        .with(subQuery)
+        .select(subQueryColumns)
+        .from(subQuery)
+        .where(eq(subQuery.rowNumber, 1))
+    );
 }

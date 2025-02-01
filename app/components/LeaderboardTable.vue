@@ -67,9 +67,9 @@
 </template>
 
 <script setup lang="ts">
-import type { LeaderboardEntry } from "~~/server/utils/eventInfo";
+import type { Score } from "~~/server/utils/score";
 
 defineProps<{
-  entries: LeaderboardEntry[];
+  entries: Score[];
 }>();
 </script>

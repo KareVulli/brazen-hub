@@ -12,6 +12,20 @@ export interface RuleDto {
   subRuleType: string;
 }
 
+export async function getRulesList(): Promise<RuleDto[]> {
+  return await useDrizzle().query.ruleTable.findMany({
+    orderBy: [desc(ruleTable.name), desc(ruleTable.stageId)],
+  });
+}
+
+export async function getRuleById(id: number): Promise<RuleDto | null> {
+  return (
+    (await useDrizzle().query.ruleTable.findFirst({
+      where: eq(ruleTable.id, id),
+    })) || null
+  );
+}
+
 export async function replaceRulesInDB(rules: RuleDto[]) {
   await useDrizzle().delete(ruleTable);
   for (let i = 0; i < rules.length; i++) {

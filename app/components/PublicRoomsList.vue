@@ -69,7 +69,7 @@
 </template>
 
 <script setup lang="ts">
-import type { HomePublicRoom } from "~~/server/api/home.get";
+import type { HomePublicRoom } from "~~/server/api/home/index.get";
 
 defineProps<{
   publicRooms: HomePublicRoom[];

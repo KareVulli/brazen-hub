@@ -1,9 +1,24 @@
+import { getColumns } from "../database/getColumns";
 import {
   ruleTable,
   scoreTable,
+  userTable,
   weeklyScoreTable,
   weeklyTable,
 } from "../database/schema";
+import { getLatestCharactersSubquery } from "./character";
+import { getLatestItemsSubquery } from "./item";
+
+export interface Score {
+  place: number;
+  user: BrazenUser;
+  time: number;
+  score: number;
+  attempts: number;
+  setAt: number | null;
+  character: Character | null;
+  subWeapon: ItemDto | null;
+}
 
 export interface DBTopScore {
   stage_name: string;
@@ -45,5 +60,59 @@ export async function getTopScoresByUserId(
       LEFT JOIN ${ruleTable} ON ${ruleTable.id} = cte.rule_id
       WHERE cte.row_number = 1; 
   `);
+  return scores;
+}
+
+export async function getTopScoresByRuleId(
+  ruleId: number,
+  limit: number = 100
+): Promise<Score[]> {
+  const scoresSubquery = useDrizzle()
+    .$with("scores")
+    .as(
+      useDrizzle()
+        .select({
+          ...getColumns(scoreTable),
+          rowNumber: sql<number>`ROW_NUMBER() OVER (
+          PARTITION BY ${scoreTable.userId}
+          ORDER BY 
+            ${scoreTable.score} DESC, 
+            ${scoreTable.time} DESC, 
+            ${scoreTable.setAt} DESC
+          )`.as("row_number"),
+        })
+        .from(scoreTable)
+        .where(eq(scoreTable.ruleId, ruleId))
+    );
+
+  const charactersSubquery = getLatestCharactersSubquery();
+  const itemsSubquery = getLatestItemsSubquery();
+
+  const scores = await useDrizzle()
+    .with(scoresSubquery, charactersSubquery, itemsSubquery)
+    .select({
+      ...getColumns(scoresSubquery),
+      user: getColumns(userTable),
+      character: getColumns(charactersSubquery),
+      subWeapon: getColumns(itemsSubquery),
+      place:
+        sql<number>`ROW_NUMBER() OVER (ORDER BY ${scoresSubquery.score} DESC)`.as(
+          "row_number"
+        ),
+    })
+    .from(scoresSubquery)
+    .innerJoin(userTable, eq(userTable.id, scoresSubquery.userId))
+    .leftJoin(
+      charactersSubquery,
+      eq(charactersSubquery.characterId, scoresSubquery.characterId)
+    )
+    .leftJoin(
+      itemsSubquery,
+      eq(itemsSubquery.itemId, scoresSubquery.subWeaponId)
+    )
+    .orderBy(desc(scoresSubquery.score))
+    .where(eq(scoresSubquery.rowNumber, 1))
+    .limit(limit);
+
   return scores;
 }
