@@ -19,6 +19,21 @@
           </a>
         </NuxtLink>
       </template>
+      <template #end>
+        <div class="flex items-center gap-2">
+          <Button
+            as="a"
+            icon="pi pi-github"
+            aria-label="Open Brazen Hub GitHub repository"
+            href="https://github.com/KareVulli/brazen-hub"
+            target="_blank"
+            rel="noopener"
+            variant="text"
+            severity="contrast"
+            size="small"
+          />
+        </div>
+      </template>
     </Menubar>
   </div>
   <div class="container mx-auto px-4 mb-4">
