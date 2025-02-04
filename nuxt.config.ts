@@ -1,4 +1,42 @@
+import { definePreset } from "@primevue/themes";
 import Aura from "@primevue/themes/aura";
+
+const CustomAura = definePreset(Aura, {
+  semantic: {
+    formField: {
+      paddingX: "0.75rem",
+      paddingY: "0.375rem",
+      sm: {
+        fontSize: "0.875rem",
+        paddingX: "0.625rem",
+        paddingY: "0.25rem",
+      },
+      lg: {
+        fontSize: "1.125rem",
+        paddingX: "0.875rem",
+        paddingY: "0.5rem",
+      },
+      borderRadius: "{border.radius.sm}",
+    },
+    navigation: {
+      item: {
+        padding: "0.25rem 1rem",
+      },
+    },
+  },
+  components: {
+    button: {
+      root: {
+        iconOnlyWidth: "2rem",
+      },
+    },
+    menubar: {
+      baseItem: {
+        padding: "{navigation.item.padding}",
+      },
+    },
+  },
+});
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -52,7 +90,7 @@ export default defineNuxtConfig({
   primevue: {
     options: {
       theme: {
-        preset: Aura,
+        preset: CustomAura,
       },
       ripple: true,
     },
