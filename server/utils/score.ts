@@ -1,17 +1,19 @@
 import { getColumns } from "../database/getColumns";
-import {
-  ruleTable,
-  scoreTable,
-  userTable,
-  weeklyScoreTable,
-  weeklyTable,
-} from "../database/schema";
+import { ruleTable, scoreTable, userTable } from "../database/schema";
 import { getLatestCharactersSubquery } from "./character";
 import { getLatestItemsSubquery } from "./item";
+import type { RuleDto } from "./rule";
 
-export interface Score {
+export interface Score extends BaseScore {
   place: number;
   user: BrazenUser;
+}
+
+export interface UserScore extends BaseScore {
+  rule: RuleDto;
+}
+
+export interface BaseScore {
   time: number;
   score: number;
   attempts: number;
@@ -20,46 +22,48 @@ export interface Score {
   subWeapon: ItemDto | null;
 }
 
-export interface DBTopScore {
-  stage_name: string;
-  name: string;
-  score_id: number;
-  weekly_id: number;
-  rule_id: number;
-  score: number;
-  time: number;
-  created_at: number;
-}
-
-export async function getTopScoresByUserId(
-  userId: number
-): Promise<DBTopScore[]> {
-  const scores = await useDrizzle().all<DBTopScore>(sql`
-    WITH cte AS (
-      SELECT 
-        ${scoreTable.id} as score_id, 
-        ${weeklyTable.id} as weekly_id, 
-        ${weeklyTable.ruleId} as rule_id, 
-        ${scoreTable.score} as score, 
-        ${scoreTable.time} as time, 
-        ${weeklyTable.createdAt} as created_at, 
-        ROW_NUMBER() OVER (
-          PARTITION BY ${weeklyTable.ruleId} 
+export async function getUserTopScores(userId: number): Promise<UserScore[]> {
+  const scoresSubquery = useDrizzle()
+    .$with("scores")
+    .as(
+      useDrizzle()
+        .select({
+          ...getColumns(scoreTable),
+          rowNumber: sql<number>`ROW_NUMBER() OVER (
+          PARTITION BY ${scoreTable.ruleId}
           ORDER BY 
             ${scoreTable.score} DESC, 
             ${scoreTable.time} DESC, 
-            ${weeklyTable.createdAt} ASC
-          ) row_number
-        FROM ${scoreTable}
-        LEFT JOIN ${weeklyScoreTable} ON ${weeklyScoreTable.scoreId} = ${scoreTable.id}
-        LEFT JOIN ${weeklyTable} ON ${weeklyTable.id} = ${weeklyScoreTable.weeklyId}
-        WHERE ${weeklyScoreTable.id} is not NULL and ${scoreTable.userId} = ${userId}
-      )
-    SELECT ${ruleTable.stageName} as stage_name, ${ruleTable.name} as name, cte.* 
-      FROM cte
-      LEFT JOIN ${ruleTable} ON ${ruleTable.id} = cte.rule_id
-      WHERE cte.row_number = 1; 
-  `);
+            ${scoreTable.setAt} DESC
+          )`.as("row_number"),
+        })
+        .from(scoreTable)
+        .where(eq(scoreTable.userId, userId))
+    );
+
+  const charactersSubquery = getLatestCharactersSubquery();
+  const itemsSubquery = getLatestItemsSubquery();
+
+  const scores = await useDrizzle()
+    .with(scoresSubquery, charactersSubquery, itemsSubquery)
+    .select({
+      ...getColumns(scoresSubquery),
+      character: getColumns(charactersSubquery),
+      subWeapon: getColumns(itemsSubquery),
+      rule: getColumns(ruleTable),
+    })
+    .from(scoresSubquery)
+    .leftJoin(
+      charactersSubquery,
+      eq(charactersSubquery.characterId, scoresSubquery.characterId)
+    )
+    .leftJoin(
+      itemsSubquery,
+      eq(itemsSubquery.itemId, scoresSubquery.subWeaponId)
+    )
+    .innerJoin(ruleTable, eq(ruleTable.id, scoresSubquery.ruleId))
+    .orderBy(asc(ruleTable.name))
+    .where(eq(scoresSubquery.rowNumber, 1));
   return scores;
 }
 

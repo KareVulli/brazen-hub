@@ -1,18 +1,13 @@
 <template>
-  <DataTable :value="entries" sort-field="place" :sort-order="1">
+  <DataTable :value="scores" sort-field="rule.name" :sort-order="1">
     <template #empty>No scores found</template>
-    <Column class="min-w-24" field="place" header="Place" sortable />
+    <Column field="rule.name" header="Rule" class="text-nowrap" sortable />
     <Column
-      class="min-w-48"
-      field="user"
-      header="User"
+      field="rule.stageName"
+      header="Stage"
+      class="text-nowrap"
       sortable
-      sort-field="user.name"
-    >
-      <template #body="slotProps">
-        <LinkedUserName :user="slotProps.data.user" />
-      </template>
-    </Column>
+    />
     <Column
       class="min-w-32"
       field="character"
@@ -42,13 +37,12 @@
         <i v-else class="opacity-50">Unknown</i>
       </template>
     </Column>
-    <Column class="min-w-28" field="time" header="Time" sortable>
+    <Column field="time" header="Time" sortable>
       <template #body="slotProps">
         <ScoreTimeColumn :time-ms="slotProps.data.time" />
       </template>
     </Column>
-    <Column class="min-w-28" field="score" header="Score" sortable />
-    <Column class="min-w-28" field="attempts" header="Attempts" sortable />
+    <Column field="score" header="Score" sortable />
     <Column class="min-w-36" field="setAt" header="Date" sortable>
       <template #body="slotProps">
         <ScoreDateColumn :date-timestamp="slotProps.data.setAt" />
@@ -58,9 +52,9 @@
 </template>
 
 <script setup lang="ts">
-import type { Score } from "~~/server/utils/score";
+import type { BaseScore } from "~~/server/utils/score";
 
 defineProps<{
-  entries: Score[];
+  scores: BaseScore[];
 }>();
 </script>

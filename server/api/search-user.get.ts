@@ -1,20 +1,9 @@
 import { z } from "zod";
 import { findUsers } from "../utils/brazen-api/findUser";
 import type { BrazenAPIDetailedUser } from "../utils/brazen-api/models/apiUser";
-import type { DBTopScore } from "../utils/score";
-import { getTopScoresByUserId } from "../utils/score";
+import type { UserScore } from "../utils/score";
+import { getUserTopScores } from "../utils/score";
 import type { DetailedBrazenUser } from "../utils/user";
-
-export interface TopScore {
-  stageName: string;
-  name: string;
-  scoreId: number;
-  weeklyId: number;
-  ruleId: number;
-  score: number;
-  time: number;
-  createdAt: number;
-}
 
 const requestSchema = z.object({
   query: z.coerce.string().min(1).max(64),
@@ -26,25 +15,16 @@ export interface SearchUserMultipleResults {
 
 export interface SearchUserResult {
   user: DetailedBrazenUser;
-  topScores: TopScore[];
+  topScores: UserScore[];
 }
 
 function usersSearchResultDtoToSearchUserResult(
   user: DetailedBrazenUser,
-  topScores: DBTopScore[]
+  topScores: UserScore[]
 ): SearchUserResult {
   return {
     user: user,
-    topScores: topScores.map((score) => ({
-      stageName: score.stage_name,
-      name: score.name,
-      scoreId: score.score_id,
-      weeklyId: score.weekly_id,
-      ruleId: score.rule_id,
-      score: score.score,
-      time: score.time,
-      createdAt: score.created_at,
-    })),
+    topScores: topScores,
   };
 }
 
@@ -63,7 +43,7 @@ export default cachedEventHandler(
     } else if (users.length === 1) {
       const user = users[0];
       const userId = await updateUserInDB(user);
-      const topScores = await getTopScoresByUserId(userId);
+      const topScores = await getUserTopScores(userId);
 
       return usersSearchResultDtoToSearchUserResult(
         { id: userId, ...user },

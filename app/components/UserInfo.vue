@@ -13,7 +13,7 @@
     </div>
   </Panel>
   <Panel header="Known best Target Challenge scores">
-    <TopScoreTable :scores="user.topScores" />
+    <UserScoreTable :scores="user.topScores" />
   </Panel>
 </template>
 
