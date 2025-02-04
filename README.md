@@ -5,7 +5,10 @@ Brazen Blaze statistics for all your needs!
 ## Features
 
 - Historical weekly challenge leaderboards
+- Target challenge leaderboards (Aggregated from weekly challenge results)
 - Round team matches leaderboards
+- Player search
+- Character stats
 - More to come!
 
 ## Setup
