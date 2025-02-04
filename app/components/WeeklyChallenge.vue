@@ -85,8 +85,6 @@
 </template>
 
 <script setup lang="ts">
-import WeeklyChallengeChart from "./WeeklyChallengeChart.vue";
-
 const props = defineProps<{
   eventId?: string;
   eventName?: string;

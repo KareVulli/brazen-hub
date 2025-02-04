@@ -1,5 +1,10 @@
 <template>
-  <Panel header="Ranking over time" toggleable>
+  <Panel
+    header="Ranking over time"
+    toggleable
+    :collapsed="collapsed"
+    @update:collapsed="onCollapseToggled"
+  >
     <div class="flex items-center mb-4 gap-2">
       <span>Y Axis:</span
       ><SelectButton
@@ -29,6 +34,9 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
+import { useStorage } from "@vueuse/core";
+
+const collapsed = useStorage<boolean>("setting-weekly-chart-collapsed", true);
 
 const props = defineProps<{
   eventId: number;
@@ -53,6 +61,10 @@ type DataOptionValue = (typeof dataOptions)[number]["optionValue"];
 
 const chartYData = ref<DataOptionValue>("score");
 const showMarkers = ref<boolean>(false);
+
+const onCollapseToggled = (value: boolean) => {
+  collapsed.value = value;
+};
 
 const { data } = useFetch(`/api/weekly-graph/${props.eventId}`);
 </script>
