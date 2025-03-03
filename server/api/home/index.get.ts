@@ -9,6 +9,7 @@ import { getUserFromDB } from "../../utils/user";
 export interface HomePublicRoom extends BrazenApiPublicRoom {
   user: BrazenUser | null;
   stage: Stage | null;
+  gameRule: GameRule | null;
 }
 
 export interface HomeInfo {
@@ -34,6 +35,7 @@ async function publicRoomsToHomePublicRooms(
     homePublicRooms.push({
       user: user,
       stage: stage,
+      gameRule: await getGameRuleByGameRuleId(room.gameRuleId),
       ...room,
     });
   }
@@ -54,7 +56,6 @@ export default cachedEventHandler(
     };
   },
   {
-    maxAge: 60,
     swr: false,
   }
 );

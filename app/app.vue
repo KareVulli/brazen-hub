@@ -40,6 +40,7 @@
     <NuxtLoadingIndicator />
     <NuxtPage />
   </div>
+  <Toast />
 </template>
 
 <script setup lang="ts">

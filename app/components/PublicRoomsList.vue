@@ -1,7 +1,7 @@
 <template>
   <Panel header="Current public rooms">
     <template #icons>
-      <Tag
+      <Badge
         v-if="publicRooms.length"
         :value="publicRooms.length"
         severity="secondary"
@@ -27,46 +27,54 @@
           <div
             v-for="(room, index) in slotProps.items"
             :key="room.roomId"
-            class="flex flex-col"
+            class="flex"
             :class="{
               'border-t border-surface-200 dark:border-surface-700 pt-4':
                 index !== 0,
               'pb-4': index !== slotProps.items.length - 1,
             }"
           >
-            <div class="flex items-center gap-2">
-              <Tag
-                class="block"
-                :value="room.state === 'active' ? 'Open' : 'Match in progress'"
-                :severity="room.state === 'active' ? 'success' : 'secondary'"
-              />
-              <span>Join code: {{ room.invitationCode }}</span>
-              <span class="ml-auto"
-                >Players: {{ room.playerCount }}/{{ room.maxPlayers }}</span
-              >
+            <div>
+              <div class="flex items-center gap-2">
+                <Tag
+                  class="block"
+                  :value="
+                    room.state === 'active' ? 'Open' : 'Match in progress'
+                  "
+                  :severity="room.state === 'active' ? 'success' : 'secondary'"
+                />
+                <span class="font-semibold">{{ room.gameRule.name }}</span>
+              </div>
+              <div class="flex items-center gap-2 mt-1.5">
+                Host:
+                <LinkedUserName
+                  v-if="(room as HomePublicRoom).user"
+                  class="inline-block"
+                  :user="room.user"
+                  small
+                />
+                <span v-else>{{ room.createdByUserName }}</span>
+              </div>
+              <p>
+                Stage:
+                <span class="font-semibold">{{
+                  room.stage ? room.stage.name : "Random"
+                }}</span>
+              </p>
+              <p>
+                Support items:
+                <span class="font-semibold">{{
+                  room.supportItems ? "allowed" : "disabled"
+                }}</span>
+              </p>
             </div>
-            <span class="flex items-center gap-2 mt-1.5">
-              Host:
-              <LinkedUserName
-                v-if="(room as HomePublicRoom).user"
-                class="inline-block"
-                :user="room.user"
-                small
-              />
-              <span v-else>{{ room.createdByUserName }}</span>
-            </span>
-            <span
-              >Support items:
-              <span class="font-semibold">{{
-                room.supportItems ? "allowed" : "disabled"
-              }}</span></span
-            >
-            <span
-              >Stage:
-              <span class="font-semibold">{{
-                room.stage ? room.stage.name : "Random"
-              }}</span></span
-            >
+            <div class="ml-auto text-right">
+              <p>
+                Join code: {{ room.invitationCode }}
+                <CopyButton :content="room.invitationCode" />
+              </p>
+              <p>Players: {{ room.playerCount }}/{{ room.maxPlayers }}</p>
+            </div>
           </div>
         </div>
       </template>
