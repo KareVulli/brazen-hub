@@ -1,4 +1,4 @@
-import { brazenApiClient } from "./client";
+import { getBrazenApiClient } from "./client";
 import type { BrazenAPIUser } from "./models/apiUser";
 
 interface UserDto {
@@ -150,10 +150,13 @@ export function eventInfoResponseFromDto(
 }
 
 export async function getRawEventInfo(token: string): Promise<EventInfoDto> {
-  return await brazenApiClient<EventInfoDto>("solo_score_game/v1/event_info", {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  return await getBrazenApiClient()<EventInfoDto>(
+    "solo_score_game/v1/event_info",
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 }

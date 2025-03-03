@@ -1,4 +1,4 @@
-import { brazenApiClient } from "./client";
+import { getBrazenApiClient } from "./client";
 import type { BrazenAPIDetailedUser } from "./models/apiUser";
 
 interface OnlineStatusDto {
@@ -38,15 +38,18 @@ async function searchUsers(
   token: string,
   query: string
 ): Promise<UsersSearchDto> {
-  return await brazenApiClient<UsersSearchDto>("userrelationships/v1/search", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    body: {
-      query: query,
-    },
-  });
+  return await getBrazenApiClient()<UsersSearchDto>(
+    "userrelationships/v1/search",
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: {
+        query: query,
+      },
+    }
+  );
 }
 
 export async function findFirstUser(

@@ -1,4 +1,4 @@
-import { brazenApiClient } from "./client";
+import { getBrazenApiClient } from "./client";
 
 export interface BrazenApiPublicRoom {
   roomId: string;
@@ -60,7 +60,7 @@ function publicRoomsFromDto(
 export async function getPublicRooms(
   token: string
 ): Promise<BrazenApiPublicRoom[]> {
-  const response = await brazenApiClient<PublicRoomsDto>(
+  const response = await getBrazenApiClient()<PublicRoomsDto>(
     "match/v1/private_match_room/list_public_rooms",
     {
       method: "GET",
