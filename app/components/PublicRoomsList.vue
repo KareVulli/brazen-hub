@@ -61,6 +61,12 @@
                 room.supportItems ? "allowed" : "disabled"
               }}</span></span
             >
+            <span
+              >Stage:
+              <span class="font-semibold">{{
+                room.stage ? room.stage.name : "Random"
+              }}</span></span
+            >
           </div>
         </div>
       </template>

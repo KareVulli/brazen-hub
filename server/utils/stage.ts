@@ -1,5 +1,12 @@
 import { stageTable } from "../database/schema";
 
+export interface Stage {
+  id: number;
+  name: string;
+  description: string;
+  thumbnailName: string;
+}
+
 export interface StageDto {
   id: number;
   name: string;
@@ -22,4 +29,11 @@ export async function writeStageToDB(stage: StageDto) {
     description: stage.description,
     thumbnailName: stage.thumbnailName,
   });
+}
+
+export async function getStageFromDB(id: number): Promise<Stage | null> {
+  const stage = await useDrizzle().query.stageTable.findFirst({
+    where: eq(stageTable.id, id),
+  });
+  return stage || null;
 }

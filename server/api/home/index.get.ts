@@ -1,3 +1,5 @@
+import type { Stage } from "~~/server/utils/stage";
+import { getStageFromDB } from "~~/server/utils/stage";
 import type { BrazenApiPublicRoom } from "../../utils/brazen-api/getPublicRooms";
 import { getPublicRooms } from "../../utils/brazen-api/getPublicRooms";
 import { getCurrentWeekly } from "../../utils/eventInfo";
@@ -6,6 +8,7 @@ import { getUserFromDB } from "../../utils/user";
 
 export interface HomePublicRoom extends BrazenApiPublicRoom {
   user: BrazenUser | null;
+  stage: Stage | null;
 }
 
 export interface HomeInfo {
@@ -21,11 +24,16 @@ async function publicRoomsToHomePublicRooms(
   for (let i = 0; i < publicRooms.length; i++) {
     const room = publicRooms[i];
     let user = await getUserFromDB(room.createdByUserKey);
+    let stage: Stage | null = null;
     if (!user) {
       user = await fetchAndUpdateUser(bzToken, room.createdByUserKey);
     }
+    if (room.stageId > 0) {
+      stage = await getStageFromDB(room.stageId);
+    }
     homePublicRooms.push({
       user: user,
+      stage: stage,
       ...room,
     });
   }
