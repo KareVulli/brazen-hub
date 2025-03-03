@@ -1,5 +1,6 @@
 import { $fetch } from "ofetch";
 
+console.log("GAME VERSION", process.env.NUXT_GAME_VERSION);
 export const brazenApiClient = $fetch.create({
   baseURL: "https://api.prod.brazenblaze.com",
   headers: {
