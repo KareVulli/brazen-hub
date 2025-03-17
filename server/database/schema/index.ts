@@ -7,3 +7,4 @@ export * from "./weeklyScore";
 export * from "./item";
 export * from "./gameRule";
 export * from "./stage";
+export * from "./account";

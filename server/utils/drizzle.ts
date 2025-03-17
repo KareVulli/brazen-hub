@@ -15,3 +15,4 @@ export type DBCharacter = typeof schema.characterTable.$inferSelect;
 export type DBItem = typeof schema.itemTable.$inferSelect;
 export type DBGameRule = typeof schema.gameRuleTable.$inferSelect;
 export type DBStage = typeof schema.stageTable.$inferSelect;
+export type DBAccount = typeof schema.accountTable.$inferSelect;

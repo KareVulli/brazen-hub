@@ -53,6 +53,7 @@ export default defineNuxtConfig({
     "dayjs-nuxt",
     ["nuxt-plotly", { inject: true }],
     "@vueuse/nuxt",
+    "nuxt-auth-utils",
   ],
   css: ["primeicons/primeicons.css"],
   app: {

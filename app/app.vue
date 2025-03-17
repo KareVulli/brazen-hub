@@ -21,6 +21,26 @@
       </template>
       <template #end>
         <div class="flex items-center gap-2">
+          <AuthState v-slot="{ loggedIn, clear, user }">
+            <template v-if="loggedIn">
+              <h1>Hey {{ user?.displayName }}!</h1>
+              <Button
+                v-if="user?.role == ROLE_ADMIN"
+                :as="NuxtLink"
+                label="Management"
+                size="small"
+                to="/manage"
+              />
+              <Button label="Logout" size="small" @click="clear" />
+            </template>
+            <Button
+              v-else
+              as="a"
+              label="Log in with Discord"
+              href="/auth/discord"
+              size="small"
+            />
+          </AuthState>
           <Button
             as="a"
             icon="pi pi-github"
@@ -44,6 +64,9 @@
 </template>
 
 <script setup lang="ts">
+import { NuxtLink } from "#components";
+import { ROLE_ADMIN } from "~~/server/database/roles";
+
 useSeoMeta({
   title: "Brazen Hub",
   description: "Statistics about Brazen Blaze",
