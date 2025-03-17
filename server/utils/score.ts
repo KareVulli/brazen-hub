@@ -1,3 +1,4 @@
+import { isNull } from "drizzle-orm";
 import { getColumns } from "../database/getColumns";
 import { ruleTable, scoreTable, userTable } from "../database/schema";
 import { getLatestCharactersSubquery } from "./character";
@@ -11,6 +12,11 @@ export interface Score extends BaseScore {
 
 export interface UserScore extends BaseScore {
   rule: RuleDto;
+}
+
+export interface CustomScore extends BaseScore {
+  rule: RuleDto;
+  user: BrazenUser;
 }
 
 export interface BaseScore {
@@ -117,6 +123,33 @@ export async function getTopScoresByRuleId(
     .orderBy(desc(scoresSubquery.score))
     .where(eq(scoresSubquery.rowNumber, 1))
     .limit(limit);
+
+  return scores;
+}
+
+export async function getCustomScores(): Promise<CustomScore[]> {
+  const charactersSubquery = getLatestCharactersSubquery();
+  const itemsSubquery = getLatestItemsSubquery();
+
+  const scores = await useDrizzle()
+    .with(charactersSubquery, itemsSubquery)
+    .select({
+      ...getColumns(scoreTable),
+      user: getColumns(userTable),
+      character: getColumns(charactersSubquery),
+      subWeapon: getColumns(itemsSubquery),
+      rule: getColumns(ruleTable),
+    })
+    .from(scoreTable)
+    .innerJoin(userTable, eq(userTable.id, scoreTable.userId))
+    .leftJoin(
+      charactersSubquery,
+      eq(charactersSubquery.characterId, scoreTable.characterId)
+    )
+    .leftJoin(itemsSubquery, eq(itemsSubquery.itemId, scoreTable.subWeaponId))
+    .innerJoin(ruleTable, eq(ruleTable.id, scoreTable.ruleId))
+    .orderBy(desc(scoreTable.score))
+    .where(isNull(scoreTable.place));
 
   return scores;
 }

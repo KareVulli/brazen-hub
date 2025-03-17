@@ -410,7 +410,7 @@ async function eventInfoFromDB(weekly: DBEventInfo): Promise<EventInfo> {
     endsAt: weekly.endsAt,
     leaderboard: weekly.weeklyScores.map((row) => {
       return {
-        place: row.score.place,
+        place: row.score.place || 99999, // Should never be null in this case
         user: {
           id: row.score.user.id,
           name: row.score.user.name,

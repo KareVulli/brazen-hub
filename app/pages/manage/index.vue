@@ -1,9 +1,7 @@
 <template>
   <main>
-    <PageTitle title="Welcome to management!" />
-    <div class="grid lg:grid-cols-2 grid-flow-dense gap-4 mb-4">
-      <p>Only admins can see this!</p>
-    </div>
+    <PageTitle title="Manage custom scores" />
+    <ManageLeaderboardTable v-if="data" :entries="data.scores" />
   </main>
 </template>
 
@@ -11,4 +9,6 @@
 definePageMeta({
   middleware: ["auth-admin"],
 });
+
+const { data } = await useFetch("/api/manage/scores");
 </script>

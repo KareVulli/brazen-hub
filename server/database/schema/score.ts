@@ -3,10 +3,11 @@ import { integer, sqliteTable } from "drizzle-orm/sqlite-core";
 import { createdAt } from "./partials/createdAt";
 import { ruleTable } from "./rule";
 import { userTable } from "./user";
+import { weeklyScoreTable } from "./weeklyScore";
 
 export const scoreTable = sqliteTable("score", {
   id: integer("id").primaryKey({ autoIncrement: true }),
-  place: integer("place").notNull(),
+  place: integer("place"),
   userId: integer("user_id")
     .references(() => userTable.id)
     .notNull(),
@@ -29,4 +30,5 @@ export const scoreRelations = relations(scoreTable, ({ one }) => ({
     fields: [scoreTable.ruleId],
     references: [ruleTable.id],
   }),
+  weeklyScore: one(weeklyScoreTable),
 }));
