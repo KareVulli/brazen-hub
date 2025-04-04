@@ -1,0 +1,1 @@
+CREATE INDEX `created_at_idx` ON `weekly` (`created_at`);
