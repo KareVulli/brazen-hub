@@ -5,11 +5,13 @@ import {
   weeklyScoreTable,
   weeklyTable,
 } from "../database/schema";
+import type {
+  BrazenApiEventInfo,
+  BrazenApiLeaderboardEntry,
+  EventInfoDto,
+} from "./brazen-api/getEventInfo";
 import type { Character } from "./character";
-import {
-  getCharacterByCharacterId,
-  getCharactersByGameVersion,
-} from "./character";
+import { getCharactersByGameVersion } from "./character";
 import type {
   DBRule,
   DBScore,
@@ -17,13 +19,8 @@ import type {
   DBWeekly,
   DBWeeklyScore,
 } from "./drizzle";
-import { getItemByItemId, getItemsByGameVersion } from "./item";
+import { getItemsByGameVersion } from "./item";
 import type { RuleDto } from "./rule";
-import type {
-  BrazenApiEventInfo,
-  BrazenApiLeaderboardEntry,
-  EventInfoDto,
-} from "./brazen-api/getEventInfo";
 
 export interface EventInfo {
   eventId: number;
@@ -394,12 +391,12 @@ async function eventInfoFromDB(weekly: DBEventInfo): Promise<EventInfo> {
 
   let character: Character | null = null;
   if (weekly.characterId !== null && weekly.characterId > 0) {
-    character = await getCharacterByCharacterId(weekly.characterId);
+    character = characters[weekly.characterId] || null;
   }
 
   let subWeapon: Item | null = null;
   if (weekly.subWeaponId !== null && weekly.subWeaponId > 0) {
-    subWeapon = await getItemByItemId(weekly.subWeaponId);
+    subWeapon = items[weekly.subWeaponId] || null;
   }
 
   return {
