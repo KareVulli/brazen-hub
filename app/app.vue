@@ -89,6 +89,10 @@ const items = ref([
     label: "Player search",
     route: "/search-user",
   },
+  {
+    label: "Characters",
+    route: "/characters",
+  },
 ]);
 </script>
 

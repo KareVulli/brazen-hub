@@ -7,7 +7,7 @@ import {
 import type { ItemDto } from "~~/server/utils/item";
 import type { StageDto } from "~~/server/utils/stage";
 import { replaceStagesInDB } from "~~/server/utils/stage";
-import type { CharacterDto } from "../../utils/character";
+import type { DetailedCharacterDto } from "../../utils/character";
 import type { RuleDto } from "../../utils/rule";
 import { replaceRulesInDB } from "../../utils/rule";
 
@@ -41,7 +41,10 @@ const characterSchema = z.object({
   ultimatePoints: z.coerce.number().int(),
   ultimatePointsDamageMultiplier: z.coerce.number(),
   ultimatePointsAttackMultiplier: z.coerce.number(),
-}) satisfies z.ZodType<CharacterDto>;
+  punchDamage: z.coerce.number().int().nullable(),
+  passivePunchDamage: z.coerce.number().int().nullable(),
+  boostPunchDamage: z.coerce.number().int().nullable(),
+}) satisfies z.ZodType<DetailedCharacterDto>;
 
 const itemSchema = z.object({
   id: z.coerce.number().positive().int(),

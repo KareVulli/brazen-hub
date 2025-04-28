@@ -22,6 +22,12 @@ export interface CharacterDto {
   ultimatePointsAttackMultiplier: number;
 }
 
+export interface DetailedCharacterDto extends CharacterDto {
+  punchDamage: number | null;
+  passivePunchDamage: number | null;
+  boostPunchDamage: number | null;
+}
+
 export interface Character {
   id: number;
   characterId: number;
@@ -44,9 +50,15 @@ export interface Character {
   ultimatePointsAttackMultiplier: number;
 }
 
+export interface DetailedCharacter extends Character {
+  punchDamage: number | null;
+  passivePunchDamage: number | null;
+  boostPunchDamage: number | null;
+}
+
 export async function replaceCharactersInDB(
   gameVersion: string,
-  characters: CharacterDto[]
+  characters: DetailedCharacterDto[]
 ) {
   await useDrizzle()
     .delete(characterTable)
@@ -59,7 +71,7 @@ export async function replaceCharactersInDB(
 
 export async function writeCharacterToDB(
   gameVersion: string,
-  characterDto: CharacterDto
+  characterDto: DetailedCharacterDto
 ) {
   await useDrizzle().insert(characterTable).values({
     gameVersion: gameVersion,
@@ -80,6 +92,9 @@ export async function writeCharacterToDB(
     ultimatePoints: characterDto.ultimatePoints,
     ultimatePointsDamageMultiplier: characterDto.ultimatePointsDamageMultiplier,
     ultimatePointsAttackMultiplier: characterDto.ultimatePointsAttackMultiplier,
+    punchDamage: characterDto.punchDamage,
+    boostPunchDamage: characterDto.boostPunchDamage,
+    passivePunchDamage: characterDto.passivePunchDamage,
   });
 }
 
@@ -107,6 +122,17 @@ export function characterFromDB(character: DBCharacter): Character {
   };
 }
 
+export function detailedCharacterFromDB(
+  character: DBCharacter
+): DetailedCharacter {
+  return {
+    ...characterFromDB(character),
+    punchDamage: character.punchDamage,
+    passivePunchDamage: character.passivePunchDamage,
+    boostPunchDamage: character.boostPunchDamage,
+  };
+}
+
 export async function getCharacterByCharacterId(
   characterId: number
 ): Promise<Character | null> {
@@ -120,19 +146,32 @@ export async function getCharacterByCharacterId(
   return null;
 }
 
-export async function getCharactersByGameVersion(
+async function getDBCharactersByGameVersion(
   gameVersion: string | number
-): Promise<Record<number, Character | undefined>> {
-  const dbCharacters = await useDrizzle().query.characterTable.findMany({
+): Promise<DBCharacter[]> {
+  return await useDrizzle().query.characterTable.findMany({
     where: eq(characterTable.gameVersion, gameVersion + ""),
     orderBy: [asc(characterTable.characterId)],
   });
+}
+
+export async function getCharactersByGameVersion(
+  gameVersion: string | number
+): Promise<Record<number, Character | undefined>> {
+  const dbCharacters = await getDBCharactersByGameVersion(gameVersion);
   return dbCharacters
     .map((character) => characterFromDB(character))
     .reduce<Record<number, Character>>((acc, character) => {
       acc[character.characterId] = character;
       return acc;
     }, {});
+}
+
+export async function getDetailedCharactersByGameVersion(
+  gameVersion: string | number
+): Promise<DetailedCharacter[]> {
+  const dbCharacters = await getDBCharactersByGameVersion(gameVersion);
+  return dbCharacters.map((character) => detailedCharacterFromDB(character));
 }
 
 export function getLatestCharactersSubquery() {

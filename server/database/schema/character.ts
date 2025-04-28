@@ -26,4 +26,8 @@ export const characterTable = sqliteTable("character", {
   ultimatePointsAttackMultiplier: real(
     "ultimate_points_attack_multiplier"
   ).notNull(),
+
+  punchDamage: integer("punch_damage"),
+  passivePunchDamage: integer("passive_punch_damage"),
+  boostPunchDamage: integer("boost_punch_damage"),
 });
