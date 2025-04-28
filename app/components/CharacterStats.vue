@@ -43,6 +43,42 @@
       sortable
     />
   </DataTable>
+  <h2 class="mt-4 mb-2">Definitions</h2>
+  <ul class="text-sm">
+    <li>
+      <span class="font-semibold">Punch dmg (Punch damage)</span> - Punches
+      without boost
+    </li>
+    <li>
+      <span class="font-semibold">Boost punch dmg (Boost punch damage)</span> -
+      Punches with boost
+    </li>
+    <li class="mb-2">
+      <span class="font-semibold"
+        >Passive punch dmg (Passive punch damage)</span
+      >
+      - Damage when you collide with another player with high speed. Only when
+      Boost punch is set to "Auto" in settings.
+    </li>
+    <li>
+      <span class="font-semibold">Ultimate cooldown</span> - Number of points
+      you need to collect to charge up the ultimate gauge.
+    </li>
+    <li>
+      <span class="font-semibold"
+        >Ult. Attack Mult. (Ultimate Attack Multiplier)</span
+      >
+      - This multiplier is used when converting the damage you give to an enemy
+      to the ultimate points you get.
+    </li>
+    <li>
+      <span class="font-semibold"
+        >Ult. Damage Mult. (Ultimate Damage Multiplier)</span
+      >
+      - This multiplier is used when converting the damage you take to the
+      ultimate points you get as a result of the damage.
+    </li>
+  </ul>
 </template>
 
 <script setup lang="ts">
