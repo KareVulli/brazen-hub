@@ -158,3 +158,9 @@ export async function getCustomScores(): Promise<CustomScore[]> {
 export async function writeScore(score: DBScoreInsert): Promise<void> {
   await useDrizzle().insert(scoreTable).values(score);
 }
+
+export async function deleteCustomScoreById(id: number): Promise<void> {
+  await useDrizzle()
+    .delete(scoreTable)
+    .where(and(isNull(scoreTable.place), eq(scoreTable.id, id)));
+}

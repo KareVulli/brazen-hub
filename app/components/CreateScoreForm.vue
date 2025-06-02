@@ -2,9 +2,10 @@
   <div v-if="targetChallenges && characters && items">
     <Form
       :resolver="resolver"
-      class="flex flex-col gap-2 items-start"
+      class="flex flex-col gap-2 items-start mt-4"
       @submit="onFormSubmit"
     >
+      <h2>Add new score</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full">
         <FormTextInput name="userId" label="User ID" type="text" />
         <FormTextInput name="score" label="Score" type="text" />
@@ -38,7 +39,7 @@ import { scoreSchema } from "~~/validation/scoreSchema";
 import { z } from "zod";
 
 const emit = defineEmits<{
-  (e: "created"): void;
+  created: [];
 }>();
 
 const scoreFormSchema = scoreSchema.merge(
@@ -77,7 +78,6 @@ const itemsOptions = computed(() => {
 const resolver = zodResolver(scoreFormSchema);
 
 const onFormSubmit = async ({ valid, values }: FormSubmitEvent) => {
-  console.log(valid, values);
   if (valid) {
     await $fetch("/api/manage/scores", {
       method: "POST",

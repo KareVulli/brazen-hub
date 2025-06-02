@@ -1,8 +1,12 @@
 <template>
   <main>
     <PageTitle title="Manage custom scores" />
-    <ManageLeaderboardTable v-if="data" :entries="data.scores" />
-    <CreateScoreForm @created="onCreated" />
+    <ManageLeaderboardTable
+      v-if="data"
+      :entries="data.scores"
+      @deleted="refresh"
+    />
+    <CreateScoreForm @created="refresh" />
   </main>
 </template>
 
@@ -12,8 +16,4 @@ definePageMeta({
 });
 
 const { data, refresh } = await useFetch("/api/manage/scores");
-
-function onCreated() {
-  refresh();
-}
 </script>

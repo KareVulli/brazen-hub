@@ -1,6 +1,7 @@
 <template>
-  <DataTable :value="entries" sort-field="place" :sort-order="1">
+  <DataTable :value="entries" sort-field="id" :sort-order="1" size="small">
     <template #empty>No scores found</template>
+    <Column field="id" header="ID" sortable sort-field="id" />
     <Column
       class="min-w-24"
       field="rule.name"
@@ -60,6 +61,18 @@
         <ScoreDateColumn :date-timestamp="slotProps.data.setAt" />
       </template>
     </Column>
+    <Column class="text-end">
+      <template #body="{ data }">
+        <Button
+          size="small"
+          icon="pi pi-trash"
+          severity="danger"
+          variant="text"
+          rounded
+          @click="onDelete(data.id)"
+        />
+      </template>
+    </Column>
   </DataTable>
 </template>
 
@@ -69,4 +82,13 @@ import type { CustomScore } from "~~/server/utils/score";
 defineProps<{
   entries: CustomScore[];
 }>();
+
+const emit = defineEmits<{
+  deleted: [];
+}>();
+
+async function onDelete(id: number) {
+  await $fetch(`/api/manage/scores/${id}`, { method: "DELETE" });
+  emit("deleted");
+}
 </script>
