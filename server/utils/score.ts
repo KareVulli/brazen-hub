@@ -23,7 +23,7 @@ export interface CustomScore extends BaseScore {
 export interface BaseScore {
   time: number;
   score: number;
-  attempts: number;
+  attempts: number | null;
   setAt: number | null;
   character: Character | null;
   subWeapon: ItemDto | null;

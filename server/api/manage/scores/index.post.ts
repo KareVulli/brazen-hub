@@ -47,5 +47,5 @@ export default defineEventHandler(async (event): Promise<void> => {
     });
   }
 
-  await writeScore({ ...data, attempts: -1, userId: user.id });
+  await writeScore({ ...data, userId: user.id });
 });

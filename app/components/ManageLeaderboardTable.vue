@@ -55,7 +55,6 @@
       </template>
     </Column>
     <Column class="min-w-28" field="score" header="Score" sortable />
-    <Column class="min-w-28" field="attempts" header="Attempts" sortable />
     <Column class="min-w-36" field="setAt" header="Date" sortable>
       <template #body="slotProps">
         <ScoreDateColumn :date-timestamp="slotProps.data.setAt" />

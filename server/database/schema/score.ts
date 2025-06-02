@@ -13,7 +13,7 @@ export const scoreTable = sqliteTable("score", {
     .notNull(),
   time: integer("time").notNull(),
   score: integer("score").notNull(),
-  attempts: integer("attempts").notNull(),
+  attempts: integer("attempts"),
   ruleId: integer("rule_id"),
   characterId: integer("character_id"),
   subWeaponId: integer("sub_weapon_id"),

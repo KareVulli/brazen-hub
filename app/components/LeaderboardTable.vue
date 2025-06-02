@@ -54,7 +54,14 @@
       field="attempts"
       header="Attempts"
       sortable
-    />
+    >
+      <template #body="slotProps">
+        <span v-if="slotProps.data.attempts !== null">{{
+          slotProps.data.attempts
+        }}</span>
+        <i v-else class="opacity-50">Unknown</i>
+      </template>
+    </Column>
     <Column class="min-w-36" field="setAt" header="Date" sortable>
       <template #body="slotProps">
         <ScoreDateColumn :date-timestamp="slotProps.data.setAt" />
