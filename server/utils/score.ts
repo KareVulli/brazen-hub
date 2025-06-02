@@ -2,6 +2,7 @@ import { isNull } from "drizzle-orm";
 import { getColumns } from "../database/getColumns";
 import { ruleTable, scoreTable, userTable } from "../database/schema";
 import { getLatestCharactersSubquery } from "./character";
+import type { DBScoreInsert } from "./drizzle";
 import { getLatestItemsSubquery } from "./item";
 import type { RuleDto } from "./rule";
 
@@ -152,4 +153,8 @@ export async function getCustomScores(): Promise<CustomScore[]> {
     .where(isNull(scoreTable.place));
 
   return scores;
+}
+
+export async function writeScore(score: DBScoreInsert): Promise<void> {
+  await useDrizzle().insert(scoreTable).values(score);
 }

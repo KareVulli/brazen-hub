@@ -2,6 +2,7 @@
   <main>
     <PageTitle title="Manage custom scores" />
     <ManageLeaderboardTable v-if="data" :entries="data.scores" />
+    <CreateScoreForm @created="onCreated" />
   </main>
 </template>
 
@@ -10,5 +11,9 @@ definePageMeta({
   middleware: ["auth-admin"],
 });
 
-const { data } = await useFetch("/api/manage/scores");
+const { data, refresh } = await useFetch("/api/manage/scores");
+
+function onCreated() {
+  refresh();
+}
 </script>

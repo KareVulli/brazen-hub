@@ -19,7 +19,7 @@ import type {
   DBWeekly,
   DBWeeklyScore,
 } from "./drizzle";
-import { getItemsByGameVersion } from "./item";
+import { getIndexedItemsByGameVersion } from "./item";
 import type { RuleDto } from "./rule";
 
 export interface EventInfo {
@@ -366,7 +366,7 @@ async function eventInfoFromDB(weekly: DBEventInfo): Promise<EventInfo> {
   const characters = await getCharactersByGameVersion(
     process.env.NUXT_GAME_VERSION_CODE || "not-found"
   );
-  const items = await getItemsByGameVersion(
+  const items = await getIndexedItemsByGameVersion(
     process.env.NUXT_GAME_VERSION_CODE || "not-found"
   );
 
