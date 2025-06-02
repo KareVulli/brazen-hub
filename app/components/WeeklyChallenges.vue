@@ -1,17 +1,19 @@
 <template>
-  <div class="flex flex-col justify-between lg:flex-row gap-4">
-    <PageTitle title="Weekly Challenges" />
-    <AuthState v-slot="{ loggedIn, user }">
-      <Button
-        v-if="loggedIn && user?.role === ROLE_ADMIN"
-        label="Try to update from Brazen Blaze"
-        icon="pi pi-refresh"
-        size="small"
-        severity="secondary"
-        @click="refetch"
-      />
-    </AuthState>
-  </div>
+  <PageTitle title="Weekly Challenges">
+    <template #actions>
+      <AuthState v-slot="{ loggedIn, user }">
+        <Button
+          v-if="loggedIn && user?.role === ROLE_ADMIN"
+          label="Try to update from Brazen Blaze"
+          icon="pi pi-refresh"
+          size="small"
+          severity="secondary"
+          @click="refetch"
+        />
+      </AuthState>
+    </template>
+  </PageTitle>
+
   <div class="flex flex-col lg:flex-row gap-4">
     <SideMenu :items="items" />
     <div class="flex-grow">
