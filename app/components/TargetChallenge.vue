@@ -5,7 +5,7 @@
     other known way of getting solo game scores.
   </p>
   <p class="mb-4">Maximum of top 100 scores are shown.</p>
-  <LeaderboardTable :entries="scores" />
+  <LeaderboardTable :entries="scores" :attempts="false" />
 </template>
 
 <script setup lang="ts">
