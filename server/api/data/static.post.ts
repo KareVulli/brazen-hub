@@ -92,8 +92,9 @@ const requestSchema = z.object({
   rules: z.array(gameRuleSchema),
   stages: z.array(stageSchema),
 });
+
 export default eventHandler(async (event): Promise<void> => {
-  checkAllowedToUpdate(event);
+  await checkAllowedToUpdate(event);
   const staticData = await readValidatedBody(event, requestSchema.parse);
   await replaceRulesInDB(staticData.soloRules);
   await replaceCharactersInDB(staticData.gameVersion, staticData.characters);

@@ -85,7 +85,7 @@ async function migrateWeekly(
 }
 
 export default eventHandler(async (event): Promise<void> => {
-  checkAllowedToUpdate(event);
+  await checkAllowedToUpdate(event);
   const request = await readValidatedBody(event, requestSchema.parse);
 
   console.log(

@@ -10,7 +10,7 @@ export default eventHandler(
   async (event): Promise<{ event: BrazenApiEventInfo | null }> => {
     const config = useRuntimeConfig(event);
 
-    checkAllowedToUpdate(event);
+    await checkAllowedToUpdate(event);
 
     const rawData = await getRawEventInfo(config.bzToken);
 

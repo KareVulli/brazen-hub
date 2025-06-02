@@ -4,18 +4,13 @@ import {
   getRawEventInfo,
 } from "~~/server/utils/brazen-api/getEventInfo";
 import { hasRecentEntry, writeToDB } from "~~/server/utils/eventInfo";
-
-enum UpdateStatus {
-  UP_TO_DATE,
-  NO_NEW_EVENT,
-  UPDATED,
-}
+import { UpdateStatus } from "../../../../types/UpdateStatus";
 
 export default eventHandler(
   async (event): Promise<{ status: UpdateStatus }> => {
     const config = useRuntimeConfig(event);
 
-    checkAllowedToUpdate(event);
+    await checkAllowedToUpdate(event);
 
     console.log("Checking last update time...");
     const recentlyUpdated = await hasRecentEntry(config.refreshTime * 1000);
