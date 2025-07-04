@@ -1,3 +1,4 @@
+import { getColumns } from "../database/getColumns";
 import { gameRuleTable } from "../database/schema/gameRule";
 import type { DBGameRule } from "./drizzle";
 
@@ -47,6 +48,30 @@ export interface GameRule {
   collapseSteps: number;
 }
 
+export function gameRuleToDto(gameRule: GameRule): GameRuleDto {
+  return {
+    id: gameRule.gameRuleId,
+    ruleDetailsId: gameRule.ruleDetailsId,
+    name: gameRule.name,
+    description: gameRule.description,
+    gameDescription: gameRule.gameDescription,
+    teamCount: gameRule.teamCount,
+    minTeamCount: gameRule.minTeamCount,
+    playersPerTeam: gameRule.playersPerTeam,
+    killUltimateBonus: gameRule.killUltimateBonus,
+    teammateDeathUltimateBonus: gameRule.teammateDeathUltimateBonus,
+    ultimateRate: gameRule.ultimateRate,
+    gameRuleType: gameRule.gameRuleType,
+    collapseTime1: gameRule.collapseTime1,
+    collapseTime2: gameRule.collapseTime2,
+    collapseTime3: gameRule.collapseTime3,
+    collapseTime4: gameRule.collapseTime4,
+    collapseTime5: gameRule.collapseTime5,
+    collapseTimeAll: gameRule.collapseTimeAll,
+    collapseSteps: gameRule.collapseSteps,
+  };
+}
+
 export async function replaceGameRulesInDB(
   gameVersion: string,
   gameRules: GameRuleDto[]
@@ -92,7 +117,7 @@ export function gameRuleFromDB(gameRule: DBGameRule): GameRule {
   return {
     id: gameRule.id,
     gameVersion: gameRule.gameVersion,
-    gameRuleId: gameRule.id,
+    gameRuleId: gameRule.gameRuleId,
     ruleDetailsId: gameRule.ruleDetailsId,
     name: gameRule.name,
     description: gameRule.description,
@@ -125,4 +150,47 @@ export async function getGameRuleByGameRuleId(
     return gameRuleFromDB(dbGameRule);
   }
   return null;
+}
+
+async function getDBGameRulesByGameVersion(
+  gameVersion: string | number
+): Promise<DBGameRule[]> {
+  return await useDrizzle().query.gameRuleTable.findMany({
+    where: eq(gameRuleTable.gameVersion, gameVersion + ""),
+    orderBy: [asc(gameRuleTable.gameRuleId)],
+  });
+}
+
+export async function getGameRulesByGameVersion(
+  gameVersion: string | number
+): Promise<GameRule[]> {
+  const dbGameRules = await getDBGameRulesByGameVersion(gameVersion);
+  return dbGameRules.map((gameRule) => gameRuleFromDB(gameRule));
+}
+
+export function getLatestGameRulesSubquery() {
+  const subQuery = useDrizzle()
+    .$with("gamerules_with_row_number")
+    .as(
+      useDrizzle()
+        .select({
+          ...getColumns(gameRuleTable),
+          rowNumber: sql<number>`ROW_NUMBER() OVER (
+          PARTITION BY ${gameRuleTable.gameRuleId}
+          ORDER BY ${gameRuleTable.gameVersion} DESC
+        )`.as("row_number"),
+        })
+        .from(gameRuleTable)
+    );
+
+  const { rowNumber, ...subQueryColumns } = getColumns(subQuery);
+  return useDrizzle()
+    .$with("latest_gamerules")
+    .as(
+      useDrizzle()
+        .with(subQuery)
+        .select(subQueryColumns)
+        .from(subQuery)
+        .where(eq(subQuery.rowNumber, 1))
+    );
 }

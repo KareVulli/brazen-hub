@@ -8,3 +8,5 @@ export * from "./item";
 export * from "./gameRule";
 export * from "./stage";
 export * from "./account";
+export * from "./room";
+export * from "./host";

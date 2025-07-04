@@ -13,6 +13,7 @@
 <script setup lang="ts">
 definePageMeta({
   middleware: ["auth-admin"],
+  layout: "management",
 });
 
 const { data, refresh } = await useFetch("/api/manage/scores");

@@ -1,5 +1,5 @@
 import type { Stage } from "~~/server/utils/stage";
-import { getStageFromDB } from "~~/server/utils/stage";
+import { getStageById } from "~~/server/utils/stage";
 import type { BrazenApiPublicRoom } from "../../utils/brazen-api/getPublicRooms";
 import { getPublicRooms } from "../../utils/brazen-api/getPublicRooms";
 import { getCurrentWeekly } from "../../utils/eventInfo";
@@ -30,7 +30,7 @@ async function publicRoomsToHomePublicRooms(
       user = await fetchAndUpdateUser(bzToken, room.createdByUserKey);
     }
     if (room.stageId > 0) {
-      stage = await getStageFromDB(room.stageId);
+      stage = await getStageById(room.stageId);
     }
     homePublicRooms.push({
       user: user,

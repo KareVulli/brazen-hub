@@ -31,7 +31,11 @@ export async function writeStageToDB(stage: StageDto) {
   });
 }
 
-export async function getStageFromDB(id: number): Promise<Stage | null> {
+export async function getStages(): Promise<Stage[]> {
+  return await useDrizzle().query.stageTable.findMany();
+}
+
+export async function getStageById(id: number): Promise<Stage | null> {
   const stage = await useDrizzle().query.stageTable.findFirst({
     where: eq(stageTable.id, id),
   });
