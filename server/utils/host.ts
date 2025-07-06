@@ -2,6 +2,13 @@ import { notExists } from "drizzle-orm";
 import { hostTable, roomTable } from "../database/schema";
 import type { DBHost } from "./drizzle";
 import { getColumns } from "../database/getColumns";
+import { createGuest } from "./brazen-api/createGuest";
+
+export interface Host {
+  name: string;
+  userKey: string;
+  token: string;
+}
 
 export async function getFreeHost(): Promise<DBHost> {
   const host = await useDrizzle()
@@ -24,14 +31,14 @@ export async function getFreeHost(): Promise<DBHost> {
   return createHost();
 }
 async function createHost(): Promise<DBHost> {
-  // TODO: Create real user
+  const host = await createGuest();
   return (
     await useDrizzle()
       .insert(hostTable)
       .values({
-        name: "foobar",
-        userKey: "1337",
-        token: "hello-token",
+        name: host.user_name,
+        userKey: host.user_key,
+        token: host.token,
       })
       .returning(getColumns(hostTable))
   )[0];
