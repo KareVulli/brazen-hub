@@ -1,5 +1,6 @@
 import { getColumns } from "../database/getColumns";
 import { roomTable, stageTable } from "../database/schema";
+import { createPrivateMatchRoom } from "./brazen-api/createPrivateMatchRoom";
 import type { DBRoomInsert } from "./drizzle";
 import {
   gameRuleToDto,
@@ -58,7 +59,23 @@ export async function getRooms(): Promise<Room[]> {
     .orderBy(desc(roomTable.id));
 }
 
-export async function createRoom(room: DBRoomInsert): Promise<void> {
+export async function createRoom(
+  host: DBHost,
+  stageId: number,
+  gameRuleId: number,
+  publicRoom: boolean
+): Promise<void> {
+  const privateMatchRoom = await createPrivateMatchRoom(host.token);
+
+  const room: DBRoomInsert = {
+    hostId: host.id,
+    matchId: privateMatchRoom.id,
+    stageId: stageId,
+    gameRuleId: gameRuleId,
+    public: publicRoom,
+    invitationCode: privateMatchRoom.invitationCode,
+  };
+
   await useDrizzle().insert(roomTable).values(room);
 }
 

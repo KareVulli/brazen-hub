@@ -25,6 +25,7 @@
     "chartjs-plugin-zoom": "^2.2.0",
     "dayjs-nuxt": "2.1.11",
     "drizzle-orm": "^0.38.3",
+    "msgpackr": "^1.11.4",
     "nuxt": "^3.15.2",
     "nuxt-auth-utils": "0.5.16",
     "nuxt-plotly": "1.0.12",
