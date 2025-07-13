@@ -1,12 +1,13 @@
 import { getColumns } from "../database/getColumns";
 import { roomTable, stageTable } from "../database/schema";
 import { createPrivateMatchRoom } from "./brazen-api/createPrivateMatchRoom";
-import type { DBRoomInsert } from "./drizzle";
 import {
-  gameRuleToDto,
-  getLatestGameRulesSubquery,
-  type GameRuleDto,
-} from "./gameRule";
+  RoomVisibility,
+  syncPrivateMatchRoom,
+} from "./brazen-api/syncPrivateMatchRoom";
+import type { DBRoomInsert } from "./drizzle";
+import { gameRuleToDto, getLatestGameRulesSubquery } from "./gameRule";
+import type { GameRuleDto } from "./gameRule";
 import type { StageDto } from "./stage";
 
 export interface Room {
@@ -75,6 +76,18 @@ export async function createRoom(
     public: publicRoom,
     invitationCode: privateMatchRoom.invitationCode,
   };
+
+  await syncPrivateMatchRoom(host.token, {
+    PrivateMatchRoomId: privateMatchRoom.id,
+    LeaderUserKey: host.userKey,
+    Players: [{ UserKey: host.userKey }],
+    Visibility: RoomVisibility.Private,
+    VoiceChatSettings: 1,
+    GameRuleId: gameRuleId,
+    StageId: stageId,
+    SupportItemsSettings: 0,
+    RoomTagId: 1,
+  });
 
   await useDrizzle().insert(roomTable).values(room);
 }

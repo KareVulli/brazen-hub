@@ -51,7 +51,7 @@ export async function brazenMessagePackApiRequest<TResponse>(
   request: FetchRequest,
   method: string,
   headers?: HeadersInit,
-  body?: Record<string, unknown>
+  body?: unknown
 ): Promise<TResponse> {
   const response = await getBrazenMessagePackApiClient().raw(request, {
     method: method,
