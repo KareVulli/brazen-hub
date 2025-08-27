@@ -93,6 +93,10 @@ const items = ref([
     label: "Characters",
     route: "/characters",
   },
+  {
+    label: "Wiki",
+    route: "/wiki",
+  },
 ]);
 </script>
 

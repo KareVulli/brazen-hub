@@ -1,0 +1,8 @@
+ignoredBuiltDependencies:
+  - '@parcel/watcher'
+  - esbuild
+  - msgpackr-extract
+  - workerd
+
+onlyBuiltDependencies:
+  - better-sqlite3

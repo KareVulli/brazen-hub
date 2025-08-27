@@ -1,9 +1,10 @@
 import type { Config } from "tailwindcss";
 // @ts-expect-error no declared types at this time
 import PrimeUI from "tailwindcss-primeui";
+import Typography from "@tailwindcss/typography";
 
 export default <Partial<Config>>{
-  plugins: [PrimeUI],
+  plugins: [PrimeUI, Typography],
   theme: {
     extend: {
       aspectRatio: {

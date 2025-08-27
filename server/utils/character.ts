@@ -58,7 +58,7 @@ export interface DetailedCharacter extends Character {
 
 export async function replaceCharactersInDB(
   gameVersion: string,
-  characters: DetailedCharacterDto[]
+  characters: DetailedCharacterDto[],
 ) {
   await useDrizzle()
     .delete(characterTable)
@@ -71,7 +71,7 @@ export async function replaceCharactersInDB(
 
 export async function writeCharacterToDB(
   gameVersion: string,
-  characterDto: DetailedCharacterDto
+  characterDto: DetailedCharacterDto,
 ) {
   await useDrizzle().insert(characterTable).values({
     gameVersion: gameVersion,
@@ -123,7 +123,7 @@ export function characterFromDB(character: DBCharacter): Character {
 }
 
 export function detailedCharacterFromDB(
-  character: DBCharacter
+  character: DBCharacter,
 ): DetailedCharacter {
   return {
     ...characterFromDB(character),
@@ -134,7 +134,7 @@ export function detailedCharacterFromDB(
 }
 
 export async function getCharacterByCharacterId(
-  characterId: number
+  characterId: number,
 ): Promise<Character | null> {
   const dbCharacter = await useDrizzle().query.characterTable.findFirst({
     where: eq(characterTable.characterId, characterId),
@@ -146,8 +146,21 @@ export async function getCharacterByCharacterId(
   return null;
 }
 
+export async function getDetailedCharacterByCharacterId(
+  characterId: number,
+): Promise<DetailedCharacter | null> {
+  const dbCharacter = await useDrizzle().query.characterTable.findFirst({
+    where: eq(characterTable.characterId, characterId),
+    orderBy: [desc(characterTable.gameVersion)],
+  });
+  if (dbCharacter) {
+    return detailedCharacterFromDB(dbCharacter);
+  }
+  return null;
+}
+
 async function getDBCharactersByGameVersion(
-  gameVersion: string | number
+  gameVersion: string | number,
 ): Promise<DBCharacter[]> {
   return await useDrizzle().query.characterTable.findMany({
     where: eq(characterTable.gameVersion, gameVersion + ""),
@@ -156,7 +169,7 @@ async function getDBCharactersByGameVersion(
 }
 
 export async function getCharactersByGameVersion(
-  gameVersion: string | number
+  gameVersion: string | number,
 ): Promise<Record<number, Character | undefined>> {
   const dbCharacters = await getDBCharactersByGameVersion(gameVersion);
   return dbCharacters
@@ -168,7 +181,7 @@ export async function getCharactersByGameVersion(
 }
 
 export async function getDetailedCharactersByGameVersion(
-  gameVersion: string | number
+  gameVersion: string | number,
 ): Promise<DetailedCharacter[]> {
   const dbCharacters = await getDBCharactersByGameVersion(gameVersion);
   return dbCharacters.map((character) => detailedCharacterFromDB(character));
@@ -186,7 +199,7 @@ export function getLatestCharactersSubquery() {
           ORDER BY ${characterTable.gameVersion} DESC
         )`.as("row_number"),
         })
-        .from(characterTable)
+        .from(characterTable),
     );
   const { rowNumber, ...subQueryColumns } = getColumns(subQuery);
   return useDrizzle()
@@ -196,6 +209,6 @@ export function getLatestCharactersSubquery() {
         .with(subQuery)
         .select(subQueryColumns)
         .from(subQuery)
-        .where(eq(subQuery.rowNumber, 1))
+        .where(eq(subQuery.rowNumber, 1)),
     );
 }
