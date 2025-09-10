@@ -1,7 +1,16 @@
 <template>
   <div>
     <PageTitle title="Brazen Blaze wiki" />
-    <p class="mb-4">Work in progress!!!</p>
+    <p class="mb-4">
+      <Message severity="info">
+        This wiki is in very early development and there is not much information
+        here yet. Most existing pages have incomplete/missing information.
+        <br />Feel free to contribute by creating a pull request in
+        <AppLink to="https://github.com/KareVulli/brazen-hub" target="_blank"
+          >https://github.com/KareVulli/brazen-hub</AppLink
+        >.
+      </Message>
+    </p>
     <div class="grid md:grid-cols-3 gap-4">
       <WikiCategory title="Characters (Not ready)" :items="characterItems" />
       <WikiCategory title="Maps (Not ready)" :items="mapItems" />
@@ -39,7 +48,15 @@ const mapItems = ref([
 const itemItems = ref([
   {
     label: "Handgun",
-    route: "/wiki/wip",
+    route: "/wiki/items/handgun",
+  },
+  {
+    label: "Combat Knife",
+    route: "/wiki/items/combat-knife",
+  },
+  {
+    label: "Electric Knuckles",
+    route: "/wiki/items/electric-knuckles",
   },
 ]);
 

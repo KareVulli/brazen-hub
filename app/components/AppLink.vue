@@ -7,5 +7,5 @@
 <script setup lang="ts">
 import type { NuxtLinkProps } from "#app";
 
-defineProps<{ to: NuxtLinkProps["to"] }>();
+defineProps<{ to: NuxtLinkProps["to"]; target?: NuxtLinkProps["target"] }>();
 </script>
