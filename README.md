@@ -9,7 +9,6 @@ Brazen Blaze statistics for all your needs!
 - Round team matches leaderboards
 - Player search
 - Character stats
-- More to come!
 
 ## Setup
 

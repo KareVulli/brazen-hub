@@ -1,6 +1,10 @@
 <template>
   <div>
     <div class="container mx-auto px-4 py-4">
+      <Message severity="warn" class="mb-4"
+        >This website is not maintained from 2025-10-08 and may not work
+        properly if the game has been updated since then.</Message
+      >
       <Menubar :model="items">
         <template #start>
           <NuxtLink to="/" class="font-bold mx-4 hover:text-red-600 transition"

@@ -3,12 +3,7 @@
     <PageTitle title="Brazen Blaze wiki" />
     <p class="mb-4">
       <Message severity="info">
-        This wiki is in very early development and there is not much information
-        here yet. Most existing pages have incomplete/missing information.
-        <br />Feel free to contribute by creating a pull request in
-        <AppLink to="https://github.com/KareVulli/brazen-hub" target="_blank"
-          >https://github.com/KareVulli/brazen-hub</AppLink
-        >.
+        This wiki is incomplete with very little information available.
       </Message>
     </p>
     <div class="grid md:grid-cols-3 gap-4">
