@@ -196,6 +196,10 @@ export async function createRoom(
     hostToken: host.token,
     matchId: privateMatchRoom.id,
     public: publicRoom,
+    players: players.map((p) => ({
+      userKey: p.userKey,
+      teamIndex: p.team + 1,
+    })),
   });
 }
 

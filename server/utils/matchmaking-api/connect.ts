@@ -15,6 +15,7 @@ export interface ConnectRequest {
   hostToken: string;
   matchId: string;
   public: boolean;
+  players: { userKey: string; teamIndex: number }[];
 }
 
 export interface ConnectResponse {
@@ -25,8 +26,8 @@ export interface ConnectResponse {
 export async function connect(
   request: ConnectRequest,
 ): Promise<ConnectResponse> {
-  return await getMatchmakingApiClient()<ConnectResponse>(
-    "api/room/connect",
-    { method: "POST", body: request }
-  );
+  return await getMatchmakingApiClient()<ConnectResponse>("api/room/connect", {
+    method: "POST",
+    body: request,
+  });
 }
