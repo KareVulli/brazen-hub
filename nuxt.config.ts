@@ -1,5 +1,5 @@
-import { definePreset } from "@primevue/themes";
-import Aura from "@primevue/themes/aura";
+import { definePreset } from "@primeuix/themes";
+import Aura from "@primeuix/themes/aura";
 
 const CustomAura = definePreset(Aura, {
   semantic: {
@@ -90,6 +90,9 @@ export default defineNuxtConfig({
   },
   devtools: { enabled: true },
   primevue: {
+    components: {
+      exclude: ["Editor", "Chart", "Form", "FormField"],
+    },
     options: {
       theme: {
         preset: CustomAura,

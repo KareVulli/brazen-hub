@@ -1,10 +1,6 @@
 <template>
   <div v-if="targetChallenges && characters && items">
-    <Form
-      :resolver="resolver"
-      class="flex flex-col gap-2 items-start mt-4"
-      @submit="onFormSubmit"
-    >
+    <form class="flex flex-col gap-2 items-start mt-4" @submit="onSubmit">
       <h2>Add new score</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full">
         <FormTextInput name="userId" label="User ID" type="text" />
@@ -28,21 +24,21 @@
         />
       </div>
       <Button type="submit" severity="secondary" label="Add custom score" />
-    </Form>
+    </form>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { FormSubmitEvent } from "@primevue/forms";
-import { zodResolver } from "@primevue/forms/resolvers/zod";
-import { scoreSchema } from "~~/validation/scoreSchema";
+import { toTypedSchema } from "@vee-validate/zod";
+import { useForm } from "vee-validate";
 import { z } from "zod";
+import { scoreSchema } from "~~/validation/scoreSchema";
 
 const emit = defineEmits<{
   created: [];
 }>();
 
-const scoreFormSchema = scoreSchema.merge(
+const scoreFormSchema = scoreSchema.extend(
   z.object({
     ruleId: z.object({ id: z.number() }).transform((rule) => rule.id),
     characterId: z
@@ -50,8 +46,12 @@ const scoreFormSchema = scoreSchema.merge(
       .transform((character) => character.characterId),
     subWeaponId: z.object({ id: z.number() }).transform((item) => item.id),
     setAt: z.date().transform((date) => Math.round(date.getTime() / 1000)),
-  })
+  }).shape,
 );
+
+const { handleSubmit } = useForm({
+  validationSchema: toTypedSchema(scoreFormSchema),
+});
 
 const { data: targetChallenges } = await useFetch("/api/target-challenges");
 const { data: characters } = await useFetch("/api/characters");
@@ -75,15 +75,11 @@ const itemsOptions = computed(() => {
   );
 });
 
-const resolver = zodResolver(scoreFormSchema);
-
-const onFormSubmit = async ({ valid, values }: FormSubmitEvent) => {
-  if (valid) {
-    await $fetch("/api/manage/scores", {
-      method: "POST",
-      body: values,
-    });
-    emit("created");
-  }
-};
+const onSubmit = handleSubmit(async (values) => {
+  await $fetch("/api/manage/scores", {
+    method: "POST",
+    body: values,
+  });
+  emit("created");
+});
 </script>

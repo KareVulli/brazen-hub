@@ -1,13 +1,16 @@
 <template>
-  <FormInput :name="name" :label="label">
-    <template #field>
-      <Checkbox binary />
-    </template>
+  <FormInput>
+    <FormFieldLabel :name="name" :label="label" />
+    <Checkbox v-model="value" binary />
+    <FormFieldError :error-message="errorMessage" />
   </FormInput>
 </template>
 
 <script setup lang="ts">
-import type { FormInputProps } from "./FormInput.vue";
+import { useField } from "vee-validate";
+import type { FormFieldProps } from "./FormInput.vue";
 
-defineProps<FormInputProps>();
+const props = defineProps<FormFieldProps>();
+
+const { value, errorMessage } = useField(() => props.name);
 </script>
