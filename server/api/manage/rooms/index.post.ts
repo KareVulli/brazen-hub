@@ -33,5 +33,11 @@ export default defineEventHandler(async (event): Promise<void> => {
 
   const host = await getFreeHost();
 
-  await createRoom(host, stage.id, gameRule.gameRuleId, data.public);
+  await createRoom(
+    host,
+    stage.id,
+    gameRule.gameRuleId,
+    data.public,
+    data.players,
+  );
 });

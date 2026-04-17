@@ -18,7 +18,6 @@
 
 <script setup lang="ts">
 import { z } from "zod";
-import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";
 import { useRoute } from "#app";
 
@@ -31,7 +30,7 @@ const schema = z.object({
 const username = computed(() => route.query.query);
 
 const { handleSubmit } = useForm({
-  validationSchema: toTypedSchema(schema),
+  validationSchema: schema,
   initialValues: {
     username: typeof username.value === "string" ? username.value : "",
   },

@@ -29,7 +29,6 @@
 </template>
 
 <script setup lang="ts">
-import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";
 import { z } from "zod";
 import { scoreSchema } from "~~/validation/scoreSchema";
@@ -50,7 +49,7 @@ const scoreFormSchema = scoreSchema.extend(
 );
 
 const { handleSubmit } = useForm({
-  validationSchema: toTypedSchema(scoreFormSchema),
+  validationSchema: scoreFormSchema,
 });
 
 const { data: targetChallenges } = await useFetch("/api/target-challenges");

@@ -1,0 +1,1 @@
+ALTER TABLE `room_user` ADD `team` integer NOT NULL;

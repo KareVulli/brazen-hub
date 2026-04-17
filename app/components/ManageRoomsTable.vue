@@ -1,6 +1,32 @@
 <template>
-  <DataTable :value="entries" sort-field="id" :sort-order="1" size="small">
+  <DataTable
+    v-model:expanded-rows="expandedRows"
+    :value="entries"
+    data-key="id"
+    sort-field="id"
+    :sort-order="1"
+    size="small"
+  >
     <template #empty>No rooms found</template>
+    <template #header>
+      <div class="flex flex-wrap justify-end gap-2">
+        <Button
+          variant="text"
+          size="small"
+          icon="pi pi-plus"
+          label="Expand All"
+          @click="expandAll"
+        />
+        <Button
+          variant="text"
+          size="small"
+          icon="pi pi-minus"
+          label="Collapse All"
+          @click="collapseAll"
+        />
+      </div>
+    </template>
+    <Column expander />
     <Column field="id" header="ID" sortable sort-field="id" />
     <Column field="matchId" header="Room ID" sortable sort-field="id" />
     <Column field="invitationCode" header="Invitation Code" sortable />
@@ -32,11 +58,33 @@
         />
       </template>
     </Column>
+    <template #expansion="{ data }: { data: Room; index: number }">
+      <div class="p-4">
+        <DataTable :value="data.users">
+          <Column
+            class="min-w-48"
+            field="user"
+            header="User"
+            sortable
+            sort-field="user.name"
+          >
+            <template #body="slotProps">
+              <LinkedUserName :user="slotProps.data.user" />
+            </template>
+          </Column>
+          <Column field="team" header="Team" sortable>
+            <template #body="slotProps">
+              Team {{ slotProps.data.team + 1 }}
+            </template>
+          </Column>
+        </DataTable>
+      </div>
+    </template>
   </DataTable>
 </template>
 
 <script setup lang="ts">
-defineProps<{
+const props = defineProps<{
   entries: Room[];
 }>();
 
@@ -52,4 +100,16 @@ async function onDelete(id: number) {
   await $fetch(`/api/manage/rooms/${id}`, { method: "DELETE" });
   emit("deleted");
 }
+
+const expandedRows = ref<Record<number, boolean>>({});
+
+const expandAll = () => {
+  expandedRows.value = props.entries.reduce<Record<number, boolean>>(
+    (acc, p) => ({ ...acc, [p.id]: true }),
+    {},
+  );
+};
+const collapseAll = () => {
+  expandedRows.value = {};
+};
 </script>

@@ -148,6 +148,20 @@
       "when": 1774561766099,
       "tag": "0020_boring_red_skull",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "6",
+      "when": 1776451744447,
+      "tag": "0021_quiet_tony_stark",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "6",
+      "when": 1776454516326,
+      "tag": "0022_familiar_snowbird",
+      "breakpoints": true
     }
   ]
 }

@@ -31,11 +31,11 @@ export async function updateUserInDB(user: BrazenAPIUser): Promise<number> {
       },
     })
     .returning({ userId: userTable.id });
-  return dbUser.userId;
+  return dbUser!.userId;
 }
 
 export async function getUserFromDB(
-  userKey: string
+  userKey: string,
 ): Promise<BrazenUser | null> {
   const user = await useDrizzle().query.userTable.findFirst({
     where: eq(userTable.userKey, userKey),
@@ -45,7 +45,7 @@ export async function getUserFromDB(
 
 export async function fetchAndUpdateUser(
   apiToken: string,
-  userKey: string
+  userKey: string,
 ): Promise<DetailedBrazenUser | null> {
   const user = await findFirstUser(apiToken, userKey);
   if (!user) {

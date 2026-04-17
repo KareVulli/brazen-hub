@@ -1,5 +1,11 @@
+import { getTableColumns } from "drizzle-orm";
 import { getColumns } from "../database/getColumns";
-import { roomTable, roomUserTable, stageTable } from "../database/schema";
+import {
+  roomTable,
+  roomUserTable,
+  stageTable,
+  userTable,
+} from "../database/schema";
 import { createPrivateMatchRoom } from "./brazen-api/createPrivateMatchRoom";
 import { openPrivateMatchRoom } from "./brazen-api/openPrivateMatchRoom";
 import {
@@ -12,16 +18,28 @@ import type { GameRuleDto } from "./gameRule";
 import { connect } from "./matchmaking-api/connect";
 import { disconnect } from "./matchmaking-api/disconnect";
 import type { StageDto } from "./stage";
+import type { BrazenUser } from "./user";
+
+interface RoomUser {
+  user: BrazenUser;
+  team: number;
+}
 
 export interface Room {
   id: number;
   matchId: string;
+  marsRoomId: string;
   stage: Stage;
   gameRule: GameRule;
   public: boolean;
   invitationCode: string;
-  marsRoomId: string;
   createdAt: Date;
+  users: RoomUser[];
+}
+
+interface RoomUserDto {
+  user: BrazenUser;
+  team: number;
 }
 
 export interface RoomDto {
@@ -33,6 +51,7 @@ export interface RoomDto {
   public: boolean;
   invitationCode: string;
   createdAt: number;
+  users: RoomUserDto[];
 }
 
 export function roomToDto(room: Room): RoomDto {
@@ -44,57 +63,68 @@ export function roomToDto(room: Room): RoomDto {
     gameRule: gameRuleToDto(room.gameRule),
     public: room.public,
     invitationCode: room.invitationCode,
+    users: room.users,
     createdAt: Math.floor(room.createdAt.getTime() / 1000),
   };
 }
 
-export async function getRooms(): Promise<Room[]> {
+function getRoomsQuery() {
   const gameRulesSubquery = getLatestGameRulesSubquery();
-  return await useDrizzle()
+
+  return useDrizzle()
     .with(gameRulesSubquery)
     .select({
       ...getColumns(roomTable),
       gameRule: getColumns(gameRulesSubquery),
       stage: getColumns(stageTable),
+      roomUser: getColumns(roomUserTable),
+      user: getTableColumns(userTable),
     })
     .from(roomTable)
     .innerJoin(stageTable, eq(stageTable.id, roomTable.stageId))
     .innerJoin(
       gameRulesSubquery,
-      eq(gameRulesSubquery.gameRuleId, roomTable.gameRuleId)
+      eq(gameRulesSubquery.gameRuleId, roomTable.gameRuleId),
     )
+    .leftJoin(roomUserTable, eq(roomUserTable.roomId, roomTable.id))
+    .leftJoin(userTable, eq(userTable.id, roomUserTable.userId))
     .orderBy(desc(roomTable.id));
 }
 
+function mergeRows(rows: Awaited<ReturnType<typeof getRoomsQuery>>): Room[] {
+  const result = rows.reduce<Record<number, Room>>((acc, row) => {
+    const { user, roomUser, ...room } = row;
+
+    if (acc[room.id] === undefined) {
+      acc[room.id] = { users: [], ...room };
+    }
+    if (roomUser && user) {
+      acc[room.id]?.users.push({ user: user, team: roomUser.team });
+    }
+
+    return acc;
+  }, {});
+
+  return Object.values(result);
+}
+
+export async function getRooms(): Promise<Room[]> {
+  const rows = await getRoomsQuery();
+  return mergeRows(rows);
+}
+
 export async function getRoomById(id: number): Promise<Room | null> {
-  const gameRulesSubquery = getLatestGameRulesSubquery();
-  const dbRoom = await useDrizzle()
-      .with(gameRulesSubquery)
-      .select({
-        ...getColumns(roomTable),
-        gameRule: getColumns(gameRulesSubquery),
-        stage: getColumns(stageTable),
-      })
-      .from(roomTable)
-      .innerJoin(stageTable, eq(stageTable.id, roomTable.stageId))
-      .innerJoin(
-        gameRulesSubquery,
-        eq(gameRulesSubquery.gameRuleId, roomTable.gameRuleId),
-      )
-      .where(eq(roomTable.id, id))
-      .get()
-    
-  if (dbRoom) {
-    return dbRoom;
-  }
-  return null;
+  const rows = await getRoomsQuery().where(eq(roomTable.id, id));
+  const result = mergeRows(rows);
+  return Object.values(result)[0] || null;
 }
 
 export async function createRoom(
   host: DBHost,
   stageId: number,
   gameRuleId: number,
-  publicRoom: boolean
+  publicRoom: boolean,
+  players: { userKey: string; team: number }[],
 ): Promise<void> {
   const privateMatchRoom = await createPrivateMatchRoom(host.token);
 
@@ -122,7 +152,34 @@ export async function createRoom(
     RoomTagId: 1,
   });
 
-  await useDrizzle().insert(roomTable).values(room);
+  const roomId = (
+    await useDrizzle()
+      .insert(roomTable)
+      .values(room)
+      .returning({ id: roomTable.id })
+  )[0];
+  if (!roomId) {
+    throw new Error("Failed to create room");
+  }
+
+  const users = [];
+  for (let i = 0; i < players.length; i++) {
+    const player = players[i]!;
+    const user = await getUserFromDB(player.userKey);
+    if (!user) {
+      throw new Error(`User with userKey ${player.userKey} not found in DB`);
+    }
+    users.push({
+      roomId: roomId.id,
+      userId: user.id,
+      team: player.team,
+    });
+  }
+  await useDrizzle().insert(roomUserTable).values(users);
+
+  if (!privateMatchRoom.players[0]) {
+    throw new Error("No host player info found in private match room data");
+  }
 
   await connect({
     marsHost: privateMatchRoom.marsHost,
@@ -139,7 +196,7 @@ export async function createRoom(
     hostToken: host.token,
     matchId: privateMatchRoom.id,
     public: publicRoom,
-  })
+  });
 }
 
 export async function closeRoom(id: number): Promise<void> {
@@ -149,7 +206,7 @@ export async function closeRoom(id: number): Promise<void> {
     return;
   }
 
-  await disconnect({marsRoomId: room.marsRoomId});
+  await disconnect({ marsRoomId: room.marsRoomId });
 
   return await deleteRoomById(id);
 }
