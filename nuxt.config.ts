@@ -105,6 +105,8 @@ export default defineNuxtConfig({
     gameVersion: "",
     gameVersionCode: "",
     gameHash: "",
+    matchmakingApi: "",
+    matchmakingToken: "",
   },
   dayjs: {
     plugins: ["duration"],

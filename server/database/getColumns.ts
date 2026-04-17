@@ -1,11 +1,5 @@
-import {
-  is,
-  type ColumnsSelection,
-  type Subquery,
-  Table,
-  View,
-  ViewBaseConfig,
-} from "drizzle-orm";
+import { is, Table, View, ViewBaseConfig } from "drizzle-orm";
+import type { ColumnsSelection, Subquery } from "drizzle-orm";
 import type { AnyMySqlSelect } from "drizzle-orm/mysql-core";
 import type { AnyPgSelect } from "drizzle-orm/pg-core";
 import type { AnySQLiteSelect } from "drizzle-orm/sqlite-core";
@@ -25,19 +19,19 @@ export function getColumns<
     | View
     | Subquery<string, ColumnsSelection>
     | WithSubquery<string, ColumnsSelection>
-    | AnySelect
+    | AnySelect,
 >(
-  table: T
+  table: T,
 ): T extends Table
   ? T["_"]["columns"]
   : T extends View | Subquery | WithSubquery | AnySelect
-  ? T["_"]["selectedFields"]
-  : never {
+    ? T["_"]["selectedFields"]
+    : never {
   return is(table, Table)
     ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (table as any)[(Table as any).Symbol.Columns]
     : is(table, View)
-    ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (table as any)[ViewBaseConfig].selectedFields
-    : table._.selectedFields;
+      ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (table as any)[ViewBaseConfig].selectedFields
+      : table._.selectedFields;
 }

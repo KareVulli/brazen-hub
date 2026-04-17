@@ -134,6 +134,20 @@
       "when": 1751624532239,
       "tag": "0018_spotty_johnny_storm",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "6",
+      "when": 1774560698044,
+      "tag": "0019_jazzy_luke_cage",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "6",
+      "when": 1774561766099,
+      "tag": "0020_boring_red_skull",
+      "breakpoints": true
     }
   ]
 }

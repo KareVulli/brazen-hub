@@ -18,6 +18,7 @@ export type DBStage = typeof schema.stageTable.$inferSelect;
 export type DBAccount = typeof schema.accountTable.$inferSelect;
 export type DBHost = typeof schema.hostTable.$inferSelect;
 export type DBRoom = typeof schema.roomTable.$inferSelect;
+export type DBRoomUser = typeof schema.roomUserTable.$inferSelect;
 
 export type DBScoreInsert = typeof schema.scoreTable.$inferInsert;
 export type DBRoomInsert = typeof schema.roomTable.$inferInsert;

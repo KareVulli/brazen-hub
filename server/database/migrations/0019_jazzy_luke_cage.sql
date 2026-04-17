@@ -1,0 +1,1 @@
+ALTER TABLE `room` ADD `mars_room_id` text NOT NULL;

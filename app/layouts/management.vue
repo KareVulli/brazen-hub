@@ -64,7 +64,6 @@
 
 <script setup lang="ts">
 import { NuxtLink } from "#components";
-import { ROLE_ADMIN } from "~~/server/database/roles";
 
 const items = ref([
   {

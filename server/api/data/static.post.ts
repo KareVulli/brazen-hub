@@ -1,9 +1,7 @@
 import { z } from "zod";
 import { checkAllowedToUpdate } from "~~/server/utils/auth";
-import {
-  replaceGameRulesInDB,
-  type GameRuleDto,
-} from "~~/server/utils/gameRule";
+import { replaceGameRulesInDB } from "~~/server/utils/gameRule";
+import type { GameRuleDto } from "~~/server/utils/gameRule";
 import type { ItemDto } from "~~/server/utils/item";
 import type { StageDto } from "~~/server/utils/stage";
 import { replaceStagesInDB } from "~~/server/utils/stage";

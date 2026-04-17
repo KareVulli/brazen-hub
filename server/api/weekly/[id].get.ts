@@ -1,8 +1,6 @@
 import { z } from "zod";
-import {
-  getEventInfoByEventId,
-  type EventInfo,
-} from "~~/server/utils/eventInfo";
+import { getEventInfoByEventId } from "~~/server/utils/eventInfo";
+import type { EventInfo } from "~~/server/utils/eventInfo";
 
 const requestSchema = z.object({
   id: z.coerce.number().positive().int(),
@@ -25,5 +23,5 @@ export default cachedEventHandler(
   {
     maxAge: 60,
     swr: false,
-  }
+  },
 );

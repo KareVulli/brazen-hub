@@ -1,4 +1,5 @@
-import { getRulesList, type RuleDto } from "../../utils/rule";
+import { getRulesList } from "../../utils/rule";
+import type { RuleDto } from "../../utils/rule";
 
 export default cachedEventHandler(
   async (): Promise<{ rulesets: RuleDto[] }> => {
@@ -9,5 +10,5 @@ export default cachedEventHandler(
   {
     maxAge: 300,
     swr: false,
-  }
+  },
 );

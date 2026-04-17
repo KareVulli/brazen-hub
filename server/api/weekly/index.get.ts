@@ -1,4 +1,5 @@
-import { getLatest, type EventInfo } from "~~/server/utils/eventInfo";
+import { getLatest } from "~~/server/utils/eventInfo";
+import type { EventInfo } from "~~/server/utils/eventInfo";
 
 export default cachedEventHandler(
   async (): Promise<{ event: EventInfo | null }> => {
@@ -7,5 +8,5 @@ export default cachedEventHandler(
   {
     maxAge: 60,
     swr: false,
-  }
+  },
 );

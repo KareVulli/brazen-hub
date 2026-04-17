@@ -5,14 +5,6 @@ import { $fetch } from "ofetch";
 let brazenApiClient: $Fetch | undefined = undefined;
 let brazenMessagepackApiClient: $Fetch | undefined = undefined;
 
-function toObject(value: unknown) {
-  return JSON.stringify(
-    value,
-    (key, value) => (typeof value === "bigint" ? value.toString() : value), // return everything else unchanged
-    2
-  );
-}
-
 export function getBrazenApiClient(): $Fetch {
   console.log("GAME VERSION", process.env.NUXT_GAME_VERSION);
   if (brazenApiClient === undefined) {
@@ -56,7 +48,7 @@ export async function brazenMessagePackApiRequest<TResponse>(
   const response = await getBrazenMessagePackApiClient().raw(request, {
     method: method,
     headers: headers,
-    body: pack(body),
+    body: body !== undefined ? pack(body) : undefined,
   });
   const result = await response._data;
   const data = unpack(result) as TResponse;

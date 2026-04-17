@@ -16,6 +16,14 @@
       <template #body="{ data }">
         <Button
           size="small"
+          icon="pi pi-play"
+          severity="success"
+          variant="text"
+          rounded
+          @click="onStartMatch(data.id)"
+        />
+        <Button
+          size="small"
           icon="pi pi-trash"
           severity="danger"
           variant="text"
@@ -35,6 +43,10 @@ defineProps<{
 const emit = defineEmits<{
   deleted: [];
 }>();
+
+async function onStartMatch(id: number) {
+  await $fetch(`/api/manage/rooms/${id}/start-match`, { method: "POST" });
+}
 
 async function onDelete(id: number) {
   await $fetch(`/api/manage/rooms/${id}`, { method: "DELETE" });
