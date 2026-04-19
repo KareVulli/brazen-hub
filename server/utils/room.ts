@@ -13,8 +13,8 @@ import {
   syncPrivateMatchRoom,
 } from "./brazen-api/syncPrivateMatchRoom";
 import type { DBRoomInsert } from "./drizzle";
-import { gameRuleToDto, getLatestGameRulesSubquery } from "./gameRule";
 import type { GameRuleDto } from "./gameRule";
+import { gameRuleToDto, getLatestGameRulesSubquery } from "./gameRule";
 import { connect } from "./matchmaking-api/connect";
 import { disconnect } from "./matchmaking-api/disconnect";
 import type { StageDto } from "./stage";
@@ -173,6 +173,7 @@ export async function createRoom(
       roomId: roomId.id,
       userId: user.id,
       team: player.team,
+      name: user.name,
     });
   }
   await useDrizzle().insert(roomUserTable).values(users);

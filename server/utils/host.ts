@@ -3,6 +3,7 @@ import { hostTable, roomTable } from "../database/schema";
 import type { DBHost } from "./drizzle";
 import { getColumns } from "../database/getColumns";
 import { createGuest } from "./brazen-api/createGuest";
+import { setUserName } from "./brazen-api/setUserName";
 
 export interface Host {
   name: string;
@@ -19,8 +20,8 @@ export async function getFreeHost(): Promise<DBHost> {
         useDrizzle()
           .select()
           .from(roomTable)
-          .where(eq(roomTable.hostId, hostTable.id))
-      )
+          .where(eq(roomTable.hostId, hostTable.id)),
+      ),
     )
     .get();
 
@@ -32,7 +33,7 @@ export async function getFreeHost(): Promise<DBHost> {
 }
 async function createHost(): Promise<DBHost> {
   const host = await createGuest();
-  return (
+  const dbHost = (
     await useDrizzle()
       .insert(hostTable)
       .values({
@@ -41,5 +42,12 @@ async function createHost(): Promise<DBHost> {
         token: host.token,
       })
       .returning(getColumns(hostTable))
-  )[0];
+  )[0]!;
+
+  await setUserName(
+    host.token,
+    `MatchingBot_${((dbHost.id % 10000) + "").padStart(4, "0")}`, // 16 chars max username length
+  );
+
+  return dbHost;
 }
