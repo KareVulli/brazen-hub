@@ -110,6 +110,9 @@ export default defineNuxtConfig({
     gameHash: "",
     matchmakingApi: "",
     matchmakingToken: "",
+    public: {
+      matchmakingWs: "",
+    },
   },
   dayjs: {
     plugins: ["duration"],

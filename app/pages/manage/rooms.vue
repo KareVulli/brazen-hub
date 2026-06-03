@@ -12,5 +12,23 @@ definePageMeta({
   layout: "management",
 });
 
+const config = useRuntimeConfig();
+
+const { data: wsdata } = useWebSocket(config.public.matchmakingWs, {
+  onConnected(ws) {
+    console.log("Connected!");
+    ws.send("Hello from client!");
+  },
+  onDisconnected(ws, event) {
+    console.log("Disconnected!", event.code);
+  },
+  onError(ws, event) {
+    console.error("Error:", event);
+  },
+  onMessage(ws, event) {
+    console.log("Message:", event.data);
+  },
+});
+
 const { data, refresh } = await useFetch("/api/manage/rooms");
 </script>
