@@ -124,7 +124,7 @@ export async function createRoom(
   stageId: number,
   gameRuleId: number,
   publicRoom: boolean,
-  players: { userKey: string; team: number }[],
+  users: { userId: number; userKey: string; name: string; team: number }[],
 ): Promise<void> {
   const privateMatchRoom = await createPrivateMatchRoom(host.token);
 
@@ -162,21 +162,9 @@ export async function createRoom(
     throw new Error("Failed to create room");
   }
 
-  const users = [];
-  for (let i = 0; i < players.length; i++) {
-    const player = players[i]!;
-    const user = await getUserFromDB(player.userKey);
-    if (!user) {
-      throw new Error(`User with userKey ${player.userKey} not found in DB`);
-    }
-    users.push({
-      roomId: roomId.id,
-      userId: user.id,
-      team: player.team,
-      name: user.name,
-    });
-  }
-  await useDrizzle().insert(roomUserTable).values(users);
+  await useDrizzle()
+    .insert(roomUserTable)
+    .values(users.map((user) => ({ roomId: roomId.id, ...user })));
 
   if (!privateMatchRoom.players[0]) {
     throw new Error("No host player info found in private match room data");
@@ -197,9 +185,9 @@ export async function createRoom(
     hostToken: host.token,
     matchId: privateMatchRoom.id,
     public: publicRoom,
-    players: players.map((p) => ({
-      userKey: p.userKey,
-      teamIndex: p.team + 1,
+    players: users.map((user) => ({
+      userKey: user.userKey,
+      teamIndex: user.team + 1,
     })),
   });
 }
