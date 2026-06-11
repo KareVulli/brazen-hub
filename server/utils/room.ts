@@ -145,7 +145,7 @@ export async function createRoom(
     LeaderUserKey: host.userKey,
     Players: [{ UserKey: host.userKey }],
     Visibility: publicRoom ? RoomVisibility.Public : RoomVisibility.Private,
-    VoiceChatSettings: 1,
+    VoiceChatSettings: 0,
     GameRuleId: gameRuleId,
     StageId: stageId,
     SupportItemsSettings: 0,
