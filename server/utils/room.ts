@@ -1,9 +1,11 @@
 import { getTableColumns } from "drizzle-orm";
 import { getColumns } from "../database/getColumns";
 import {
+  matchTable,
   roomTable,
   roomUserTable,
   stageTable,
+  teamTable,
   userTable,
 } from "../database/schema";
 import { createPrivateMatchRoom } from "./brazen-api/createPrivateMatchRoom";
@@ -19,6 +21,7 @@ import { connect } from "./matchmaking-api/connect";
 import { disconnect } from "./matchmaking-api/disconnect";
 import type { StageDto } from "./stage";
 import type { BrazenUser } from "./user";
+import { matchToDto } from "./match";
 
 interface RoomUser {
   user: BrazenUser;
@@ -35,6 +38,7 @@ export interface Room {
   invitationCode: string;
   createdAt: Date;
   users: RoomUser[];
+  matches: Match[];
 }
 
 interface RoomUserDto {
@@ -52,6 +56,7 @@ export interface RoomDto {
   invitationCode: string;
   createdAt: number;
   users: RoomUserDto[];
+  matches: MatchDto[];
 }
 
 export function roomToDto(room: Room): RoomDto {
@@ -64,6 +69,7 @@ export function roomToDto(room: Room): RoomDto {
     public: room.public,
     invitationCode: room.invitationCode,
     users: room.users,
+    matches: room.matches.map(matchToDto),
     createdAt: Math.floor(room.createdAt.getTime() / 1000),
   };
 }
@@ -79,6 +85,8 @@ function getRoomsQuery() {
       stage: getColumns(stageTable),
       roomUser: getColumns(roomUserTable),
       user: getTableColumns(userTable),
+      match: getColumns(matchTable),
+      team: getColumns(teamTable),
     })
     .from(roomTable)
     .innerJoin(stageTable, eq(stageTable.id, roomTable.stageId))
@@ -88,18 +96,34 @@ function getRoomsQuery() {
     )
     .leftJoin(roomUserTable, eq(roomUserTable.roomId, roomTable.id))
     .leftJoin(userTable, eq(userTable.id, roomUserTable.userId))
+    .leftJoin(matchTable, eq(matchTable.roomId, roomTable.id))
+    .leftJoin(teamTable, eq(teamTable.matchId, matchTable.id))
     .orderBy(desc(roomTable.id));
 }
 
 function mergeRows(rows: Awaited<ReturnType<typeof getRoomsQuery>>): Room[] {
   const result = rows.reduce<Record<number, Room>>((acc, row) => {
-    const { user, roomUser, ...room } = row;
+    const { user, roomUser, match, team, ...rest } = row;
 
-    if (acc[room.id] === undefined) {
-      acc[room.id] = { users: [], ...room };
+    let room = acc[rest.id];
+    if (!room) {
+      room = { users: [], matches: [], ...rest };
+      acc[rest.id] = room;
     }
     if (roomUser && user) {
-      acc[room.id]?.users.push({ user: user, team: roomUser.team });
+      room.users.push({ user: user, team: roomUser.team });
+    }
+
+    if (match) {
+      let existingMatch = room.matches.find((m) => m.id === match.id);
+      if (!existingMatch) {
+        existingMatch = { stage: room.stage, ...match, teams: [] };
+        // TODO: Fetch correct stage when random stage support is added
+        room.matches.push(existingMatch);
+      }
+      if (team) {
+        existingMatch.teams.push(team);
+      }
     }
 
     return acc;

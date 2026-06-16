@@ -5,6 +5,7 @@ import { createdAt } from "./partials/createdAt";
 import { roomUserTable } from "./roomUser";
 import { updatedAt } from "./partials/updatedAt";
 import { stageTable } from "./stage";
+import { matchTable } from "./match";
 
 export const roomTable = sqliteTable("room", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -29,4 +30,5 @@ export const roomRelations = relations(roomTable, ({ one, many }) => ({
     references: [stageTable.id],
   }),
   roomUsers: many(roomUserTable),
+  matches: many(matchTable),
 }));
