@@ -16,8 +16,7 @@ export interface StageDto {
 
 export async function replaceStagesInDB(stages: StageDto[]) {
   await useDrizzle().delete(stageTable);
-  for (let i = 0; i < stages.length; i++) {
-    const stage = stages[i];
+  for (const stage of stages) {
     await writeStageToDB(stage);
   }
 }

@@ -25,5 +25,5 @@ export const matchRelations = relations(matchTable, ({ one, many }) => ({
     fields: [matchTable.roomId],
     references: [roomTable.id],
   }),
-  team: many(teamTable),
+  teams: many(teamTable),
 }));

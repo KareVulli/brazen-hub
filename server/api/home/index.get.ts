@@ -19,11 +19,10 @@ export interface HomeInfo {
 
 async function publicRoomsToHomePublicRooms(
   bzToken: string,
-  publicRooms: BrazenApiPublicRoom[]
+  publicRooms: BrazenApiPublicRoom[],
 ): Promise<HomePublicRoom[]> {
   const homePublicRooms: HomePublicRoom[] = [];
-  for (let i = 0; i < publicRooms.length; i++) {
-    const room = publicRooms[i];
+  for (const room of publicRooms) {
     let user = await getUserFromDB(room.createdByUserKey);
     let stage: Stage | null = null;
     if (!user) {
@@ -51,11 +50,11 @@ export default cachedEventHandler(
       weekly: await getCurrentWeekly(),
       publicRooms: await publicRoomsToHomePublicRooms(
         config.bzToken,
-        publicRooms
+        publicRooms,
       ),
     };
   },
   {
     swr: false,
-  }
+  },
 );

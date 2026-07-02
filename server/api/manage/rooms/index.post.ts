@@ -1,5 +1,4 @@
 import { ROLE_ADMIN } from "~~/server/database/roles";
-import { getFreeHost } from "~~/server/utils/host";
 import { createRoom } from "~~/server/utils/room";
 import { getStageById } from "~~/server/utils/stage";
 import { roomSchema } from "~~/validation/roomSchema";
@@ -54,7 +53,5 @@ export default defineEventHandler(async (event): Promise<void> => {
     });
   }
 
-  const host = await getFreeHost();
-
-  await createRoom(host, stage.id, gameRule.gameRuleId, data.public, users);
+  await createRoom(stage.id, gameRule.gameRuleId, data.public, users);
 });

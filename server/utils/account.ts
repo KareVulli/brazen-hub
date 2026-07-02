@@ -7,7 +7,7 @@ export async function updateAccountInDB(discordUser: {
   displayName: string;
   username: string;
 }): Promise<DBAccount> {
-  const [dbAccount] = await useDrizzle()
+  const result = await useDrizzle()
     .insert(accountTable)
     .values({
       discordId: discordUser.discordId,
@@ -22,11 +22,11 @@ export async function updateAccountInDB(discordUser: {
       },
     })
     .returning(getColumns(accountTable));
-  return dbAccount;
+  return result[0]!;
 }
 
 export async function getAccountByDiscordId(
-  discordId: string
+  discordId: string,
 ): Promise<DBAccount | null> {
   const user = await useDrizzle().query.accountTable.findFirst({
     where: eq(accountTable.discordId, discordId),

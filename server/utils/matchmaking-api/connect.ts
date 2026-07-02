@@ -1,6 +1,7 @@
 import { getMatchmakingApiClient } from "./client";
 
 export interface ConnectRequest {
+  hubRoomId: number;
   marsHost: string;
   marsPort: number;
   marsSessionId: number;
@@ -13,7 +14,7 @@ export interface ConnectRequest {
   stageId: number;
   ruleId: number;
   hostToken: string;
-  matchId: string;
+  privateMatchRoomId: string;
   public: boolean;
   players: { userKey: string; teamIndex: number }[];
 }

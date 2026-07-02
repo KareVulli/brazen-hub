@@ -20,7 +20,7 @@ export interface SearchUserResult {
 
 function usersSearchResultDtoToSearchUserResult(
   user: DetailedBrazenUser,
-  topScores: UserScore[]
+  topScores: UserScore[],
 ): SearchUserResult {
   return {
     user: user,
@@ -41,13 +41,13 @@ export default cachedEventHandler(
         message: `Did not find the requested user`,
       });
     } else if (users.length === 1) {
-      const user = users[0];
+      const user = users[0]!;
       const userId = await updateUserInDB(user);
       const topScores = await getUserTopScores(userId);
 
       return usersSearchResultDtoToSearchUserResult(
         { id: userId, ...user },
-        topScores
+        topScores,
       );
     }
 
@@ -55,5 +55,5 @@ export default cachedEventHandler(
   },
   {
     swr: false,
-  }
+  },
 );

@@ -36,11 +36,10 @@ export interface EventInfo {
 export async function writeLeaderboardToDB(
   weeklyId: number,
   leaderboard: BrazenApiLeaderboardEntry[],
-  updateUser: boolean = true
+  updateUser: boolean = true,
 ): Promise<number[]> {
   const scoresData: Omit<DBScore, "id" | "createdAt">[] = [];
-  for (let i = 0; i < leaderboard.length; i++) {
-    const score = leaderboard[i];
+  for (const score of leaderboard) {
     const scoreUser = score.user;
     let scoreUserId: number;
     if (updateUser) {
@@ -78,7 +77,7 @@ export async function writeLeaderboardToDB(
       scoreIds.map(({ scoreId }) => ({
         weeklyId: weeklyId,
         scoreId: scoreId,
-      }))
+      })),
     )
     .returning({ id: weeklyScoreTable.id });
 
@@ -90,7 +89,7 @@ export async function writeToDB(raw: EventInfoDto, event: BrazenApiEventInfo) {
   let worldRecordId: number | null = null;
   if (worldRecord) {
     const worldRecordUser = worldRecord.user;
-    const [{ worldRecordUserId }] = await useDrizzle()
+    const worldRecordUserRow = await useDrizzle()
       .insert(userTable)
       .values({
         userKey: worldRecordUser.userKey,
@@ -107,6 +106,7 @@ export async function writeToDB(raw: EventInfoDto, event: BrazenApiEventInfo) {
         },
       })
       .returning({ worldRecordUserId: userTable.id });
+    const worldRecordUserId = worldRecordUserRow[0]!.worldRecordUserId;
 
     const result = await useDrizzle()
       .insert(scoreTable)
@@ -123,10 +123,10 @@ export async function writeToDB(raw: EventInfoDto, event: BrazenApiEventInfo) {
       })
       .returning({ worldRecordId: scoreTable.id });
 
-    worldRecordId = result[0].worldRecordId;
+    worldRecordId = result[0]!.worldRecordId;
   }
 
-  const [{ weeklyId }] = await useDrizzle()
+  const weekly = await useDrizzle()
     .insert(weeklyTable)
     .values({
       eventId: event.eventId,
@@ -138,6 +138,7 @@ export async function writeToDB(raw: EventInfoDto, event: BrazenApiEventInfo) {
       raw: raw,
     })
     .returning({ weeklyId: weeklyTable.id });
+  const weeklyId = weekly[0]!.weeklyId;
 
   await writeLeaderboardToDB(weeklyId, event.leaderboard);
 
@@ -213,7 +214,7 @@ export async function getCurrentWeekly(): Promise<EventInfo | null> {
 }
 
 export async function getEventInfoByEventId(
-  eventId: number
+  eventId: number,
 ): Promise<EventInfo | null> {
   const weekly: DBEventInfo | undefined =
     await useDrizzle().query.weeklyTable.findFirst({
@@ -273,7 +274,7 @@ interface HistoryItem {
 }
 
 export async function getLeaderboardHistoryByEventId(
-  eventId: number
+  eventId: number,
 ): Promise<LeaderboardGraph> {
   const history: HistoryItem[] = await useDrizzle()
     .select({
@@ -292,7 +293,7 @@ export async function getLeaderboardHistoryByEventId(
     .orderBy(
       desc(weeklyTable.eventId),
       asc(weeklyTable.createdAt),
-      asc(scoreTable.place)
+      asc(scoreTable.place),
     )
     .where(eq(weeklyTable.eventId, eventId));
 
@@ -314,13 +315,13 @@ export async function getLeaderboardHistoryByEventId(
       groups[key] = group;
       return groups;
     },
-    {}
+    {},
   );
 
   Object.values(snapshots).forEach((snapshot) => {
     players.forEach((player) => {
       const historyItem = snapshot.find(
-        (history) => history.player === player.name
+        (history) => history.player === player.name,
       );
       if (
         historyItem &&
@@ -343,7 +344,7 @@ export async function getLeaderboardHistoryByEventId(
   return {
     eventId: eventId,
     players: players.toSorted(
-      (a, b) => a.lastKnownPosition - b.lastKnownPosition
+      (a, b) => a.lastKnownPosition - b.lastKnownPosition,
     ),
   };
 }
@@ -364,10 +365,10 @@ interface DBEventInfo extends DBWeekly {
 async function eventInfoFromDB(weekly: DBEventInfo): Promise<EventInfo> {
   let worldRecord: Score | null = null;
   const characters = await getCharactersByGameVersion(
-    process.env.NUXT_GAME_VERSION_CODE || "not-found"
+    process.env.NUXT_GAME_VERSION_CODE || "not-found",
   );
   const items = await getIndexedItemsByGameVersion(
-    process.env.NUXT_GAME_VERSION_CODE || "not-found"
+    process.env.NUXT_GAME_VERSION_CODE || "not-found",
   );
 
   if (weekly.worldRecord) {

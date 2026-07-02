@@ -2,6 +2,7 @@ import { getTableColumns } from "drizzle-orm";
 import { getColumns } from "../database/getColumns";
 import {
   matchTable,
+  roomSessionTable,
   roomTable,
   roomUserTable,
   stageTable,
@@ -28,16 +29,22 @@ interface RoomUser {
   team: number;
 }
 
-export interface Room {
+export interface RoomSession {
   id: number;
   matchId: string;
   marsRoomId: string;
+  invitationCode: string;
+  active: boolean;
+}
+
+export interface Room {
+  id: number;
   stage: Stage;
   gameRule: GameRule;
   public: boolean;
-  invitationCode: string;
   createdAt: Date;
   users: RoomUser[];
+  roomSessions: RoomSession[];
   matches: Match[];
 }
 
@@ -48,28 +55,24 @@ interface RoomUserDto {
 
 export interface RoomDto {
   id: number;
-  matchId: string;
-  marsRoomId: string;
   stage: StageDto;
   gameRule: GameRuleDto;
   public: boolean;
-  invitationCode: string;
   createdAt: number;
   users: RoomUserDto[];
+  roomSessions: RoomSession[];
   matches: MatchDto[];
 }
 
 export function roomToDto(room: Room): RoomDto {
   return {
     id: room.id,
-    matchId: room.matchId,
-    marsRoomId: room.marsRoomId,
     stage: room.stage,
     gameRule: gameRuleToDto(room.gameRule),
     public: room.public,
-    invitationCode: room.invitationCode,
     users: room.users,
     matches: room.matches.map(matchToDto),
+    roomSessions: room.roomSessions,
     createdAt: Math.floor(room.createdAt.getTime() / 1000),
   };
 }
@@ -87,6 +90,7 @@ function getRoomsQuery() {
       user: getTableColumns(userTable),
       match: getColumns(matchTable),
       team: getColumns(teamTable),
+      roomSession: getColumns(roomSessionTable),
     })
     .from(roomTable)
     .innerJoin(stageTable, eq(stageTable.id, roomTable.stageId))
@@ -98,19 +102,24 @@ function getRoomsQuery() {
     .leftJoin(userTable, eq(userTable.id, roomUserTable.userId))
     .leftJoin(matchTable, eq(matchTable.roomId, roomTable.id))
     .leftJoin(teamTable, eq(teamTable.matchId, matchTable.id))
+    .leftJoin(roomSessionTable, eq(roomSessionTable.roomId, roomTable.id))
     .orderBy(desc(roomTable.id));
 }
 
 function mergeRows(rows: Awaited<ReturnType<typeof getRoomsQuery>>): Room[] {
   const result = rows.reduce<Record<number, Room>>((acc, row) => {
-    const { user, roomUser, match, team, ...rest } = row;
+    const { user, roomUser, match, team, roomSession, ...rest } = row;
 
     let room = acc[rest.id];
     if (!room) {
-      room = { users: [], matches: [], ...rest };
+      room = { users: [], matches: [], roomSessions: [], ...rest };
       acc[rest.id] = room;
     }
-    if (roomUser && user) {
+    if (
+      roomUser &&
+      user &&
+      !room.users.find((value) => value.user.id === user.id)
+    ) {
       room.users.push({ user: user, team: roomUser.team });
     }
 
@@ -121,9 +130,16 @@ function mergeRows(rows: Awaited<ReturnType<typeof getRoomsQuery>>): Room[] {
         // TODO: Fetch correct stage when random stage support is added
         room.matches.push(existingMatch);
       }
-      if (team) {
+      if (team && !existingMatch.teams.find((value) => value.id === team.id)) {
         existingMatch.teams.push(team);
       }
+    }
+
+    if (
+      roomSession &&
+      !room.roomSessions.find((value) => value.id === roomSession.id)
+    ) {
+      room.roomSessions.push(roomSession);
     }
 
     return acc;
@@ -144,23 +160,34 @@ export async function getRoomById(id: number): Promise<Room | null> {
 }
 
 export async function createRoom(
-  host: DBHost,
   stageId: number,
   gameRuleId: number,
   publicRoom: boolean,
   users: { userId: number; userKey: string; name: string; team: number }[],
 ): Promise<void> {
-  const privateMatchRoom = await createPrivateMatchRoom(host.token);
-
   const room: DBRoomInsert = {
-    hostId: host.id,
-    matchId: privateMatchRoom.id,
     stageId: stageId,
     gameRuleId: gameRuleId,
     public: publicRoom,
-    invitationCode: privateMatchRoom.invitationCode,
-    marsRoomId: privateMatchRoom.marsRoomId,
   };
+
+  const roomId = (
+    await useDrizzle()
+      .insert(roomTable)
+      .values(room)
+      .returning({ id: roomTable.id })
+  )[0]?.id;
+  if (roomId === undefined) {
+    throw new Error("Failed to create room");
+  }
+
+  await useDrizzle()
+    .insert(roomUserTable)
+    .values(users.map((user) => ({ roomId: roomId, ...user })));
+}
+
+export async function openRoom(room: Room, host: DBHost): Promise<void> {
+  const privateMatchRoom = await createPrivateMatchRoom(host.token);
 
   await openPrivateMatchRoom(host.token, privateMatchRoom.id);
 
@@ -168,33 +195,37 @@ export async function createRoom(
     PrivateMatchRoomId: privateMatchRoom.id,
     LeaderUserKey: host.userKey,
     Players: [{ UserKey: host.userKey }],
-    Visibility: publicRoom ? RoomVisibility.Public : RoomVisibility.Private,
+    Visibility: room.public ? RoomVisibility.Public : RoomVisibility.Private,
     VoiceChatSettings: 0,
-    GameRuleId: gameRuleId,
-    StageId: stageId,
+    GameRuleId: room.gameRule.gameRuleId,
+    StageId: room.stage.id,
     SupportItemsSettings: 0,
     RoomTagId: 1,
   });
 
-  const roomId = (
+  const sessionId = (
     await useDrizzle()
-      .insert(roomTable)
-      .values(room)
+      .insert(roomSessionTable)
+      .values({
+        roomId: room.id,
+        hostId: host.id,
+        matchId: privateMatchRoom.id,
+        invitationCode: privateMatchRoom.invitationCode,
+        marsRoomId: privateMatchRoom.marsRoomId,
+        active: true,
+      })
       .returning({ id: roomTable.id })
-  )[0];
-  if (!roomId) {
-    throw new Error("Failed to create room");
+  )[0]?.id;
+  if (sessionId === undefined) {
+    throw new Error("Failed to create room session");
   }
-
-  await useDrizzle()
-    .insert(roomUserTable)
-    .values(users.map((user) => ({ roomId: roomId.id, ...user })));
 
   if (!privateMatchRoom.players[0]) {
     throw new Error("No host player info found in private match room data");
   }
 
   await connect({
+    hubRoomId: room.id,
     marsHost: privateMatchRoom.marsHost,
     marsPort: privateMatchRoom.marsPort,
     marsSessionId: privateMatchRoom.players[0].marsSessionId,
@@ -204,13 +235,13 @@ export async function createRoom(
     voiceChatClientId: privateMatchRoom.players[0].voiceChatClientId,
     voiceChatToken: privateMatchRoom.players[0].voiceChatToken,
     userKey: privateMatchRoom.players[0].userKey,
-    stageId: stageId,
-    ruleId: gameRuleId,
+    stageId: room.stage.id,
+    ruleId: room.gameRule.gameRuleId,
     hostToken: host.token,
-    matchId: privateMatchRoom.id,
-    public: publicRoom,
-    players: users.map((user) => ({
-      userKey: user.userKey,
+    privateMatchRoomId: privateMatchRoom.id,
+    public: room.public,
+    players: room.users.map((user) => ({
+      userKey: user.user.userKey,
       teamIndex: user.team + 1,
     })),
   });
@@ -223,9 +254,17 @@ export async function closeRoom(id: number): Promise<void> {
     return;
   }
 
-  await disconnect({ marsRoomId: room.marsRoomId });
+  const activeSession = room.roomSessions.find((value) => value.active);
+  if (activeSession === undefined) {
+    return;
+  }
 
-  return await deleteRoomById(id);
+  await disconnect({ marsRoomId: activeSession.marsRoomId });
+
+  await useDrizzle()
+    .update(roomSessionTable)
+    .set({ active: false })
+    .where(eq(roomSessionTable.id, activeSession.id));
 }
 
 export async function deleteRoomById(id: number): Promise<void> {

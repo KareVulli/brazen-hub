@@ -63,8 +63,7 @@ export async function replaceCharactersInDB(
   await useDrizzle()
     .delete(characterTable)
     .where(eq(characterTable.gameVersion, gameVersion));
-  for (let i = 0; i < characters.length; i++) {
-    const character = characters[i];
+  for (const character of characters) {
     await writeCharacterToDB(gameVersion, character);
   }
 }

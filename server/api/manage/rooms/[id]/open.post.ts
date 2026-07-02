@@ -1,13 +1,12 @@
-import { z } from "zod";
+import z from "zod";
 import { ROLE_ADMIN } from "~~/server/database/roles";
-import { getRoomById } from "~~/server/utils/room";
-import { startMatch } from "~~/server/utils/matchmaking-api/start-match";
+import { getFreeHost } from "~~/server/utils/host";
 
 const requestSchema = z.object({
   id: z.coerce.number().positive().int(),
 });
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event): Promise<void> => {
   const session = await requireUserSession(event);
 
   if (session.user.role !== ROLE_ADMIN) {
@@ -16,7 +15,6 @@ export default defineEventHandler(async (event) => {
       message: `Forbidden`,
     });
   }
-
   const { id } = await getValidatedRouterParams(event, requestSchema.parse);
 
   const room = await getRoomById(id);
@@ -28,13 +26,13 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const activeSession = room.roomSessions.find((value) => value.active);
-  if (activeSession === undefined) {
+  if (room.roomSessions.find((value) => value.active) !== undefined) {
     throw createError({
       statusCode: 400,
-      message: `Room does not have an active session`,
+      message: `Room already has an active session`,
     });
   }
 
-  return await startMatch({ marsRoomId: activeSession.marsRoomId });
+  const host = await getFreeHost();
+  await openRoom(room, host);
 });

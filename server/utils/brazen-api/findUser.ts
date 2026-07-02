@@ -22,7 +22,7 @@ interface UsersSearchDto {
 }
 
 function brazenApiUserFromDto(
-  user: UsersSearchResultDto
+  user: UsersSearchResultDto,
 ): BrazenAPIDetailedUser {
   return {
     name: user.name,
@@ -36,7 +36,7 @@ function brazenApiUserFromDto(
 
 async function searchUsers(
   token: string,
-  query: string
+  query: string,
 ): Promise<UsersSearchDto> {
   return await getBrazenApiClient()<UsersSearchDto>(
     "userrelationships/v1/search",
@@ -48,16 +48,16 @@ async function searchUsers(
       body: {
         query: query,
       },
-    }
+    },
   );
 }
 
 export async function findFirstUser(
   token: string,
-  query: string
+  query: string,
 ): Promise<BrazenAPIDetailedUser | null> {
   const users = await searchUsers(token, query);
-  if (users.users.length) {
+  if (users.users[0]) {
     return brazenApiUserFromDto(users.users[0]);
   }
   return null;
@@ -65,7 +65,7 @@ export async function findFirstUser(
 
 export async function findUsers(
   token: string,
-  query: string
+  query: string,
 ): Promise<BrazenAPIDetailedUser[]> {
   const users = await searchUsers(token, query);
   return users.users.map((user) => brazenApiUserFromDto(user));

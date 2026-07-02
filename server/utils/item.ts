@@ -26,8 +26,7 @@ export async function replaceitemsInDB(gameVersion: string, items: ItemDto[]) {
   await useDrizzle()
     .delete(itemTable)
     .where(eq(itemTable.gameVersion, gameVersion));
-  for (let i = 0; i < items.length; i++) {
-    const item = items[i];
+  for (const item of items) {
     await writeitemToDB(gameVersion, item);
   }
 }
@@ -69,7 +68,7 @@ export async function getItemByItemId(itemId: number): Promise<Item | null> {
 }
 
 export async function getItemsByGameVersion(
-  gameVersion: string | number
+  gameVersion: string | number,
 ): Promise<Item[]> {
   const dbItems = await useDrizzle().query.itemTable.findMany({
     where: eq(itemTable.gameVersion, gameVersion + ""),
@@ -79,7 +78,7 @@ export async function getItemsByGameVersion(
 }
 
 export async function getIndexedItemsByGameVersion(
-  gameVersion: string | number
+  gameVersion: string | number,
 ): Promise<Record<number, Item | undefined>> {
   const dbItems = await useDrizzle().query.itemTable.findMany({
     where: eq(itemTable.gameVersion, gameVersion + ""),
@@ -105,7 +104,7 @@ export function getLatestItemsSubquery() {
           ORDER BY ${itemTable.gameVersion} DESC
         )`.as("row_number"),
         })
-        .from(itemTable)
+        .from(itemTable),
     );
 
   const { rowNumber, ...subQueryColumns } = getColumns(subQuery);
@@ -116,6 +115,6 @@ export function getLatestItemsSubquery() {
         .with(subQuery)
         .select(subQueryColumns)
         .from(subQuery)
-        .where(eq(subQuery.rowNumber, 1))
+        .where(eq(subQuery.rowNumber, 1)),
     );
 }

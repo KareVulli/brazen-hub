@@ -22,7 +22,7 @@
         :src="`/img/characters/character-${data.characterId}.png`"
         :alt="data.name"
         class="mx-auto w-full max-w-sm h-auto"
-      />
+      >
     </div>
   </div>
 </template>

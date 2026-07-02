@@ -74,20 +74,19 @@ export function gameRuleToDto(gameRule: GameRule): GameRuleDto {
 
 export async function replaceGameRulesInDB(
   gameVersion: string,
-  gameRules: GameRuleDto[]
+  gameRules: GameRuleDto[],
 ) {
   await useDrizzle()
     .delete(gameRuleTable)
     .where(eq(gameRuleTable.gameVersion, gameVersion));
-  for (let i = 0; i < gameRules.length; i++) {
-    const gameRule = gameRules[i];
+  for (const gameRule of gameRules) {
     await writeGameRuleToDB(gameVersion, gameRule);
   }
 }
 
 export async function writeGameRuleToDB(
   gameVersion: string,
-  gameRuleDto: GameRuleDto
+  gameRuleDto: GameRuleDto,
 ) {
   await useDrizzle().insert(gameRuleTable).values({
     gameVersion: gameVersion,
@@ -140,7 +139,7 @@ export function gameRuleFromDB(gameRule: DBGameRule): GameRule {
 }
 
 export async function getGameRuleByGameRuleId(
-  gameRuleId: number
+  gameRuleId: number,
 ): Promise<GameRule | null> {
   const dbGameRule = await useDrizzle().query.gameRuleTable.findFirst({
     where: eq(gameRuleTable.gameRuleId, gameRuleId),
@@ -153,7 +152,7 @@ export async function getGameRuleByGameRuleId(
 }
 
 async function getDBGameRulesByGameVersion(
-  gameVersion: string | number
+  gameVersion: string | number,
 ): Promise<DBGameRule[]> {
   return await useDrizzle().query.gameRuleTable.findMany({
     where: eq(gameRuleTable.gameVersion, gameVersion + ""),
@@ -162,7 +161,7 @@ async function getDBGameRulesByGameVersion(
 }
 
 export async function getGameRulesByGameVersion(
-  gameVersion: string | number
+  gameVersion: string | number,
 ): Promise<GameRule[]> {
   const dbGameRules = await getDBGameRulesByGameVersion(gameVersion);
   return dbGameRules.map((gameRule) => gameRuleFromDB(gameRule));
@@ -180,7 +179,7 @@ export function getLatestGameRulesSubquery() {
           ORDER BY ${gameRuleTable.gameVersion} DESC
         )`.as("row_number"),
         })
-        .from(gameRuleTable)
+        .from(gameRuleTable),
     );
 
   const { rowNumber, ...subQueryColumns } = getColumns(subQuery);
@@ -191,6 +190,6 @@ export function getLatestGameRulesSubquery() {
         .with(subQuery)
         .select(subQueryColumns)
         .from(subQuery)
-        .where(eq(subQuery.rowNumber, 1))
+        .where(eq(subQuery.rowNumber, 1)),
     );
 }

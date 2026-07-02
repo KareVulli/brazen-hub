@@ -1,7 +1,12 @@
 <template>
   <main>
     <PageTitle title="Manage Rooms" />
-    <ManageRoomsTable v-if="data" :entries="data.rooms" @deleted="refresh" />
+    <ManageRoomsTable
+      v-if="data"
+      :entries="data.rooms"
+      @opened="refresh"
+      @closed="refresh"
+    />
     <CreateRoomForm @created="refresh" />
   </main>
 </template>
@@ -14,7 +19,7 @@ definePageMeta({
 
 const config = useRuntimeConfig();
 
-const { data: wsdata } = useWebSocket(config.public.matchmakingWs, {
+const { data: _wsdata } = useWebSocket(config.public.matchmakingWs, {
   onConnected(ws) {
     console.log("Connected!");
     ws.send("Hello from client!");

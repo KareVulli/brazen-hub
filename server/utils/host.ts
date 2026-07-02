@@ -1,9 +1,9 @@
 import { notExists } from "drizzle-orm";
-import { hostTable, roomTable } from "../database/schema";
-import type { DBHost } from "./drizzle";
 import { getColumns } from "../database/getColumns";
+import { hostTable, roomSessionTable } from "../database/schema";
 import { createGuest } from "./brazen-api/createGuest";
 import { setUserName } from "./brazen-api/setUserName";
+import type { DBHost } from "./drizzle";
 
 export interface Host {
   name: string;
@@ -19,8 +19,13 @@ export async function getFreeHost(): Promise<DBHost> {
       notExists(
         useDrizzle()
           .select()
-          .from(roomTable)
-          .where(eq(roomTable.hostId, hostTable.id)),
+          .from(roomSessionTable)
+          .where(
+            and(
+              eq(roomSessionTable.hostId, hostTable.id),
+              eq(roomSessionTable.active, true),
+            ),
+          ),
       ),
     )
     .get();

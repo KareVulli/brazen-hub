@@ -10,6 +10,7 @@ export * from "./stage";
 export * from "./account";
 export * from "./room";
 export * from "./roomUser";
+export * from "./roomSession";
 export * from "./host";
 export * from "./team";
 export * from "./match";

@@ -28,8 +28,7 @@ export async function getRuleById(id: number): Promise<RuleDto | null> {
 
 export async function replaceRulesInDB(rules: RuleDto[]) {
   await useDrizzle().delete(ruleTable);
-  for (let i = 0; i < rules.length; i++) {
-    const rule = rules[i];
+  for (const rule of rules) {
     await writeRuleToDB(rule);
   }
 }
