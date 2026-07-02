@@ -32,8 +32,7 @@ export default defineEventHandler(async (event): Promise<void> => {
   }
 
   const users = [];
-  for (let i = 0; i < data.players.length; i++) {
-    const player = data.players[i]!;
+  for (const player of data.players) {
     let user = await getUserFromDB(player.userKey);
     if (!user) {
       user = await fetchAndUpdateUser(config.bzToken, player.userKey);

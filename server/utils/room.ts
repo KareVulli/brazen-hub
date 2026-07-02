@@ -242,7 +242,7 @@ export async function openRoom(room: Room, host: DBHost): Promise<void> {
     public: room.public,
     players: room.users.map((user) => ({
       userKey: user.user.userKey,
-      teamIndex: user.team + 1,
+      teamIndex: user.team,
     })),
   });
 }

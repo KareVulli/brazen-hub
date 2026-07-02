@@ -95,7 +95,7 @@
           </Column>
           <Column field="team" header="Team" sortable>
             <template #body="slotProps">
-              Team {{ slotProps.data.team + 1 }}
+              Team {{ slotProps.data.team }}
             </template>
           </Column>
         </DataTable>
@@ -115,7 +115,7 @@
           </template>
           <Column class="min-w-48" field="team" header="Team" sortable>
             <template #body="slotProps">
-              Team {{ slotProps.data.team + 1 }}
+              Team {{ slotProps.data.team }}
             </template>
           </Column>
           <Column field="wins" header="Wins" sortable />

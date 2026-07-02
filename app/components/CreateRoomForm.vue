@@ -80,8 +80,8 @@ const gameRule = useFieldValue<GameRuleDto>("gameRuleId");
 const teams = computed(() => {
   const teamsCount = gameRule.value?.teamCount || 0;
   const options = [];
-  for (let i = 0; i < teamsCount; i++) {
-    options.push({ name: `Team ${i + 1}`, value: i });
+  for (let i = 1; i <= teamsCount; i++) {
+    options.push({ name: `Team ${i}`, value: i });
   }
   return options;
 });
