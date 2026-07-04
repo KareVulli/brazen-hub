@@ -180,10 +180,11 @@ export async function createRoom(
   if (roomId === undefined) {
     throw new Error("Failed to create room");
   }
-
-  await useDrizzle()
-    .insert(roomUserTable)
-    .values(users.map((user) => ({ roomId: roomId, ...user })));
+  if (users.length) {
+    await useDrizzle()
+      .insert(roomUserTable)
+      .values(users.map((user) => ({ roomId: roomId, ...user })));
+  }
 }
 
 export async function openRoom(room: Room, host: DBHost): Promise<void> {

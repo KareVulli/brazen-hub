@@ -43,6 +43,7 @@
     <Column field="gameRule.name" header="Game Rule" sortable />
     <Column field="stage.name" header="Stage" sortable />
     <Column field="public" header="Public?" sortable />
+    <Column field="free" header="Open Teams?" sortable />
     <Column field="createdAt" header="Created At" sortable>
       <template #body="slotProps">
         <ScoreDateColumn :date-timestamp="slotProps.data.createdAt" />
@@ -159,6 +160,7 @@ const augmentedEntries = computed(() => {
       ...room,
       matches: [...room.matches].sort((a, b) => b.createdAt - a.createdAt),
       activeSession: activeSession || null,
+      free: !room.users.length,
     };
   });
 });

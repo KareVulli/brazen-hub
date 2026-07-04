@@ -11,7 +11,7 @@ export const roomSchema = z.object({
         team: z.coerce.number().int(),
       }),
     )
-    .min(1),
+    .min(0),
 });
 
 export type RoomSchema = z.infer<typeof roomSchema>;

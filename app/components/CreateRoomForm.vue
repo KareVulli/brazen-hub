@@ -65,7 +65,7 @@ const roomFormSchema = roomSchema.extend(
           team: z.object({ value: z.number() }).transform((team) => team.value),
         }),
       )
-      .min(1),
+      .default(() => []),
   }).shape,
 );
 
