@@ -1,11 +1,12 @@
+import { buildConflictUpdateColumns } from "../database/buildConflictUpdateColumns";
 import { matchTable, teamTable } from "../database/schema";
 import type { Team, TeamDto } from "./team";
 import { teamToDto } from "./team";
-import { buildConflictUpdateColumns } from "../database/buildConflictUpdateColumns";
 
 export interface Match {
   id: number;
   roomId: number;
+  gameRule: GameRule;
   stage: Stage;
   teams: Team[];
   updatedAt: Date;
@@ -15,6 +16,7 @@ export interface Match {
 export interface MatchDto {
   id: number;
   roomId: number;
+  gameRule: GameRuleDto;
   stage: StageDto;
   teams: TeamDto[];
   updatedAt: number;
@@ -25,6 +27,7 @@ export function matchToDto(match: Match): MatchDto {
   return {
     id: match.id,
     roomId: match.roomId,
+    gameRule: gameRuleToDto(match.gameRule),
     stage: match.stage,
     teams: match.teams.map(teamToDto),
     updatedAt: Math.floor(match.updatedAt.getTime() / 1000),
@@ -39,6 +42,19 @@ export async function getMatchById(id: number): Promise<Match | null> {
       with: {
         teams: true,
         stage: true,
+        gameRule: true,
+      },
+    })) || null
+  );
+}
+
+export async function getMatches(): Promise<Match[]> {
+  return (
+    (await useDrizzle().query.matchTable.findMany({
+      with: {
+        teams: true,
+        stage: true,
+        gameRule: true,
       },
     })) || null
   );
@@ -52,7 +68,11 @@ export async function createMatch(
   const match = (
     await useDrizzle()
       .insert(matchTable)
-      .values({ roomId: room.id, stageId: stage.id })
+      .values({
+        roomId: room.id,
+        stageId: stage.id,
+        gameRuleId: room.gameRule.id,
+      })
       .returning()
   )[0]!;
 

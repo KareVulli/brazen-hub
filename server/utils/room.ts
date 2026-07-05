@@ -1,6 +1,7 @@
 import { getTableColumns } from "drizzle-orm";
 import { getColumns } from "../database/getColumns";
 import {
+  gameRuleTable,
   matchTable,
   roomSessionTable,
   roomTable,
@@ -89,6 +90,7 @@ function getRoomsQuery() {
       roomUser: getColumns(roomUserTable),
       user: getTableColumns(userTable),
       match: getColumns(matchTable),
+      matchGameRule: getColumns(gameRuleTable),
       team: getColumns(teamTable),
       roomSession: getColumns(roomSessionTable),
     })
@@ -102,13 +104,15 @@ function getRoomsQuery() {
     .leftJoin(userTable, eq(userTable.id, roomUserTable.userId))
     .leftJoin(matchTable, eq(matchTable.roomId, roomTable.id))
     .leftJoin(teamTable, eq(teamTable.matchId, matchTable.id))
+    .leftJoin(gameRuleTable, eq(gameRuleTable.id, matchTable.gameRuleId))
     .leftJoin(roomSessionTable, eq(roomSessionTable.roomId, roomTable.id))
     .orderBy(desc(roomTable.id));
 }
 
 function mergeRows(rows: Awaited<ReturnType<typeof getRoomsQuery>>): Room[] {
   const result = rows.reduce<Record<number, Room>>((acc, row) => {
-    const { user, roomUser, match, team, roomSession, ...rest } = row;
+    const { user, roomUser, match, team, roomSession, matchGameRule, ...rest } =
+      row;
 
     let room = acc[rest.id];
     if (!room) {
@@ -123,10 +127,15 @@ function mergeRows(rows: Awaited<ReturnType<typeof getRoomsQuery>>): Room[] {
       room.users.push({ user: user, team: roomUser.team });
     }
 
-    if (match) {
+    if (match && matchGameRule) {
       let existingMatch = room.matches.find((m) => m.id === match.id);
       if (!existingMatch) {
-        existingMatch = { stage: room.stage, ...match, teams: [] };
+        existingMatch = {
+          stage: room.stage,
+          ...match,
+          teams: [],
+          gameRule: matchGameRule,
+        };
         // TODO: Fetch correct stage when random stage support is added
         room.matches.push(existingMatch);
       }

@@ -1,0 +1,1 @@
+ALTER TABLE `match` ADD `game_rule_id` integer NOT NULL REFERENCES game_rule(id);

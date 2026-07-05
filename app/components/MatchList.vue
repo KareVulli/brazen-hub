@@ -1,6 +1,41 @@
 <template>
   <PageTitle title="Custom Matches"></PageTitle>
   <div class="grid gap-2 2xl:grid-cols-2">
+    <NuxtLink
+      v-for="match in matches"
+      :key="match.id"
+      :to="`/matches/${match.id}`"
+    >
+      <Card class="border hover:bg-gray-800 duration-100">
+        <template #content>
+          <div class="px-2 py-0.5">
+            <div class="flex justify-between items-center">
+              <p class="font-semibold">
+                Match #{{ match.id }} @
+                <NuxtTime
+                  :datetime="new Date(match.createdAt * 1000)"
+                  date-style="full"
+                  time-style="short"
+                />
+              </p>
+              <p>2 minutes 10 seconds</p>
+            </div>
+            <p>{{ match.gameRule.name }} | {{ match.stage.name }}</p>
+          </div>
+          <hr class="border-t border-gray-400 mx-2 my-2" />
+          <div class="space-y-0.5">
+            <div
+              v-for="team in match.teams"
+              :key="team.id"
+              class="flex justify-between font-bold rounded-md px-2 py-0.5"
+            >
+              <p>// TODO:</p>
+              <p class="">{{ team.wins }}</p>
+            </div>
+          </div>
+        </template>
+      </Card>
+    </NuxtLink>
     <NuxtLink to="/matches/0">
       <Card class="border border-green-400 hover:bg-gray-800 duration-100">
         <template #content>
@@ -109,6 +144,8 @@
 </template>
 
 <script setup lang="ts">
+const props = defineProps<{ matches: MatchDto[] }>();
+
 const playerStats = computed(() => [
   {
     players: [
