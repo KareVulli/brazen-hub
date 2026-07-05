@@ -11,8 +11,9 @@
             >Brazen Hub</NuxtLink
           >
         </template>
-        <template #item="{ item, props }">
+        <template #item="{ item, props, hasSubmenu }">
           <NuxtLink
+            v-if="item.route"
             v-slot="{ href, navigate, isActive }"
             :to="item.route"
             custom
@@ -27,6 +28,16 @@
               <span>{{ item.label }}</span>
             </a>
           </NuxtLink>
+          <a
+            v-else
+            v-ripple
+            :href="item.url"
+            :target="item.target"
+            v-bind="props.action"
+          >
+            <span>{{ item.label }}</span>
+            <span v-if="hasSubmenu" class="pi pi-angle-down ml-2" />
+          </a>
         </template>
         <template #end>
           <div class="flex items-center gap-2">
@@ -74,20 +85,31 @@
 
 <script setup lang="ts">
 import { NuxtLink } from "#components";
+import type { MenuItem } from "primevue/menuitem";
 import { ROLE_ADMIN } from "~~/server/database/roles";
 
-const items = ref([
+const items = ref<MenuItem[]>([
   {
-    label: "Weekly challenges",
-    route: "/weekly-challenges",
-  },
-  {
-    label: "Target challenges",
-    route: "/target-challenges",
+    label: "Custom matches",
+    route: "/matches",
   },
   {
     label: "Round team match",
     route: "/rtm",
+  },
+  {
+    label: "Challenges",
+
+    items: [
+      {
+        label: "Weekly challenges",
+        route: "/weekly-challenges",
+      },
+      {
+        label: "Target challenges",
+        route: "/target-challenges",
+      },
+    ],
   },
   {
     label: "Player search",
