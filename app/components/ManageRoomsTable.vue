@@ -71,6 +71,24 @@
         />
         <Button
           size="small"
+          icon="pi pi-user-plus"
+          severity="info"
+          variant="text"
+          rounded
+          :disabled="!data.activeSession"
+          @click="onAddBot(data.id)"
+        />
+        <Button
+          size="small"
+          icon="pi pi-user-minus"
+          severity="secondary"
+          variant="text"
+          rounded
+          :disabled="!data.activeSession"
+          @click="onRemoveBot(data.id)"
+        />
+        <Button
+          size="small"
           icon="pi pi-trash"
           severity="danger"
           variant="text"
@@ -143,6 +161,14 @@ async function onOpenRoom(id: number) {
 
 async function onStartMatch(id: number) {
   await $fetch(`/api/manage/rooms/${id}/start-match`, { method: "POST" });
+}
+
+async function onAddBot(id: number) {
+  await $fetch(`/api/manage/rooms/${id}/add-bot`, { method: "POST" });
+}
+
+async function onRemoveBot(id: number) {
+  await $fetch(`/api/manage/rooms/${id}/remove-bot`, { method: "POST" });
 }
 
 async function onDelete(id: number) {

@@ -56,6 +56,7 @@ export async function getMatches(): Promise<Match[]> {
         stage: true,
         gameRule: true,
       },
+      orderBy: desc(matchTable.id),
     })) || null
   );
 }
