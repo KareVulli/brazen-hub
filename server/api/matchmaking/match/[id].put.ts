@@ -19,5 +19,5 @@ export default defineEventHandler(async (event): Promise<void> => {
     });
   }
 
-  await updateMatchStats(id, data.teams);
+  await updateMatchStats(id, data);
 });

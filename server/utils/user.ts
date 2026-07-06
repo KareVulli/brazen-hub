@@ -57,3 +57,14 @@ export async function fetchAndUpdateUser(
     ...user,
   };
 }
+
+export async function getUser(
+  apiToken: string,
+  userKey: string,
+): Promise<BrazenUser | null> {
+  const user = await getUserFromDB(userKey);
+  if (user === null) {
+    return await fetchAndUpdateUser(apiToken, userKey);
+  }
+  return user;
+}

@@ -1,7 +1,17 @@
+import type { MatchSchema } from "~~/validation/matchSchema";
+import type { MatchUpdateSchema } from "~~/validation/matchUpdateSchema";
 import { buildConflictUpdateColumns } from "../database/buildConflictUpdateColumns";
-import { matchTable, teamTable } from "../database/schema";
+import { getColumns } from "../database/getColumns";
+import {
+  matchTable,
+  teamTable,
+  teamUserTable,
+  userTable,
+} from "../database/schema";
+import type { DBTeamUserInsert } from "./drizzle";
 import type { Team, TeamDto } from "./team";
 import { teamToDto } from "./team";
+import { getUser } from "./user";
 
 export interface Match {
   id: number;
@@ -64,8 +74,10 @@ export async function getMatches(): Promise<Match[]> {
 export async function createMatch(
   room: Room,
   stage: Stage,
-  teams: Record<number, { wins: number }>,
+  teams: MatchSchema["teams"],
 ): Promise<number> {
+  const config = useRuntimeConfig();
+
   const match = (
     await useDrizzle()
       .insert(matchTable)
@@ -77,20 +89,60 @@ export async function createMatch(
       .returning()
   )[0]!;
 
-  const teamInserts = Object.entries(teams).map(([team, stats]) => ({
-    ...stats,
+  const teamInserts = Object.entries(teams).map(([team, _data]) => ({
     matchId: match.id,
     team: Number.parseInt(team, 10),
+    wins: 0,
   }));
 
-  await useDrizzle().insert(teamTable).values(teamInserts);
+  const insertedTeams = await useDrizzle()
+    .insert(teamTable)
+    .values(teamInserts)
+    .returning({ id: teamTable.id, teamIndex: teamTable.team });
+
+  const playerInserts: DBTeamUserInsert[] = [];
+
+  const mappedTeams = insertedTeams.reduce<Record<string, number>>(
+    (acc, team) => ({ ...acc, [team.teamIndex]: team.id }),
+    {},
+  );
+  const characters = await getCharactersByGameVersion(config.gameVersionCode);
+  const items = await getIndexedItemsByGameVersion(config.gameVersionCode);
+
+  for (const [team, data] of Object.entries(teams)) {
+    for (const [userKey, playerData] of Object.entries(data.players)) {
+      const user = await getUser(config.apiToken, userKey);
+      if (!user) {
+        throw new Error(`Could not find user ${userKey}`);
+      }
+
+      const character = characters[playerData.characterId];
+      if (!character) {
+        throw new Error(`Could not find character ${playerData.characterId}`);
+      }
+
+      const subWeapon = items[playerData.subWeaponId];
+      if (!subWeapon) {
+        throw new Error(`Could not find item ${playerData.subWeaponId}`);
+      }
+
+      playerInserts.push({
+        teamId: mappedTeams[team]!,
+        userId: user.id,
+        characterId: character.id,
+        subWeaponId: subWeapon.id,
+      });
+    }
+  }
+
+  await useDrizzle().insert(teamUserTable).values(playerInserts);
 
   return match.id;
 }
 
 export async function updateMatchStats(
   matchId: number,
-  teams: Record<number, { wins: number }>,
+  { teams, players: playerStats }: MatchUpdateSchema,
 ): Promise<void> {
   const teamInserts = Object.entries(teams).map(([team, stats]) => ({
     ...stats,
@@ -98,11 +150,57 @@ export async function updateMatchStats(
     team: Number.parseInt(team, 10),
   }));
 
+  const players = await useDrizzle()
+    .select({
+      teamUser: getColumns(teamUserTable),
+      user: getColumns(userTable),
+    })
+    .from(teamUserTable)
+    .innerJoin(teamTable, eq(teamTable.id, teamUserTable.teamId))
+    .innerJoin(userTable, eq(userTable.id, teamUserTable.userId))
+    .where(eq(teamTable.matchId, matchId));
+
+  const teamUserInserts: DBTeamUserInsert[] = [];
+
+  for (const [userKey, stats] of Object.entries(playerStats)) {
+    const player = players.find((player) => player.user.userKey === userKey);
+    if (!player) {
+      throw new Error(`Could not find team user ${userKey}`);
+    }
+
+    teamUserInserts.push({
+      id: player.teamUser.id,
+      teamId: player.teamUser.teamId,
+      characterId: player.teamUser.characterId,
+      subWeaponId: player.teamUser.subWeaponId,
+      userId: player.teamUser.userId,
+      ...stats,
+    });
+  }
+
   await useDrizzle()
     .insert(teamTable)
     .values(teamInserts)
     .onConflictDoUpdate({
       target: [teamTable.matchId, teamTable.team],
       set: buildConflictUpdateColumns(teamTable, ["team", "wins"]),
+    });
+
+  await useDrizzle()
+    .insert(teamUserTable)
+    .values(teamUserInserts)
+    .onConflictDoUpdate({
+      target: [teamUserTable.id],
+      set: buildConflictUpdateColumns(teamUserTable, [
+        "kills",
+        "stuns",
+        "deaths",
+        "revives",
+        "healed",
+        "skill",
+        "ultimate",
+        "damage",
+        "aliveDuration",
+      ]),
     });
 }

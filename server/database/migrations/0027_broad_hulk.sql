@@ -1,0 +1,21 @@
+CREATE TABLE `team_user` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`team_id` integer NOT NULL,
+	`user_id` integer NOT NULL,
+	`character_id` integer NOT NULL,
+	`sub_weapon_id` integer,
+	`kills` integer NOT NULL,
+	`stuns` integer NOT NULL,
+	`deaths` integer NOT NULL,
+	`revives` integer NOT NULL,
+	`healed` integer NOT NULL,
+	`skill` integer NOT NULL,
+	`ultimate` integer NOT NULL,
+	`damage` integer NOT NULL,
+	`alive_duration` integer NOT NULL,
+	`created_at` integer NOT NULL,
+	FOREIGN KEY (`team_id`) REFERENCES `team`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`character_id`) REFERENCES `character`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`sub_weapon_id`) REFERENCES `item`(`id`) ON UPDATE no action ON DELETE no action
+);

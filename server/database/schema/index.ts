@@ -13,4 +13,5 @@ export * from "./roomUser";
 export * from "./roomSession";
 export * from "./host";
 export * from "./team";
+export * from "./teamUser";
 export * from "./match";
