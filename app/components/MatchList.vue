@@ -1,5 +1,5 @@
 <template>
-  <PageTitle title="Custom Matches"></PageTitle>
+  <PageTitle title="Custom Matches"/>
   <div class="grid gap-2 2xl:grid-cols-2">
     <NuxtLink
       v-for="match in matches"
@@ -22,7 +22,7 @@
             </div>
             <p>{{ match.gameRule.name }} | {{ match.stage.name }}</p>
           </div>
-          <hr class="border-t border-gray-400 mx-2 my-2" />
+          <hr class="border-t border-gray-400 mx-2 my-2" >
           <div class="space-y-0.5">
             <div
               v-for="team in match.teams"
@@ -49,7 +49,7 @@
             </div>
             <p>Round Team Match BO5 | New York City (Day)</p>
           </div>
-          <hr class="border-t border-gray-400 mx-2 my-2" />
+          <hr class="border-t border-gray-400 mx-2 my-2" >
           <div class="space-y-0.5">
             <div class="flex justify-between font-bold rounded-md px-2 py-0.5">
               <p>CareFully, LordDeath115, Pufin</p>
@@ -76,7 +76,7 @@
 
             <p>Round Team Match BO5 | New York City (Day)</p>
           </div>
-          <hr class="border-t border-gray-400 mx-2 my-2" />
+          <hr class="border-t border-gray-400 mx-2 my-2" >
           <div class="space-y-0.5">
             <div class="flex justify-between font-bold rounded-md px-2 py-0.5">
               <p>CareFully, LordDeath115, Pufin</p>
@@ -108,7 +108,7 @@
               <span class="font-semibold">CareFully</span>
             </p>
           </div>
-          <hr class="border-t border-gray-400 mx-2 my-2" />
+          <hr class="border-t border-gray-400 mx-2 my-2" >
           <div class="grid grid-cols-3 gap-0.5">
             <div
               class="flex justify-between font-bold rounded-md px-2 py-0.5 bg-green-500/20"

@@ -26,12 +26,12 @@
         <p class="text-red-600 text-xl">0</p>
       </div>
       <DataTable :value="match.teams[0]?.players" size="small">
-        <Column field="name" header="Name"></Column>
-        <Column field="runner" header="Runner"></Column>
-        <Column field="kills" header="Kills"></Column>
-        <Column field="deaths" header="Deaths"></Column>
-        <Column field="stuns" header="Stuns"></Column>
-        <Column field="damage" header="Damage"></Column>
+        <Column field="name" header="Name"/>
+        <Column field="runner" header="Runner"/>
+        <Column field="kills" header="Kills"/>
+        <Column field="deaths" header="Deaths"/>
+        <Column field="stuns" header="Stuns"/>
+        <Column field="damage" header="Damage"/>
       </DataTable>
     </div>
     <div>
@@ -40,26 +40,26 @@
         <p class="text-green-600 text-xl">1</p>
       </div>
       <DataTable :value="match.teams[1]?.players" size="small">
-        <Column field="name" header="Name"></Column>
-        <Column field="runner" header="Runner"></Column>
-        <Column field="kills" header="Kills"></Column>
-        <Column field="deaths" header="Deaths"></Column>
-        <Column field="stuns" header="Stuns"></Column>
-        <Column field="damage" header="Damage"></Column>
+        <Column field="name" header="Name"/>
+        <Column field="runner" header="Runner"/>
+        <Column field="kills" header="Kills"/>
+        <Column field="deaths" header="Deaths"/>
+        <Column field="stuns" header="Stuns"/>
+        <Column field="damage" header="Damage"/>
       </DataTable>
     </div>
   </div>
   <div v-else>
     <DataTable :value="allPlayers" size="small">
-      <Column field="name" header="Name"></Column>
-      <Column field="runner" header="Runner"></Column>
-      <Column field="kills" header="Kills"></Column>
-      <Column field="deaths" header="Deaths"></Column>
-      <Column field="stuns" header="Stuns"></Column>
-      <Column field="damage" header="Damage"></Column>
+      <Column field="name" header="Name"/>
+      <Column field="runner" header="Runner"/>
+      <Column field="kills" header="Kills"/>
+      <Column field="deaths" header="Deaths"/>
+      <Column field="stuns" header="Stuns"/>
+      <Column field="damage" header="Damage"/>
     </DataTable>
   </div>
-  <hr class="border-t border-slate-600 my-4" />
+  <hr class="border-t border-slate-600 my-4" >
   <PageTitle title="Match Log" />
   <div class="space-y-2">
     <div class="flex gap-4">
@@ -89,7 +89,7 @@
             </div>
             <p>Winner: <span class="font-semibold">Team 2</span></p>
           </div>
-          <hr class="border-t border-gray-400 mx-2 my-2" />
+          <hr class="border-t border-gray-400 mx-2 my-2" >
           <div class="grid grid-cols-2 gap-4">
             <div>
               <div class="text-center font-bold my-4">
@@ -97,12 +97,12 @@
                 <p class="text-red-600 text-xl">0</p>
               </div>
               <DataTable :value="match.teams[0]?.players" size="small">
-                <Column field="name" header="Name"></Column>
-                <Column field="runner" header="Runner"></Column>
-                <Column field="kills" header="Kills"></Column>
-                <Column field="deaths" header="Deaths"></Column>
-                <Column field="stuns" header="Stuns"></Column>
-                <Column field="damage" header="Damage"></Column>
+                <Column field="name" header="Name"/>
+                <Column field="runner" header="Runner"/>
+                <Column field="kills" header="Kills"/>
+                <Column field="deaths" header="Deaths"/>
+                <Column field="stuns" header="Stuns"/>
+                <Column field="damage" header="Damage"/>
               </DataTable>
             </div>
             <div>
@@ -111,12 +111,12 @@
                 <p class="text-green-600 text-xl">1</p>
               </div>
               <DataTable :value="match.teams[1]?.players" size="small">
-                <Column field="name" header="Name"></Column>
-                <Column field="runner" header="Runner"></Column>
-                <Column field="kills" header="Kills"></Column>
-                <Column field="deaths" header="Deaths"></Column>
-                <Column field="stuns" header="Stuns"></Column>
-                <Column field="damage" header="Damage"></Column>
+                <Column field="name" header="Name"/>
+                <Column field="runner" header="Runner"/>
+                <Column field="kills" header="Kills"/>
+                <Column field="deaths" header="Deaths"/>
+                <Column field="stuns" header="Stuns"/>
+                <Column field="damage" header="Damage"/>
               </DataTable>
             </div>
           </div>
