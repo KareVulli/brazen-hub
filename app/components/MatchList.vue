@@ -1,13 +1,13 @@
 <template>
   <PageTitle title="Custom Matches" />
   <div class="grid gap-2 2xl:grid-cols-2">
-    <NuxtLink
+    <Card
       v-for="match in matches"
       :key="match.id"
-      :to="`/matches/${match.id}`"
+      class="border border-slate-800 hover:bg-gray-800 duration-100"
     >
-      <Card class="border border-slate-800 hover:bg-gray-800 duration-100">
-        <template #content>
+      <template #content>
+        <NuxtLink :to="`/matches/${match.id}`">
           <div class="px-2 py-0.5">
             <div class="flex justify-between items-center">
               <p class="font-semibold">
@@ -31,39 +31,39 @@
             <p>{{ match.gameRule.name }} | {{ match.stage.name }}</p>
           </div>
           <hr class="border-t border-gray-400 mx-2 my-2" />
-          <div class="space-y-0.5">
-            <div
-              v-for="team in match.teams"
-              :key="team.id"
-              class="flex justify-between px-2 py-0.5"
-            >
-              <p class="font-semibold">
-                <template
-                  v-for="(teamUser, index) in team.teamUsers"
-                  :key="index"
-                >
-                  <UserName
-                    class="mr-2"
-                    :user="teamUser.user"
-                    inline
-                    variant="small"
-                  />
-                </template>
-              </p>
-              <p
-                class="font-bold"
-                :class="{
-                  'text-green-500': isWinnerTeam(match, team.team),
-                  'text-red-500': !isWinnerTeam(match, team.team),
-                }"
+        </NuxtLink>
+        <div class="space-y-0.5">
+          <div
+            v-for="team in match.teams"
+            :key="team.id"
+            class="flex justify-between px-2 py-0.5"
+          >
+            <p class="font-semibold">
+              <template
+                v-for="(teamUser, index) in team.teamUsers"
+                :key="index"
               >
-                {{ team.wins }}
-              </p>
-            </div>
+                <LinkedUserName
+                  class="mr-2"
+                  :user="teamUser.user"
+                  inline
+                  variant="small"
+                />
+              </template>
+            </p>
+            <p
+              class="font-bold"
+              :class="{
+                'text-green-500': isWinnerTeam(match, team.team),
+                'text-red-500': !isWinnerTeam(match, team.team),
+              }"
+            >
+              {{ team.wins }}
+            </p>
           </div>
-        </template>
-      </Card>
-    </NuxtLink>
+        </div>
+      </template>
+    </Card>
     <NuxtLink to="/matches/0">
       <Card class="border border-green-400 hover:bg-gray-800 duration-100">
         <template #content>

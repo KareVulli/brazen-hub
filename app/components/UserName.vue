@@ -32,10 +32,17 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{
-  user: BrazenUser;
-  showKey?: boolean;
-  variant?: "normal" | "small" | "text";
-  inline?: boolean;
-}>();
+withDefaults(
+  defineProps<{
+    user: BrazenUser;
+    showKey?: boolean;
+    variant?: "normal" | "small" | "text";
+    inline?: boolean;
+  }>(),
+  {
+    showKey: false,
+    variant: "normal",
+    inline: false,
+  },
+);
 </script>

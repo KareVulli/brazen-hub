@@ -51,7 +51,7 @@
                   v-if="(room as HomePublicRoom).user"
                   class="inline-block"
                   :user="room.user"
-                  small
+                  variant="small"
                 />
                 <span v-else>{{ room.createdByUserName }}</span>
               </div>
