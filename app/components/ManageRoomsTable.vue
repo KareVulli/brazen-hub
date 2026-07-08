@@ -119,26 +119,14 @@
           </Column>
         </DataTable>
         <p>Match history</p>
-        <DataTable
-          v-for="match in data.matches"
-          :key="match.id"
-          :value="match.teams"
-        >
-          <template #header>
-            <div class="flex flex-wrap gap-2">
-              <p class="font-semibold">
-                Match #{{ match.id }} | Started
-                <ScoreDateColumn :date-timestamp="match.createdAt" />
-              </p>
-            </div>
-          </template>
-          <Column class="min-w-48" field="team" header="Team" sortable>
-            <template #body="slotProps">
-              Team {{ slotProps.data.team }}
-            </template>
-          </Column>
-          <Column field="wins" header="Wins" sortable />
-        </DataTable>
+        <SideMenu
+          :items="
+            data.matches.map((match) => ({
+              label: `Match #${match.id}`,
+              url: `/matches/${match.id}`,
+            }))
+          "
+        />
       </div>
     </template>
   </DataTable>

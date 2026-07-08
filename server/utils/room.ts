@@ -7,7 +7,6 @@ import {
   roomTable,
   roomUserTable,
   stageTable,
-  teamTable,
   userTable,
 } from "../database/schema";
 import { createPrivateMatchRoom } from "./brazen-api/createPrivateMatchRoom";
@@ -19,11 +18,12 @@ import {
 import type { DBRoomInsert } from "./drizzle";
 import type { GameRuleDto } from "./gameRule";
 import { gameRuleToDto, getLatestGameRulesSubquery } from "./gameRule";
+import type { SimpleMatch, SimpleMatchDto } from "./match";
+import { simpleMatchToDto } from "./match";
 import { connect } from "./matchmaking-api/connect";
 import { disconnect } from "./matchmaking-api/disconnect";
 import type { StageDto } from "./stage";
 import type { BrazenUser } from "./user";
-import { matchToDto } from "./match";
 
 interface RoomUser {
   user: BrazenUser;
@@ -46,7 +46,7 @@ export interface Room {
   createdAt: Date;
   users: RoomUser[];
   roomSessions: RoomSession[];
-  matches: Match[];
+  matches: SimpleMatch[];
 }
 
 interface RoomUserDto {
@@ -62,7 +62,7 @@ export interface RoomDto {
   createdAt: number;
   users: RoomUserDto[];
   roomSessions: RoomSession[];
-  matches: MatchDto[];
+  matches: SimpleMatchDto[];
 }
 
 export function roomToDto(room: Room): RoomDto {
@@ -72,7 +72,7 @@ export function roomToDto(room: Room): RoomDto {
     gameRule: gameRuleToDto(room.gameRule),
     public: room.public,
     users: room.users,
-    matches: room.matches.map(matchToDto),
+    matches: room.matches.map(simpleMatchToDto),
     roomSessions: room.roomSessions,
     createdAt: Math.floor(room.createdAt.getTime() / 1000),
   };
@@ -91,7 +91,6 @@ function getRoomsQuery() {
       user: getTableColumns(userTable),
       match: getColumns(matchTable),
       matchGameRule: getColumns(gameRuleTable),
-      team: getColumns(teamTable),
       roomSession: getColumns(roomSessionTable),
     })
     .from(roomTable)
@@ -103,7 +102,6 @@ function getRoomsQuery() {
     .leftJoin(roomUserTable, eq(roomUserTable.roomId, roomTable.id))
     .leftJoin(userTable, eq(userTable.id, roomUserTable.userId))
     .leftJoin(matchTable, eq(matchTable.roomId, roomTable.id))
-    .leftJoin(teamTable, eq(teamTable.matchId, matchTable.id))
     .leftJoin(gameRuleTable, eq(gameRuleTable.id, matchTable.gameRuleId))
     .leftJoin(roomSessionTable, eq(roomSessionTable.roomId, roomTable.id))
     .orderBy(desc(roomTable.id));
@@ -111,8 +109,7 @@ function getRoomsQuery() {
 
 function mergeRows(rows: Awaited<ReturnType<typeof getRoomsQuery>>): Room[] {
   const result = rows.reduce<Record<number, Room>>((acc, row) => {
-    const { user, roomUser, match, team, roomSession, matchGameRule, ...rest } =
-      row;
+    const { user, roomUser, match, roomSession, matchGameRule, ...rest } = row;
 
     let room = acc[rest.id];
     if (!room) {
@@ -133,14 +130,10 @@ function mergeRows(rows: Awaited<ReturnType<typeof getRoomsQuery>>): Room[] {
         existingMatch = {
           stage: room.stage,
           ...match,
-          teams: [],
           gameRule: matchGameRule,
         };
         // TODO: Fetch correct stage when random stage support is added
         room.matches.push(existingMatch);
-      }
-      if (team && !existingMatch.teams.find((value) => value.id === team.id)) {
-        existingMatch.teams.push(team);
       }
     }
 

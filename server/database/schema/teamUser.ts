@@ -23,13 +23,14 @@ export const teamUserTable = sqliteTable("team_user", {
   kills: integer("kills").notNull().default(0),
   stuns: integer("stuns").notNull().default(0),
   deaths: integer("deaths").notNull().default(0),
+  damage: integer("damage").notNull().default(0),
   revives: integer("revives").notNull().default(0),
   healed: integer("healed").notNull().default(0),
   skill: integer("skill").notNull().default(0),
   ultimate: integer("ultimate").notNull().default(0),
-  damage: integer("damage").notNull().default(0),
   aliveDuration: integer("alive_duration").notNull().default(0),
   createdAt: createdAt,
+  // updatedAt: updatedAt, // TODO: Add when clearing local db
 });
 
 export const teamUserRelations = relations(teamUserTable, ({ one }) => ({

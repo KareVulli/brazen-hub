@@ -14,7 +14,7 @@ export default defineEventHandler(async (event): Promise<void> => {
   const match = await getMatchById(id);
   if (match === null) {
     throw createError({
-      statusCode: 400,
+      statusCode: 404,
       message: `Match not found`,
     });
   }

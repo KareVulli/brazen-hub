@@ -13,35 +13,47 @@ import type { Team, TeamDto } from "./team";
 import { teamToDto } from "./team";
 import { getUser } from "./user";
 
-export interface Match {
+export interface SimpleMatch {
   id: number;
   roomId: number;
   gameRule: GameRule;
   stage: Stage;
-  teams: Team[];
   updatedAt: Date;
   createdAt: Date;
 }
 
-export interface MatchDto {
+export interface SimpleMatchDto {
   id: number;
   roomId: number;
   gameRule: GameRuleDto;
   stage: StageDto;
-  teams: TeamDto[];
   updatedAt: number;
   createdAt: number;
 }
 
-export function matchToDto(match: Match): MatchDto {
+export interface Match extends SimpleMatch {
+  teams: Team[];
+}
+
+export interface MatchDto extends SimpleMatchDto {
+  teams: TeamDto[];
+}
+
+export function simpleMatchToDto(match: SimpleMatch): SimpleMatchDto {
   return {
     id: match.id,
     roomId: match.roomId,
     gameRule: gameRuleToDto(match.gameRule),
     stage: match.stage,
-    teams: match.teams.map(teamToDto),
     updatedAt: Math.floor(match.updatedAt.getTime() / 1000),
     createdAt: Math.floor(match.createdAt.getTime() / 1000),
+  };
+}
+
+export function matchToDto(match: Match): MatchDto {
+  return {
+    ...simpleMatchToDto(match),
+    teams: match.teams.map(teamToDto),
   };
 }
 
@@ -50,7 +62,17 @@ export async function getMatchById(id: number): Promise<Match | null> {
     (await useDrizzle().query.matchTable.findFirst({
       where: eq(matchTable.id, id),
       with: {
-        teams: true,
+        teams: {
+          with: {
+            teamUsers: {
+              with: {
+                user: true,
+                character: true,
+                subWeapon: true,
+              },
+            },
+          },
+        },
         stage: true,
         gameRule: true,
       },
@@ -62,7 +84,17 @@ export async function getMatches(): Promise<Match[]> {
   return (
     (await useDrizzle().query.matchTable.findMany({
       with: {
-        teams: true,
+        teams: {
+          with: {
+            teamUsers: {
+              with: {
+                user: true,
+                character: true,
+                subWeapon: true,
+              },
+            },
+          },
+        },
         stage: true,
         gameRule: true,
       },

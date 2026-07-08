@@ -3,6 +3,7 @@ import { integer, sqliteTable, unique } from "drizzle-orm/sqlite-core";
 import { matchTable } from "./match";
 import { createdAt } from "./partials/createdAt";
 import { updatedAt } from "./partials/updatedAt";
+import { teamUserTable } from "./teamUser";
 
 export const teamTable = sqliteTable(
   "team",
@@ -19,9 +20,10 @@ export const teamTable = sqliteTable(
   (table) => [unique().on(table.matchId, table.team)],
 );
 
-export const teamRelations = relations(teamTable, ({ one }) => ({
+export const teamRelations = relations(teamTable, ({ one, many }) => ({
   match: one(matchTable, {
     fields: [teamTable.matchId],
     references: [matchTable.id],
   }),
+  teamUsers: many(teamUserTable),
 }));
