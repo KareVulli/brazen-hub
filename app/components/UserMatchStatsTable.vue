@@ -27,10 +27,25 @@
         <i v-else class="opacity-50">Unknown</i>
       </template>
     </Column>
+    <Column
+      v-if="!compact"
+      class="min-w-32"
+      field="subWeapon"
+      header="Sub-Weapon"
+      sortable
+      sort-field="subWeapon.name"
+    >
+      <template #body="slotProps">
+        <span v-if="slotProps.data.subWeapon">{{
+          slotProps.data.subWeapon.name
+        }}</span>
+        <i v-else class="opacity-50">Unknown</i>
+      </template>
+    </Column>
     <Column field="kills" header="Kills" />
     <Column field="deaths" header="Deaths" />
     <Column field="stuns" header="Stuns" />
-    <Column field="damage" header="Damage dealt" />
+    <Column field="damage" header="Damage" />
   </DataTable>
 </template>
 

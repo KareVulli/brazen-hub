@@ -4,7 +4,7 @@
     class="hover:text-blue-600 hover:dark:text-blue-500 hover:underline"
     :class="[small ? 'font-semibold' : 'font-medium']"
   >
-    <UserName :user="user" :small="small" />
+    <UserName :user="user" :variant="small ? 'text' : 'normal'" />
   </NuxtLink>
 </template>
 
