@@ -8,6 +8,7 @@ export const userTable = sqliteTable("user", {
   userKey: text("user_key").unique().notNull(),
   iconId: integer("icon_id").notNull(),
   iconFrameId: integer("icon_frame_id").notNull(),
+  bot: integer({ mode: "boolean" }).notNull().default(false),
   updatedAt: updatedAt,
   createdAt: createdAt,
 });

@@ -11,7 +11,6 @@ import {
 import type { DBTeamUserInsert } from "./drizzle";
 import type { Team, TeamDto } from "./team";
 import { teamToDto } from "./team";
-import { getUser } from "./user";
 
 export interface SimpleMatch {
   id: number;
@@ -143,10 +142,15 @@ export async function createMatch(
 
   for (const [team, data] of Object.entries(teams)) {
     for (const [userKey, playerData] of Object.entries(data.players)) {
-      const user = await getUser(config.apiToken, userKey);
-      if (!user) {
-        throw new Error(`Could not find user ${userKey}`);
-      }
+      const userId = await updateUserInDB(
+        {
+          userKey: userKey,
+          name: playerData.name,
+          iconId: playerData.iconId,
+          iconFrameId: playerData.iconFrameId,
+        },
+        playerData.bot,
+      );
 
       const character = characters[playerData.characterId];
       if (!character) {
@@ -160,7 +164,7 @@ export async function createMatch(
 
       playerInserts.push({
         teamId: mappedTeams[team]!,
-        userId: user.id,
+        userId: userId,
         characterId: character.id,
         subWeaponId: subWeapon.id,
       });

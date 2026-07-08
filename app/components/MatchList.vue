@@ -31,23 +31,35 @@
             <p>{{ match.gameRule.name }} | {{ match.stage.name }}</p>
           </div>
           <hr class="border-t border-gray-400 mx-2 my-2" />
-          <div class="space-y-0.5">
-            <div
-              v-for="team in match.teams"
-              :key="team.id"
-              class="flex justify-between font-bold rounded-md px-2 py-0.5"
-            >
-              <span>
-                <UserName
-                  v-for="teamUser in team.teamUsers"
-                  :key="teamUser.id"
-                  :user="teamUser.user"
-                  inline
-                />
-              </span>
-              <p class="">{{ team.wins }}</p>
-            </div>
-          </div>
+          <table class="w-full">
+            <tr v-for="team in match.teams" :key="team.id" class="font-bold">
+              <td
+                v-for="(teamUser, index) in team.teamUsers"
+                :key="teamUser.id"
+                class="px-2"
+                :class="{
+                  'py-1 rounded-s-md': index === 0,
+                  'bg-green-500/20': isWinnerTeam(match, team.team),
+                }"
+              >
+                <UserName :user="teamUser.user" />
+              </td>
+              <td
+                :colspan="1 + maxPlayersPerTeam(match) - team.teamUsers.length"
+                class="text-right py-1 pr-2 rounded-e-md w-full"
+                :class="{
+                  'text-green-500 bg-green-500/20': isWinnerTeam(
+                    match,
+                    team.team,
+                  ),
+                  'text-red-500': !isWinnerTeam(match, team.team),
+                  'rounded-s-md': team.teamUsers.length === 0,
+                }"
+              >
+                {{ team.wins }}
+              </td>
+            </tr>
+          </table>
         </template>
       </Card>
     </NuxtLink>
@@ -160,4 +172,13 @@
 
 <script setup lang="ts">
 defineProps<{ matches: MatchDto[] }>();
+
+function isWinnerTeam(match: MatchDto, team: number) {
+  const winnerTeam = [...match.teams].sort((a, b) => b.wins - a.wins)[0];
+  return winnerTeam?.team === team;
+}
+
+function maxPlayersPerTeam(match: MatchDto) {
+  return Math.max(...match.teams.map((team) => team.teamUsers.length));
+}
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <MatchList :matches="data" />
+  <MatchList v-if="data" :matches="data" />
 </template>
 
 <script setup lang="ts">

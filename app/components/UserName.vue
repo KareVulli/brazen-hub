@@ -1,6 +1,6 @@
 <template>
   <div :class="`${inline ? 'inline-flex' : 'flex'} items-center gap-2`">
-    <div v-if="!small" class="relative flex-shrink-0">
+    <div v-if="!small" class="relative w-8">
       <img
         class="h-8"
         :src="`https://static.prod.brazenblaze.com/public-assets/profile-icon/thumbnail/${user.iconId}.png`"

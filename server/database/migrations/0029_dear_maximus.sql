@@ -1,0 +1,1 @@
+ALTER TABLE `user` ADD `bot` integer DEFAULT false NOT NULL;

@@ -18,20 +18,22 @@
     </Panel>
 
     <div
-      v-if="match.gameRule.name === 'Round Team Match BO5'"
+      v-if="teamBasedGameRules.includes(match.gameRule.name)"
       class="grid grid-cols-2 gap-4"
     >
       <div>
         <div class="text-center font-bold my-4">
           <p>Team 1</p>
-          <p class="text-red-600 text-xl">0</p>
+          <p class="text-red-600 text-xl">{{ match.teams[0]?.wins ?? "-" }}</p>
         </div>
         <UserMatchStatsTable :team-users="match.teams[0]?.teamUsers" />
       </div>
       <div>
         <div class="text-center font-bold my-4">
           <p>Team 2</p>
-          <p class="text-green-600 text-xl">1</p>
+          <p class="text-green-600 text-xl">
+            {{ match.teams[1]?.wins ?? "-" }}
+          </p>
         </div>
         <UserMatchStatsTable :team-users="match.teams[1]?.teamUsers" />
       </div>
@@ -160,17 +162,19 @@ import dayjs from "#build/dayjs.imports.mjs";
 import UserMatchStatsTable from "./UserMatchStatsTable.vue";
 const props = defineProps<{ matchId: number }>();
 
+const teamBasedGameRules = ["Round Team Match BO5", "Round Team Match BO3"];
+
 const { data: match } = await useFetch(`/api/matches/${props.matchId}`);
 
 const winnerTeam = computed(() => {
   if (!match.value) {
     return "";
   }
-  const winnerTeam = [...match.value.teams].sort((a, b) => a.wins - b.wins)[0];
+  const winnerTeam = [...match.value.teams].sort((a, b) => b.wins - a.wins)[0];
   if (!winnerTeam) {
     return "";
   }
-  if (match.value.gameRule.name === "Round Team Match BO5") {
+  if (teamBasedGameRules.includes(match.value.gameRule.name)) {
     return `Team ${winnerTeam.team} (${winnerTeam.teamUsers.map((teamUser) => teamUser.user.name).join(", ")})`;
   } else {
     return winnerTeam.teamUsers[0]?.user.name || "";

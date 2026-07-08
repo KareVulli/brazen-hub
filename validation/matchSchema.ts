@@ -9,6 +9,10 @@ export const matchSchema = z.object({
       players: z.record(
         z.string(),
         z.object({
+          name: z.string(),
+          iconId: z.coerce.number().int(),
+          iconFrameId: z.coerce.number().int(),
+          bot: z.boolean(),
           characterId: z.coerce.number().int(),
           subWeaponId: z.coerce.number().int(),
         }),

@@ -13,7 +13,10 @@ export interface DetailedBrazenUser extends BrazenAPIDetailedUser {
   id: number;
 }
 
-export async function updateUserInDB(user: BrazenAPIUser): Promise<number> {
+export async function updateUserInDB(
+  user: BrazenAPIUser,
+  bot: boolean = false,
+): Promise<number> {
   const [dbUser] = await useDrizzle()
     .insert(userTable)
     .values({
@@ -21,6 +24,7 @@ export async function updateUserInDB(user: BrazenAPIUser): Promise<number> {
       name: user.name,
       iconId: user.iconId,
       iconFrameId: user.iconFrameId,
+      bot: bot,
     })
     .onConflictDoUpdate({
       target: userTable.userKey,
@@ -28,6 +32,7 @@ export async function updateUserInDB(user: BrazenAPIUser): Promise<number> {
         name: user.name,
         iconId: user.iconId,
         iconFrameId: user.iconFrameId,
+        bot: bot,
       },
     })
     .returning({ userId: userTable.id });
