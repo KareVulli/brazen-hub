@@ -115,7 +115,7 @@ export default defineNuxtConfig({
     },
   },
   dayjs: {
-    plugins: ["duration"],
+    plugins: ["duration", "relativeTime"],
   },
   vite: {
     optimizeDeps: {

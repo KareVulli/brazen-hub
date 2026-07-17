@@ -17,6 +17,7 @@ export interface SimpleMatch {
   roomId: number;
   gameRule: GameRule;
   stage: Stage;
+  endedAt: Date | null;
   updatedAt: Date;
   createdAt: Date;
 }
@@ -26,6 +27,7 @@ export interface SimpleMatchDto {
   roomId: number;
   gameRule: GameRuleDto;
   stage: StageDto;
+  endedAt: number | null;
   updatedAt: number;
   createdAt: number;
 }
@@ -44,6 +46,7 @@ export function simpleMatchToDto(match: SimpleMatch): SimpleMatchDto {
     roomId: match.roomId,
     gameRule: gameRuleToDto(match.gameRule),
     stage: match.stage,
+    endedAt: match.endedAt ? Math.floor(match.endedAt.getTime() / 1000) : null,
     updatedAt: Math.floor(match.updatedAt.getTime() / 1000),
     createdAt: Math.floor(match.createdAt.getTime() / 1000),
   };
@@ -178,7 +181,7 @@ export async function createMatch(
 
 export async function updateMatchStats(
   matchId: number,
-  { teams, players: playerStats }: MatchUpdateSchema,
+  { teams, players: playerStats, endedAt }: MatchUpdateSchema,
 ): Promise<void> {
   const teamInserts = Object.entries(teams).map(([team, stats]) => ({
     ...stats,
@@ -213,6 +216,13 @@ export async function updateMatchStats(
       ...stats,
     });
   }
+
+  await useDrizzle()
+    .update(matchTable)
+    .set({
+      endedAt: endedAt ? new Date(endedAt * 1000) : null,
+    })
+    .where(eq(matchTable.id, matchId));
 
   await useDrizzle()
     .insert(teamTable)

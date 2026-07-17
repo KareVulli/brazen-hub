@@ -4,13 +4,22 @@
     <Card
       v-for="match in matches"
       :key="match.id"
-      class="border border-slate-800 hover:bg-gray-800 duration-100"
+      class="border hover:bg-gray-800 duration-100"
+      :class="{
+        'border-green-400': match.endedAt === null,
+        'border-slate-800': match.endedAt !== null,
+      }"
     >
       <template #content>
         <NuxtLink :to="`/matches/${match.id}`">
           <div class="px-2 py-0.5">
             <div class="flex justify-between items-center">
               <p class="font-semibold">
+                <span
+                  v-if="match.endedAt === null"
+                  class="text-green-500 font-semibold"
+                  >LIVE!</span
+                >
                 Match #{{ match.id }} @
                 <NuxtTime
                   :datetime="new Date(match.createdAt * 1000)"
@@ -19,13 +28,7 @@
                 />
               </p>
               <p>
-                {{
-                  $dayjs(
-                    $dayjs(match.createdAt * 1000).diff(
-                      $dayjs(match.updatedAt * 1000),
-                    ),
-                  ).format("m [minutes] s [seconds]")
-                }}
+                {{ matchDuration(match) }}
               </p>
             </div>
             <p>{{ match.gameRule.name }} | {{ match.stage.name }}</p>
@@ -174,6 +177,9 @@
 <script setup lang="ts">
 defineProps<{ matches: MatchDto[] }>();
 
+const dayjs = useDayjs();
+const formatDuration = useFormatDuration();
+
 function isWinnerTeam(match: MatchDto, team: number) {
   const winnerTeam = [...match.teams].sort((a, b) => b.wins - a.wins)[0];
   return winnerTeam?.team === team;
@@ -181,5 +187,18 @@ function isWinnerTeam(match: MatchDto, team: number) {
 
 function maxPlayersPerTeam(match: MatchDto) {
   return Math.max(...match.teams.map((team) => team.teamUsers.length));
+}
+
+function matchDuration(match: MatchDto) {
+  if (!match) {
+    return "";
+  }
+  if (match.endedAt === null) {
+    return formatDuration(dayjs().diff(dayjs(match.createdAt * 1000)));
+  }
+
+  return formatDuration(
+    dayjs(match.endedAt * 1000).diff(dayjs(match.createdAt * 1000)),
+  );
 }
 </script>

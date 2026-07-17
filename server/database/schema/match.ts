@@ -18,6 +18,7 @@ export const matchTable = sqliteTable("match", {
     .notNull(),
   updatedAt: updatedAt,
   createdAt: createdAt,
+  endedAt: integer("ended_at", { mode: "timestamp" }),
 });
 
 export const matchRelations = relations(matchTable, ({ one, many }) => ({

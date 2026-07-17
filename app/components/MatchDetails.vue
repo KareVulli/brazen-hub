@@ -6,13 +6,14 @@
       </template>
     </PageTitle>
     <Panel :header="match.gameRule.name" class="mb-4">
-      <template #icons
-        ><p>{{ duration }}</p></template
-      >
-      <!-- TODO -->
-      <p v-if="true" class="text-green-500 font-semibold">Match in progress!</p>
+      <template #icons>
+        <p>{{ duration }}</p>
+      </template>
       <p>New York City (Day)</p>
-      <p v-if="true">
+      <p v-if="match.endedAt === null" class="text-green-500 font-semibold">
+        Match in progress
+      </p>
+      <p v-else>
         Winner: <span class="font-semibold">{{ winnerTeam }}</span>
       </p>
     </Panel>
@@ -158,9 +159,11 @@
 </template>
 
 <script setup lang="ts">
-import dayjs from "#build/dayjs.imports.mjs";
 import UserMatchStatsTable from "./UserMatchStatsTable.vue";
 const props = defineProps<{ matchId: number }>();
+
+const dayjs = useDayjs();
+const formatDuration = useFormatDuration();
 
 const teamBasedGameRules = ["Round Team Match BO5", "Round Team Match BO3"];
 
@@ -193,10 +196,14 @@ const allPlayers = computed(() => {
 
 const duration = computed(() => {
   if (!match.value) {
-    return 0;
+    return "";
   }
-  return dayjs(match.value.createdAt * 1000).diff(
-    dayjs(match.value.updatedAt * 1000),
+  if (match.value.endedAt === null) {
+    return formatDuration(dayjs().diff(dayjs(match.value.createdAt * 1000)));
+  }
+
+  return formatDuration(
+    dayjs(match.value.endedAt * 1000).diff(dayjs(match.value.createdAt * 1000)),
   );
 });
 </script>

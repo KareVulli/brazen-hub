@@ -21,6 +21,7 @@ export const matchUpdateSchema = z.object({
       aliveDuration: z.coerce.number().int(),
     }),
   ),
+  endedAt: z.coerce.number().int().optional().nullable().default(null),
 });
 
 export type MatchUpdateSchema = z.infer<typeof matchUpdateSchema>;
