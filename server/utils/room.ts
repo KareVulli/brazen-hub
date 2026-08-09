@@ -222,7 +222,7 @@ export async function openRoom(room: Room, host: DBHost): Promise<void> {
   }
 
   await connect({
-    hubRoomId: room.id,
+    hubSessionId: sessionId,
     marsHost: privateMatchRoom.marsHost,
     marsPort: privateMatchRoom.marsPort,
     marsSessionId: privateMatchRoom.players[0].marsSessionId,

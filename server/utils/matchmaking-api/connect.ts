@@ -1,7 +1,7 @@
 import { getMatchmakingApiClient } from "./client";
 
 export interface ConnectRequest {
-  hubRoomId: number;
+  hubSessionId: number;
   marsHost: string;
   marsPort: number;
   marsSessionId: number;
@@ -19,15 +19,8 @@ export interface ConnectRequest {
   players: { userKey: string; teamIndex: number }[];
 }
 
-export interface ConnectResponse {
-  roomId: string;
-  message: string;
-}
-
-export async function connect(
-  request: ConnectRequest,
-): Promise<ConnectResponse> {
-  return await getMatchmakingApiClient()<ConnectResponse>("api/room/connect", {
+export async function connect(request: ConnectRequest): Promise<void> {
+  await getMatchmakingApiClient()("api/room/connect", {
     method: "POST",
     body: request,
   });

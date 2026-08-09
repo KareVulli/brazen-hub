@@ -1,4 +1,5 @@
 import { createMatch } from "~~/server/utils/match";
+import { getSessionById } from "~~/server/utils/roomSession";
 import { getStageById } from "~~/server/utils/stage";
 import { matchSchema } from "~~/validation/matchSchema";
 
@@ -7,17 +8,19 @@ export default defineEventHandler(async (event): Promise<{ id: number }> => {
 
   const data = await readValidatedBody(event, matchSchema.parse);
 
-  const room = await getRoomById(data.roomId);
-  if (room === null) {
+  const roomSession = await getSessionById(data.roomSessionId);
+  if (roomSession === null) {
     throw createError({
       statusCode: 400,
-      message: `Room not found`,
+      message: `Room Session not found`,
     });
   }
-  if (!room.roomSessions.some((session) => session.active)) {
+
+  const gameRule = await getGameRuleByGameRuleId(data.gameRuleId);
+  if (gameRule === null) {
     throw createError({
       statusCode: 400,
-      message: `Room has no active session`,
+      message: `Game Rule not found`,
     });
   }
 
@@ -29,7 +32,7 @@ export default defineEventHandler(async (event): Promise<{ id: number }> => {
     });
   }
 
-  const matchId = await createMatch(room, stage, data.teams);
+  const matchId = await createMatch(roomSession, gameRule, stage, data.teams);
 
   return { id: matchId };
 });

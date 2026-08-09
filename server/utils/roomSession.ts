@@ -2,6 +2,7 @@ import { isNull } from "drizzle-orm";
 import { roomSessionTable } from "../database/schema";
 import type { BrazenAPIRoom } from "./brazen-api/models/apiRoom";
 import { connectWatcher } from "./matchmaking-api/connectWatcher";
+import type { DBRoomSession } from "./drizzle";
 
 export interface RoomSession {
   id: number;
@@ -51,6 +52,15 @@ export function watcherSessionToDto(
   };
 }
 
+export async function getSessionById(
+  id: number,
+): Promise<DBRoomSession | null> {
+  const session = await useDrizzle().query.roomSessionTable.findFirst({
+    where: eq(roomSessionTable.id, id),
+  });
+  return session || null;
+}
+
 export async function createWatcher(
   host: DBHost,
   privateMatchRoom: BrazenAPIRoom,
@@ -72,21 +82,8 @@ export async function createWatcher(
     throw new Error("Failed to create room session");
   }
 
-  const roomUser = privateMatchRoom.players.find(
-    (roomUser) => roomUser.userKey === host.userKey,
-  );
-  if (!roomUser) {
-    throw new Error("No watcher player info found in private match room data");
-  }
-
   await connectWatcher({
     hubSessionId: sessionId,
-    marsHost: privateMatchRoom.marsHost,
-    marsPort: privateMatchRoom.marsPort,
-    marsSessionId: roomUser.marsSessionId,
-    marsRoomId: privateMatchRoom.marsRoomId,
-    marsCryptKey: privateMatchRoom.marsCryptKey,
-    marsToken: roomUser.marsToken,
     userKey: host.userKey,
     hostToken: host.token,
     privateMatchRoomId: privateMatchRoom.id,

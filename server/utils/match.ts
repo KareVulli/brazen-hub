@@ -8,8 +8,8 @@ import {
   teamUserTable,
   userTable,
 } from "../database/schema";
-import type { DBTeamUserInsert } from "./drizzle";
-import type { Room } from "./room";
+import type { DBRoomSession, DBTeamUserInsert } from "./drizzle";
+import type { GameRule } from "./gameRule";
 import type { Team, TeamDto } from "./team";
 import { teamToDto } from "./team";
 
@@ -107,16 +107,12 @@ export async function getMatches(): Promise<Match[]> {
 }
 
 export async function createMatch(
-  room: Room,
+  roomSession: DBRoomSession,
+  gameRule: GameRule,
   stage: Stage,
   teams: MatchSchema["teams"],
 ): Promise<number> {
   const config = useRuntimeConfig();
-
-  const roomSession = room.roomSessions.find((session) => session.active);
-  if (!roomSession) {
-    throw new Error(`No active room session found for Room ${room.id}`);
-  }
 
   const match = (
     await useDrizzle()
@@ -124,7 +120,7 @@ export async function createMatch(
       .values({
         roomSessionId: roomSession.id,
         stageId: stage.id,
-        gameRuleId: room.gameRule.id,
+        gameRuleId: gameRule.id,
       })
       .returning()
   )[0]!;
