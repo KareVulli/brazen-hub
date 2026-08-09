@@ -9,12 +9,13 @@ import {
   userTable,
 } from "../database/schema";
 import type { DBTeamUserInsert } from "./drizzle";
+import type { Room } from "./room";
 import type { Team, TeamDto } from "./team";
 import { teamToDto } from "./team";
 
 export interface SimpleMatch {
   id: number;
-  roomId: number;
+  roomSessionId: number;
   gameRule: GameRule;
   stage: Stage;
   endedAt: Date | null;
@@ -24,7 +25,7 @@ export interface SimpleMatch {
 
 export interface SimpleMatchDto {
   id: number;
-  roomId: number;
+  roomSessionId: number;
   gameRule: GameRuleDto;
   stage: StageDto;
   endedAt: number | null;
@@ -43,7 +44,7 @@ export interface MatchDto extends SimpleMatchDto {
 export function simpleMatchToDto(match: SimpleMatch): SimpleMatchDto {
   return {
     id: match.id,
-    roomId: match.roomId,
+    roomSessionId: match.roomSessionId,
     gameRule: gameRuleToDto(match.gameRule),
     stage: match.stage,
     endedAt: match.endedAt ? Math.floor(match.endedAt.getTime() / 1000) : null,
@@ -112,11 +113,16 @@ export async function createMatch(
 ): Promise<number> {
   const config = useRuntimeConfig();
 
+  const roomSession = room.roomSessions.find((session) => session.active);
+  if (!roomSession) {
+    throw new Error(`No active room session found for Room ${room.id}`);
+  }
+
   const match = (
     await useDrizzle()
       .insert(matchTable)
       .values({
-        roomId: room.id,
+        roomSessionId: roomSession.id,
         stageId: stage.id,
         gameRuleId: room.gameRule.id,
       })

@@ -1,6 +1,5 @@
 import { relations } from "drizzle-orm";
 import { integer, sqliteTable } from "drizzle-orm/sqlite-core";
-import { matchTable } from "./match";
 import { createdAt } from "./partials/createdAt";
 import { updatedAt } from "./partials/updatedAt";
 import { roomSessionTable } from "./roomSession";
@@ -23,5 +22,4 @@ export const roomRelations = relations(roomTable, ({ one, many }) => ({
   }),
   roomSessions: many(roomSessionTable),
   roomUsers: many(roomUserTable),
-  matches: many(matchTable),
 }));

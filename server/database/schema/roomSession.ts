@@ -4,12 +4,11 @@ import { hostTable } from "./host";
 import { createdAt } from "./partials/createdAt";
 import { updatedAt } from "./partials/updatedAt";
 import { roomTable } from "./room";
+import { matchTable } from "./match";
 
 export const roomSessionTable = sqliteTable("room_session", {
   id: integer("id").primaryKey({ autoIncrement: true }),
-  roomId: integer("room_id")
-    .references(() => roomTable.id)
-    .notNull(),
+  roomId: integer("room_id").references(() => roomTable.id),
   hostId: integer("host_id")
     .references(() => hostTable.id)
     .notNull(),
@@ -21,13 +20,17 @@ export const roomSessionTable = sqliteTable("room_session", {
   createdAt: createdAt,
 });
 
-export const roomSessionRelations = relations(roomSessionTable, ({ one }) => ({
-  room: one(roomTable, {
-    fields: [roomSessionTable.roomId],
-    references: [roomTable.id],
+export const roomSessionRelations = relations(
+  roomSessionTable,
+  ({ one, many }) => ({
+    room: one(roomTable, {
+      fields: [roomSessionTable.roomId],
+      references: [roomTable.id],
+    }),
+    host: one(hostTable, {
+      fields: [roomSessionTable.hostId],
+      references: [hostTable.id],
+    }),
+    matches: many(matchTable),
   }),
-  host: one(hostTable, {
-    fields: [roomSessionTable.hostId],
-    references: [hostTable.id],
-  }),
-}));
+);

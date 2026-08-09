@@ -51,7 +51,7 @@ async function createHost(): Promise<DBHost> {
 
   await setUserName(
     host.token,
-    `MatchingBot_${((dbHost.id % 10000) + "").padStart(4, "0")}`, // 16 chars max username length
+    `StatsBot-${((dbHost.id % 10000) + "").padStart(4, "0")}`, // 16 chars max username length
   );
 
   return dbHost;

@@ -74,6 +74,10 @@ const items = ref([
     label: "Rooms",
     route: "/manage/rooms",
   },
+  {
+    label: "Watcher",
+    route: "/manage/watcher",
+  },
 ]);
 </script>
 

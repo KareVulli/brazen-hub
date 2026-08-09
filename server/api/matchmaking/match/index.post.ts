@@ -14,6 +14,12 @@ export default defineEventHandler(async (event): Promise<{ id: number }> => {
       message: `Room not found`,
     });
   }
+  if (!room.roomSessions.some((session) => session.active)) {
+    throw createError({
+      statusCode: 400,
+      message: `Room has no active session`,
+    });
+  }
 
   const stage = await getStageById(data.stageId);
   if (stage === null) {

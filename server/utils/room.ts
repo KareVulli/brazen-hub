@@ -22,20 +22,14 @@ import type { SimpleMatch, SimpleMatchDto } from "./match";
 import { simpleMatchToDto } from "./match";
 import { connect } from "./matchmaking-api/connect";
 import { disconnect } from "./matchmaking-api/disconnect";
+import type { RoomSessionDto } from "./roomSession";
+import { roomSessionToDto } from "./roomSession";
 import type { StageDto } from "./stage";
 import type { BrazenUser } from "./user";
 
 interface RoomUser {
   user: BrazenUser;
   team: number;
-}
-
-export interface RoomSession {
-  id: number;
-  matchId: string;
-  marsRoomId: string;
-  invitationCode: string;
-  active: boolean;
 }
 
 export interface Room {
@@ -61,7 +55,7 @@ export interface RoomDto {
   public: boolean;
   createdAt: number;
   users: RoomUserDto[];
-  roomSessions: RoomSession[];
+  roomSessions: RoomSessionDto[];
   matches: SimpleMatchDto[];
 }
 
@@ -73,7 +67,7 @@ export function roomToDto(room: Room): RoomDto {
     public: room.public,
     users: room.users,
     matches: room.matches.map(simpleMatchToDto),
-    roomSessions: room.roomSessions,
+    roomSessions: room.roomSessions.map(roomSessionToDto),
     createdAt: Math.floor(room.createdAt.getTime() / 1000),
   };
 }
@@ -101,9 +95,9 @@ function getRoomsQuery() {
     )
     .leftJoin(roomUserTable, eq(roomUserTable.roomId, roomTable.id))
     .leftJoin(userTable, eq(userTable.id, roomUserTable.userId))
-    .leftJoin(matchTable, eq(matchTable.roomId, roomTable.id))
-    .leftJoin(gameRuleTable, eq(gameRuleTable.id, matchTable.gameRuleId))
     .leftJoin(roomSessionTable, eq(roomSessionTable.roomId, roomTable.id))
+    .leftJoin(matchTable, eq(matchTable.roomSessionId, roomSessionTable.id))
+    .leftJoin(gameRuleTable, eq(gameRuleTable.id, matchTable.gameRuleId))
     .orderBy(desc(roomTable.id));
 }
 
