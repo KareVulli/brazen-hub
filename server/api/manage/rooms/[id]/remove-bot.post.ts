@@ -36,5 +36,5 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  return await removeBot({ marsRoomId: activeSession.marsRoomId });
+  return await removeBot({ sessionId: activeSession.id });
 });

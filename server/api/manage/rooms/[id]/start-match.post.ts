@@ -36,5 +36,5 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  return await startMatch({ marsRoomId: activeSession.marsRoomId });
+  return await startMatch({ sessionId: activeSession.id });
 });

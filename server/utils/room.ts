@@ -256,7 +256,7 @@ export async function closeRoom(id: number): Promise<void> {
     return;
   }
 
-  await disconnect({ marsRoomId: activeSession.marsRoomId });
+  await disconnect({ sessionId: activeSession.id });
 
   await useDrizzle()
     .update(roomSessionTable)

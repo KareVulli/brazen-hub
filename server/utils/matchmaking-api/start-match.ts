@@ -1,7 +1,7 @@
 import { getMatchmakingApiClient } from "./client";
 
 export interface StartMatchRequest {
-  marsRoomId: string;
+  sessionId: number;
 }
 
 export interface StartMatchResponse {
@@ -9,9 +9,11 @@ export interface StartMatchResponse {
   message: string;
 }
 
-export async function startMatch(request: StartMatchRequest): Promise<StartMatchResponse> {
-  return getMatchmakingApiClient()<StartMatchResponse>(
-    "api/room/start-match",
-    {method: "POST", body: request}
-  );
+export async function startMatch(
+  request: StartMatchRequest,
+): Promise<StartMatchResponse> {
+  return getMatchmakingApiClient()<StartMatchResponse>("api/room/start-match", {
+    method: "POST",
+    body: request,
+  });
 }

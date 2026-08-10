@@ -1,7 +1,7 @@
 import { getMatchmakingApiClient } from "./client";
 
 export interface DisconnectRequest {
-  marsRoomId: string;
+  sessionId: number;
 }
 
 export interface DisconnectResponse {
@@ -11,8 +11,8 @@ export interface DisconnectResponse {
 export async function disconnect(
   request: DisconnectRequest,
 ): Promise<DisconnectResponse> {
-  return getMatchmakingApiClient()<DisconnectResponse>(
-    "api/room/disconnect",
-    {method: "POST", body: request}
-  );
+  return getMatchmakingApiClient()<DisconnectResponse>("api/room/disconnect", {
+    method: "POST",
+    body: request,
+  });
 }

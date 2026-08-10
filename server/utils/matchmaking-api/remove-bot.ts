@@ -1,7 +1,7 @@
 import { getMatchmakingApiClient } from "./client";
 
 export interface RemoveBotRequest {
-  marsRoomId: string;
+  sessionId: number;
 }
 
 export interface RemoveBotResponse {
