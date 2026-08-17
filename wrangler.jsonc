@@ -33,21 +33,5 @@
         "NUXT_GAME_VERSION_CODE": "2025100601",
         "NUXT_MATCHMAKING_API": "https://match.brazenhub.net",
         "NUXT_PUBLIC_MATCHMAKING_WS": "wss://match.brazenhub.net/stats"
-    },
-    "env": {
-        "preview": {
-            "kv_namespaces": [
-                {
-                    "binding": "CACHE",
-                    "id": "5895d5cc0aea440d9e0a9edfe1674f97"
-                }
-            ],
-            "d1_databases": [
-                {
-                    "binding": "DB",
-                    "database_id": "8c415264-1389-459b-af37-87016f296f10"
-                }
-            ]
-        }
     }
 }
