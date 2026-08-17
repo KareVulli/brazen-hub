@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ROLE_ADMIN } from "~~/server/database/roles";
+import { ROLE_ADMIN } from "~~/server/db/roles";
 import { closeRoom } from "~~/server/utils/room";
 
 const requestSchema = z.object({

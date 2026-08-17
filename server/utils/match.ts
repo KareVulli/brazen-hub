@@ -1,13 +1,8 @@
 import type { MatchSchema } from "~~/validation/matchSchema";
 import type { MatchUpdateSchema } from "~~/validation/matchUpdateSchema";
-import { buildConflictUpdateColumns } from "../database/buildConflictUpdateColumns";
-import { getColumns } from "../database/getColumns";
-import {
-  matchTable,
-  teamTable,
-  teamUserTable,
-  userTable,
-} from "../database/schema";
+import { buildConflictUpdateColumns } from "../db/buildConflictUpdateColumns";
+import { getColumns } from "../db/getColumns";
+import { matchTable, teamTable, teamUserTable, userTable } from "../db/schema";
 import type { DBRoomSession, DBTeamUserInsert } from "./drizzle";
 import type { GameRule } from "./gameRule";
 import type { Team, TeamDto } from "./team";

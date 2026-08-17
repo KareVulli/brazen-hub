@@ -1,4 +1,4 @@
-import { ROLE_ADMIN } from "~~/server/database/roles";
+import { ROLE_ADMIN } from "~~/server/db/roles";
 import type { WatcherSessionDto } from "~~/server/utils/roomSession";
 import { watcherSessionToDto } from "~~/server/utils/roomSession";
 

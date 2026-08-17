@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ROLE_ADMIN } from "~~/server/database/roles";
+import { ROLE_ADMIN } from "~~/server/db/roles";
 import { addBot } from "~~/server/utils/matchmaking-api/add-bot";
 import { getRoomById } from "~~/server/utils/room";
 

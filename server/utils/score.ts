@@ -1,6 +1,6 @@
 import { isNull } from "drizzle-orm";
-import { getColumns } from "../database/getColumns";
-import { ruleTable, scoreTable, userTable } from "../database/schema";
+import { getColumns } from "../db/getColumns";
+import { ruleTable, scoreTable, userTable } from "../db/schema";
 import { getLatestCharactersSubquery } from "./character";
 import type { DBScoreInsert } from "./drizzle";
 import { getLatestItemsSubquery } from "./item";
@@ -45,7 +45,7 @@ export async function getUserTopScores(userId: number): Promise<UserScore[]> {
           )`.as("row_number"),
         })
         .from(scoreTable)
-        .where(eq(scoreTable.userId, userId))
+        .where(eq(scoreTable.userId, userId)),
     );
 
   const charactersSubquery = getLatestCharactersSubquery();
@@ -62,11 +62,11 @@ export async function getUserTopScores(userId: number): Promise<UserScore[]> {
     .from(scoresSubquery)
     .leftJoin(
       charactersSubquery,
-      eq(charactersSubquery.characterId, scoresSubquery.characterId)
+      eq(charactersSubquery.characterId, scoresSubquery.characterId),
     )
     .leftJoin(
       itemsSubquery,
-      eq(itemsSubquery.itemId, scoresSubquery.subWeaponId)
+      eq(itemsSubquery.itemId, scoresSubquery.subWeaponId),
     )
     .innerJoin(ruleTable, eq(ruleTable.id, scoresSubquery.ruleId))
     .orderBy(asc(ruleTable.name))
@@ -76,7 +76,7 @@ export async function getUserTopScores(userId: number): Promise<UserScore[]> {
 
 export async function getTopScoresByRuleId(
   ruleId: number,
-  limit: number = 100
+  limit: number = 100,
 ): Promise<Score[]> {
   const scoresSubquery = useDrizzle()
     .$with("scores")
@@ -93,7 +93,7 @@ export async function getTopScoresByRuleId(
           )`.as("row_number"),
         })
         .from(scoreTable)
-        .where(eq(scoreTable.ruleId, ruleId))
+        .where(eq(scoreTable.ruleId, ruleId)),
     );
 
   const charactersSubquery = getLatestCharactersSubquery();
@@ -108,18 +108,18 @@ export async function getTopScoresByRuleId(
       subWeapon: getColumns(itemsSubquery),
       place:
         sql<number>`ROW_NUMBER() OVER (ORDER BY ${scoresSubquery.score} DESC)`.as(
-          "row_number"
+          "row_number",
         ),
     })
     .from(scoresSubquery)
     .innerJoin(userTable, eq(userTable.id, scoresSubquery.userId))
     .leftJoin(
       charactersSubquery,
-      eq(charactersSubquery.characterId, scoresSubquery.characterId)
+      eq(charactersSubquery.characterId, scoresSubquery.characterId),
     )
     .leftJoin(
       itemsSubquery,
-      eq(itemsSubquery.itemId, scoresSubquery.subWeaponId)
+      eq(itemsSubquery.itemId, scoresSubquery.subWeaponId),
     )
     .orderBy(desc(scoresSubquery.score))
     .where(eq(scoresSubquery.rowNumber, 1))
@@ -145,7 +145,7 @@ export async function getCustomScores(): Promise<CustomScore[]> {
     .innerJoin(userTable, eq(userTable.id, scoreTable.userId))
     .leftJoin(
       charactersSubquery,
-      eq(charactersSubquery.characterId, scoreTable.characterId)
+      eq(charactersSubquery.characterId, scoreTable.characterId),
     )
     .leftJoin(itemsSubquery, eq(itemsSubquery.itemId, scoreTable.subWeaponId))
     .innerJoin(ruleTable, eq(ruleTable.id, scoreTable.ruleId))

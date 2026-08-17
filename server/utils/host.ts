@@ -1,6 +1,6 @@
 import { notExists } from "drizzle-orm";
-import { getColumns } from "../database/getColumns";
-import { hostTable, roomSessionTable } from "../database/schema";
+import { getColumns } from "../db/getColumns";
+import { hostTable, roomSessionTable } from "../db/schema";
 import { createGuest } from "./brazen-api/createGuest";
 import { setUserName } from "./brazen-api/setUserName";
 import type { DBHost } from "./drizzle";

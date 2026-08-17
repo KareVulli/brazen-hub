@@ -1,5 +1,5 @@
-import { getColumns } from "../database/getColumns";
-import { accountTable } from "../database/schema";
+import { getColumns } from "../db/getColumns";
+import { accountTable } from "../db/schema";
 import type { DBAccount } from "./drizzle";
 
 export async function updateAccountInDB(discordUser: {

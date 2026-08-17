@@ -1,4 +1,4 @@
-import { ROLE_ADMIN } from "~~/server/database/roles";
+import { ROLE_ADMIN } from "~~/server/db/roles";
 import type { CustomScore } from "~~/server/utils/score";
 import { getCustomScores } from "~~/server/utils/score";
 
@@ -16,5 +16,5 @@ export default defineEventHandler(
     return {
       scores: await getCustomScores(),
     };
-  }
+  },
 );

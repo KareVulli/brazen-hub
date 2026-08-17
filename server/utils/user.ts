@@ -1,4 +1,4 @@
-import { userTable } from "../database/schema";
+import { userTable } from "../db/schema";
 import { findFirstUser } from "./brazen-api/findUser";
 import type {
   BrazenAPIDetailedUser,

@@ -1,4 +1,4 @@
-import { weeklyTable } from "../database/schema";
+import { weeklyTable } from "../db/schema";
 
 export interface EventListItem {
   eventId: number;

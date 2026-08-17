@@ -1,9 +1,10 @@
 import { drizzle } from "drizzle-orm/d1";
-import * as schema from "../database/schema";
+import * as schema from "../db/schema";
 export { sql, eq, and, or, desc, asc, lt, gt } from "drizzle-orm";
 
 export function useDrizzle() {
-  return drizzle(hubDatabase(), { schema: schema });
+  const DB = process.env.DB || globalThis.__env__?.DB || globalThis.DB;
+  return drizzle(DB, { schema: schema });
 }
 
 export type DBUser = typeof schema.userTable.$inferSelect;

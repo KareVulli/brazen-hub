@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ROLE_ADMIN } from "~~/server/database/roles";
+import { ROLE_ADMIN } from "~~/server/db/roles";
 import { deleteCustomScoreById } from "~~/server/utils/score";
 
 const requestSchema = z.object({

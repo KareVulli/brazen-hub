@@ -1,5 +1,5 @@
-import { getColumns } from "../database/getColumns";
-import { characterTable } from "../database/schema/character";
+import { getColumns } from "../db/getColumns";
+import { characterTable } from "../db/schema/character";
 import type { DBCharacter } from "./drizzle";
 
 export interface CharacterDto {

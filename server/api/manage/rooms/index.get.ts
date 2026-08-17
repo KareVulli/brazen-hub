@@ -1,4 +1,4 @@
-import { ROLE_ADMIN } from "~~/server/database/roles";
+import { ROLE_ADMIN } from "~~/server/db/roles";
 import type { RoomDto } from "~~/server/utils/room";
 import { getRooms, roomToDto } from "~~/server/utils/room";
 
@@ -16,5 +16,5 @@ export default defineEventHandler(
     return {
       rooms: (await getRooms()).map((room) => roomToDto(room)),
     };
-  }
+  },
 );

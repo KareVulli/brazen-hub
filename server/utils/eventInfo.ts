@@ -4,7 +4,7 @@ import {
   userTable,
   weeklyScoreTable,
   weeklyTable,
-} from "../database/schema";
+} from "../db/schema";
 import type {
   BrazenApiEventInfo,
   BrazenApiLeaderboardEntry,

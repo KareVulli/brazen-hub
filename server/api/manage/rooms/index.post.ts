@@ -1,4 +1,4 @@
-import { ROLE_ADMIN } from "~~/server/database/roles";
+import { ROLE_ADMIN } from "~~/server/db/roles";
 import { createRoom } from "~~/server/utils/room";
 import { getStageById } from "~~/server/utils/stage";
 import { roomSchema } from "~~/validation/roomSchema";

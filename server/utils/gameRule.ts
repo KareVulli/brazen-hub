@@ -1,5 +1,5 @@
-import { getColumns } from "../database/getColumns";
-import { gameRuleTable } from "../database/schema/gameRule";
+import { getColumns } from "../db/getColumns";
+import { gameRuleTable } from "../db/schema/gameRule";
 import type { DBGameRule } from "./drizzle";
 
 export interface GameRuleDto {

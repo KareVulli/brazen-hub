@@ -1,4 +1,4 @@
-import { stageTable } from "../database/schema";
+import { stageTable } from "../db/schema";
 
 export interface Stage {
   id: number;

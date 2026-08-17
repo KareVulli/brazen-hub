@@ -1,4 +1,4 @@
-import { ROLE_ADMIN } from "~~/server/database/roles";
+import { ROLE_ADMIN } from "~~/server/db/roles";
 import { writeScore } from "~~/server/utils/score";
 import { scoreSchema } from "~~/validation/scoreSchema";
 

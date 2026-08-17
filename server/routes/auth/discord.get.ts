@@ -1,4 +1,4 @@
-import { ROLE_USER } from "~~/server/database/roles";
+import { ROLE_USER } from "~~/server/db/roles";
 import { updateAccountInDB } from "~~/server/utils/account";
 
 export default defineOAuthDiscordEventHandler({

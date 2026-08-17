@@ -1,5 +1,5 @@
 import type { H3Event } from "h3";
-import { ROLE_ADMIN } from "../database/roles";
+import { ROLE_ADMIN } from "../db/roles";
 
 export async function checkAllowedToUpdate(event: H3Event): Promise<void> {
   const config = useRuntimeConfig(event);

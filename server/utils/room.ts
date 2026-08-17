@@ -1,5 +1,5 @@
 import { getTableColumns } from "drizzle-orm";
-import { getColumns } from "../database/getColumns";
+import { getColumns } from "../db/getColumns";
 import {
   gameRuleTable,
   matchTable,
@@ -8,7 +8,7 @@ import {
   roomUserTable,
   stageTable,
   userTable,
-} from "../database/schema";
+} from "../db/schema";
 import { createPrivateMatchRoom } from "./brazen-api/createPrivateMatchRoom";
 import { openPrivateMatchRoom } from "./brazen-api/openPrivateMatchRoom";
 import {

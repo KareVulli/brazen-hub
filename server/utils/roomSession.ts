@@ -1,5 +1,5 @@
 import { isNull } from "drizzle-orm";
-import { roomSessionTable } from "../database/schema";
+import { roomSessionTable } from "../db/schema";
 import type { BrazenAPIRoom } from "./brazen-api/models/apiRoom";
 import { connectWatcher } from "./matchmaking-api/connectWatcher";
 import type { DBRoomSession } from "./drizzle";

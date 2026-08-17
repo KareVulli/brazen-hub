@@ -1,4 +1,4 @@
-import { ROLE_ADMIN } from "~~/server/database/roles";
+import { ROLE_ADMIN } from "~~/server/db/roles";
 
 export default defineNuxtRouteMiddleware(() => {
   const { loggedIn, user } = useUserSession();

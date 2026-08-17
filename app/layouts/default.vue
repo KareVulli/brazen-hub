@@ -86,7 +86,7 @@
 <script setup lang="ts">
 import { NuxtLink } from "#components";
 import type { MenuItem } from "primevue/menuitem";
-import { ROLE_ADMIN } from "~~/server/database/roles";
+import { ROLE_ADMIN } from "~~/server/db/roles";
 
 const items = ref<MenuItem[]>([
   {

@@ -1,5 +1,5 @@
-import { getColumns } from "../database/getColumns";
-import { itemTable } from "../database/schema/item";
+import { getColumns } from "../db/getColumns";
+import { itemTable } from "../db/schema/item";
 import type { DBItem } from "./drizzle";
 
 export interface ItemDto {

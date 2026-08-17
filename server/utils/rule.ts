@@ -1,4 +1,4 @@
-import { ruleTable } from "../database/schema";
+import { ruleTable } from "../db/schema";
 
 export interface RuleDto {
   id: number;

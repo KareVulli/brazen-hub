@@ -29,7 +29,7 @@
 <script setup lang="ts">
 import type { EventListItem } from "~~/server/utils/eventsList";
 import { UpdateStatus } from "~~/types/UpdateStatus";
-import { ROLE_ADMIN } from "~~/server/database/roles";
+import { ROLE_ADMIN } from "~~/server/db/roles";
 import type { ToastMessageOptions } from "primevue";
 
 const toast = useToast();
@@ -61,7 +61,7 @@ const items = computed(() =>
       label: eventName,
       route: `/weekly-challenges/${event.eventId}`,
     };
-  })
+  }),
 );
 
 async function refetch() {

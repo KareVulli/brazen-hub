@@ -40,21 +40,18 @@ const CustomAura = definePreset(Aura, {
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: "2024-07-30",
+  compatibilityDate: "2026-08-16",
   // Nuxt 4 directory structure and features
   // https://nuxt.com/docs/getting-started/upgrade#testing-nuxt-4
   future: { compatibilityVersion: 4 },
   modules: [
-    "@nuxthub/core",
+    "@nuxt/content",
     "@nuxt/eslint",
     "@nuxtjs/tailwindcss",
     "@primevue/nuxt-module",
-    "nuxt-time",
     "dayjs-nuxt",
-    ["nuxt-plotly", { inject: true }],
     "@vueuse/nuxt",
     "nuxt-auth-utils",
-    "@nuxt/content",
   ],
   css: ["primeicons/primeicons.css"],
   app: {
@@ -76,13 +73,15 @@ export default defineNuxtConfig({
       ],
     },
   },
-  hub: {
-    database: true,
-    kv: false,
-    blob: false,
-    cache: true,
-  },
   nitro: {
+    preset: "cloudflare_module",
+    cloudflare: {
+      nodeCompat: true,
+      wrangler: {
+        kv_namespaces: [{ binding: "CACHE" }],
+        d1_databases: [{ binding: "DB" }],
+      },
+    },
     experimental: {
       // Enable Server API documentation within NuxtHub
       openAPI: true,
