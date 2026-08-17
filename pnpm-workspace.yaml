@@ -1,8 +1,8 @@
-ignoredBuiltDependencies:
-  - '@parcel/watcher'
-  - esbuild
-  - msgpackr-extract
-  - workerd
-
-onlyBuiltDependencies:
-  - better-sqlite3
+shamefullyHoist: true
+allowBuilds:
+  better-sqlite3: true
+  '@parcel/watcher': false
+  esbuild: false
+  msgpackr-extract: false
+  workerd: false
+  unrs-resolver: true
