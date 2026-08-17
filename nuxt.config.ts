@@ -75,13 +75,6 @@ export default defineNuxtConfig({
   },
   nitro: {
     preset: "cloudflare_module",
-    cloudflare: {
-      nodeCompat: true,
-      wrangler: {
-        kv_namespaces: [{ binding: "CACHE" }],
-        d1_databases: [{ binding: "DB" }],
-      },
-    },
     experimental: {
       // Enable Server API documentation within NuxtHub
       openAPI: true,
