@@ -95,7 +95,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     bzToken: "",
     cacheTime: 60,
-    refreshTime: 600,
+    refreshTime: 30,
     updateToken: "",
     gameVersion: "",
     gameVersionCode: "",
