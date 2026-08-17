@@ -26,7 +26,9 @@
     "d1_databases": [
         {
             "binding": "DB",
-            "database_id": "500db735-cbba-4063-9e2b-dcda45bce59a"
+            "database_id": "500db735-cbba-4063-9e2b-dcda45bce59a",
+            "migrations_table": "_hub_migrations",
+            "migrations_dir": "server/db/migrations/"
         }
     ],
     "vars": {
