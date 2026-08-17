@@ -1,10 +1,18 @@
 <template>
   <div>
     <div class="container mx-auto px-4 py-4">
-      <Message severity="warn" class="mb-4"
-        >This website is not maintained from 2025-10-08 and may not work
-        properly if the game has been updated since then.</Message
+      <Transition
+        leave-active-class="transition-opacity duration-1000 ease-in"
+        leave-from-class="opacity-80"
+        leave-to-class="opacity-0"
       >
+        <Message
+          v-if="showAnnouncement"
+          severity="secondary"
+          class="mb-4 opacity-80"
+          >{{ announcementMessage }}</Message
+        >
+      </Transition>
       <Menubar :model="items">
         <template #start>
           <NuxtLink to="/" class="font-bold mx-4 hover:text-red-600 transition"
@@ -90,7 +98,33 @@ import { ROLE_ADMIN } from "~~/server/db/roles";
 
 const config = useRuntimeConfig();
 
+const announcementMessages = [
+  "The old magic stirs...",
+  "Something ancient stirs once more...",
+  "The old one stirs...",
+  "What was buried begins to stir...",
+  "The forgotten stirs again...",
+  "The veil parts for what was lost...",
+  "The ancient wakes...",
+  "What once was sleeps no longer...",
+  "The old rites stir once more...",
+  "From the ashes, the old magic returns...",
+];
 
+const announcementMessage = useState(
+  "announcement-message",
+  () =>
+    announcementMessages[
+      Math.floor(Math.random() * announcementMessages.length)
+    ] ?? announcementMessages[0],
+);
+const showAnnouncement = ref(true);
+
+onMounted(() => {
+  requestAnimationFrame(() => {
+    showAnnouncement.value = false;
+  });
+});
 
 const items = ref<MenuItem[]>([
   {
