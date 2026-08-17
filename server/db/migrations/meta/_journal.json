@@ -232,6 +232,20 @@
       "when": 1785273158719,
       "tag": "0032_big_titania",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "6",
+      "when": 1786993889357,
+      "tag": "0033_slippery_obadiah_stane",
+      "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "6",
+      "when": 1786994424373,
+      "tag": "0034_purple_ma_gnuci",
+      "breakpoints": true
     }
   ]
 }

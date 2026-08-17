@@ -1,7 +1,7 @@
 <template>
   <div v-if="eventInfo?.event">
     <div class="grid xl:grid-cols-2">
-      <PageTitle :title="`Weekly Challenge - ${eventName ? eventName : ''}`" />
+      <PageTitle :title="`Weekly Challenge - Week ${eventInfo.event.week}`" />
       <p class="mb-4 xl:text-right">
         <template v-if="eventInfo.event.endsAt * 1000 > Date.now()">
           Last updated:
@@ -87,10 +87,9 @@
 <script setup lang="ts">
 const props = defineProps<{
   eventId?: string;
-  eventName?: string;
   showChart: boolean;
 }>();
 const { data: eventInfo } = await useFetch(
-  props?.eventId ? `/api/weekly/${props.eventId}` : "/api/weekly"
+  props?.eventId ? `/api/weekly/${props.eventId}` : "/api/weekly",
 );
 </script>

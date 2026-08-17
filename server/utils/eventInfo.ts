@@ -24,6 +24,7 @@ import type { RuleDto } from "./rule";
 
 export interface EventInfo {
   eventId: number;
+  week: number;
   endsAt: number;
   leaderboard: Score[];
   worldRecord: Score | null;
@@ -85,6 +86,16 @@ export async function writeLeaderboardToDB(
 }
 
 export async function writeToDB(raw: EventInfoDto, event: BrazenApiEventInfo) {
+  const latestEvent = await getLatest();
+  let week: number;
+  if (!latestEvent) {
+    week = 1;
+  } else if (latestEvent.eventId === event.eventId) {
+    week = latestEvent.week;
+  } else {
+    week = latestEvent.week + 1;
+  }
+
   const worldRecord = event.worldRecord;
   let worldRecordId: number | null = null;
   if (worldRecord) {
@@ -130,6 +141,7 @@ export async function writeToDB(raw: EventInfoDto, event: BrazenApiEventInfo) {
     .insert(weeklyTable)
     .values({
       eventId: event.eventId,
+      week: week,
       ruleId: event.ruleId,
       characterId: event.characterId,
       subWeaponId: event.subWeaponId,
@@ -402,6 +414,7 @@ async function eventInfoFromDB(weekly: DBEventInfo): Promise<EventInfo> {
 
   return {
     eventId: weekly.eventId,
+    week: weekly.week,
     rule: weekly.rule,
     character: character,
     subWeapon: subWeapon,

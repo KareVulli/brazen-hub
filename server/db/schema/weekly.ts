@@ -10,8 +10,9 @@ export const weeklyTable = sqliteTable(
   {
     id: integer("id").primaryKey({ autoIncrement: true }),
     eventId: integer("event_id").notNull(),
+    week: integer("week").notNull(),
     worldRecordId: integer("world_record_score_id").references(
-      () => scoreTable.id
+      () => scoreTable.id,
     ),
     endsAt: integer("ends_at").notNull(),
     raw: text("raw", { mode: "json" }).notNull(),
@@ -20,7 +21,7 @@ export const weeklyTable = sqliteTable(
     characterId: integer("character_id"),
     subWeaponId: integer("sub_weapon_id"),
   },
-  (table) => [index("created_at_idx").on(table.createdAt)]
+  (table) => [index("created_at_idx").on(table.createdAt)],
 );
 
 export const weeklyRelations = relations(weeklyTable, ({ one, many }) => ({

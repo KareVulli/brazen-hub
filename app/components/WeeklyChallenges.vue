@@ -17,11 +17,7 @@
   <div class="flex flex-col lg:flex-row gap-4">
     <SideMenu :items="items" />
     <div class="flex-grow">
-      <WeeklyChallenge
-        :event-name="selectedEvent?.eventName"
-        :event-id="props.eventId"
-        :show-chart="showChart"
-      />
+      <WeeklyChallenge :event-id="props.eventId" :show-chart="showChart" />
     </div>
   </div>
 </template>
@@ -39,17 +35,6 @@ const props = defineProps<{
   eventId?: string;
   showChart: boolean;
 }>();
-
-const selectedEvent = computed(() => {
-  if (props.eventId !== undefined) {
-    const eventId = Number.parseInt(props.eventId);
-    return props.events.find((event) => event.eventId === eventId);
-  } else if (props.events.length) {
-    return props.events[0];
-  } else {
-    return null;
-  }
-});
 
 const items = computed(() =>
   props.events.map((event) => {
