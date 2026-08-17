@@ -104,6 +104,7 @@ export default defineNuxtConfig({
     matchmakingToken: "",
     public: {
       matchmakingWs: "",
+      showWiki: 0,
     },
   },
   dayjs: {

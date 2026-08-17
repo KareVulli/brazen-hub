@@ -88,6 +88,10 @@ import { NuxtLink } from "#components";
 import type { MenuItem } from "primevue/menuitem";
 import { ROLE_ADMIN } from "~~/server/db/roles";
 
+const config = useRuntimeConfig();
+
+
+
 const items = ref<MenuItem[]>([
   {
     label: "Custom matches",
@@ -119,11 +123,14 @@ const items = ref<MenuItem[]>([
     label: "Characters",
     route: "/characters",
   },
-  {
+]);
+
+if (config.public.showWiki) {
+  items.value.push({
     label: "Wiki",
     route: "/wiki",
-  },
-]);
+  });
+}
 </script>
 
 <style>
