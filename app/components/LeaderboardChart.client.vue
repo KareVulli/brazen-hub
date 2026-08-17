@@ -8,9 +8,9 @@
 </template>
 
 <script setup lang="ts">
-import type { NuxtPlotlyConfig, NuxtPlotlyData } from "nuxt-plotly";
 import type * as Plotly from "plotly.js-dist-min";
 import type { LeaderboardGraphPlayer } from "~~/server/utils/eventInfo";
+import type { NuxtPlotlyConfig, NuxtPlotlyData } from "./NuxtPlotly.vue";
 
 const props = defineProps<{
   playersData: LeaderboardGraphPlayer[];
@@ -29,7 +29,7 @@ const chartOptions: any = computed(
     displayModeBar: true,
     responsive: true,
     modeBarButtonsToRemove: ["lasso2d", "select2d", "toImage"],
-  })
+  }),
 );
 
 const chartData = computed((): NuxtPlotlyData => {
@@ -49,7 +49,7 @@ const chartData = computed((): NuxtPlotlyData => {
 const documentStyle = getComputedStyle(document.documentElement);
 const textColor = ref(documentStyle.getPropertyValue("--p-text-color"));
 const surfaceBorder = ref(
-  documentStyle.getPropertyValue("--p-content-border-color")
+  documentStyle.getPropertyValue("--p-content-border-color"),
 );
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -108,7 +108,7 @@ watch(isDark, () => {
   const documentStyle = getComputedStyle(document.documentElement);
   textColor.value = documentStyle.getPropertyValue("--p-text-color");
   surfaceBorder.value = documentStyle.getPropertyValue(
-    "--p-content-border-color"
+    "--p-content-border-color",
   );
 });
 

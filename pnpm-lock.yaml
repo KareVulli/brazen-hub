@@ -29,15 +29,6 @@ importers:
       better-sqlite3:
         specifier: ^12.11.1
         version: 12.11.1
-      chart.js:
-        specifier: ^4.5.1
-        version: 4.5.1
-      chartjs-adapter-dayjs-4:
-        specifier: ^1.0.4
-        version: 1.0.4(chart.js@4.5.1)(dayjs@1.11.22)
-      chartjs-plugin-zoom:
-        specifier: ^2.2.0
-        version: 2.2.0(chart.js@4.5.1)
       dayjs-nuxt:
         specifier: 2.1.11
         version: 2.1.11(magicast@0.5.4)
@@ -53,9 +44,9 @@ importers:
       nuxt-auth-utils:
         specifier: 0.5.30
         version: 0.5.30(magic-string@1.2.0)(magicast@0.5.4)(oxc-parser@0.139.0)(rolldown@1.2.4)(unplugin@3.3.0(esbuild@0.28.2)(rolldown@1.2.4)(rollup@4.62.4)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0)))
-      nuxt-plotly:
-        specifier: 1.0.12
-        version: 1.0.12(magicast@0.5.4)
+      plotly.js-dist-min:
+        specifier: ^3.7.0
+        version: 3.7.0
       primeicons:
         specifier: ^7.0.0
         version: 7.0.0
@@ -1286,9 +1277,6 @@ packages:
     engines: {node: '>= 12'}
     deprecated: Please upgrade to v15 or higher. All reported bugs in this version are fixed in newer releases, dependencies have been updated, and security has been improved.
 
-  '@kurkle/color@0.3.4':
-    resolution: {integrity: sha512-M5UknZPHRu3DEDWoipU6sE8PdkZ6Z/S+v4dD+Ke8IaNlpdSQah50lz1KtcFBa2vsdOnwbbnxJwVM4wty6udA5w==}
-
   '@kwsites/file-exists@1.1.1':
     resolution: {integrity: sha512-m9/5YGR18lIwxSFDwfE3oA7bWuq9kdau6ugN4H2rJeyhFQZcG9AgSHkQtSD15a8WvTgfz9aikZMrKPHvbpqFiw==}
 
@@ -2178,9 +2166,6 @@ packages:
   '@types/estree@1.0.9':
     resolution: {integrity: sha512-GhdPgy1el4/ImP05X05Uw4cw2/M93BCUmnEvWZNStlCzEKME4Fkk+YpoA5OiHNQmoS7Cafb8Xa3Pya8m1Qrzeg==}
 
-  '@types/hammerjs@2.0.46':
-    resolution: {integrity: sha512-ynRvcq6wvqexJ9brDMS4BnBLzmr0e14d6ZJTEShTBWKymQiHwlAyGu0ZPEFI2Fh1U53F7tN9ufClWM5KvqkKOw==}
-
   '@types/hast@3.0.5':
     resolution: {integrity: sha512-rp/ezSWaD1m44dPKICGhiskI13nVr7qTloFwDa/IYkhhf5nzwP+zIQcIJh3WIFSBOy/H1PzB40jPjMDksN4F+g==}
 
@@ -2894,22 +2879,6 @@ packages:
 
   character-reference-invalid@2.0.1:
     resolution: {integrity: sha512-iBZ4F4wRbyORVsu0jPV7gXkOsGYjGHPmAyv+HiHG8gi5PtC9KI2j1+v8/tlibRvjoWX027ypmG/n0HtO5t7unw==}
-
-  chart.js@4.5.1:
-    resolution: {integrity: sha512-GIjfiT9dbmHRiYi6Nl2yFCq7kkwdkp1W/lp2J99rX0yo9tgJGn3lKQATztIjb5tVtevcBtIdICNWqlq5+E8/Pw==}
-    engines: {pnpm: '>=8'}
-
-  chartjs-adapter-dayjs-4@1.0.4:
-    resolution: {integrity: sha512-yy9BAYW4aNzPVrCWZetbILegTRb7HokhgospPoC3b5iZ5qdlqNmXts2KdSp6AqnjkPAp/YWyHDxLvIvwt5x81w==}
-    engines: {node: '>=10'}
-    peerDependencies:
-      chart.js: '>=4.0.1'
-      dayjs: ^1.9.7
-
-  chartjs-plugin-zoom@2.2.0:
-    resolution: {integrity: sha512-in6kcdiTlP6npIVLMd4zXZ08PDUXC52gZ4FAy5oyjk1zX3gKarXMAof7B9eFiisf9WOC3bh2saHg+J5WtLXZeA==}
-    peerDependencies:
-      chart.js: '>=3.2.0'
 
   chokidar@3.6.0:
     resolution: {integrity: sha512-7VT13fmjotKpGipCW9JEQAusEPE+Ei8nl6/g4FBAmIm0GOOLMua9NDDo/DWp0ZAxCr3cPq5ZpBqmPAQgDda2Pw==}
@@ -3939,10 +3908,6 @@ packages:
       crossws:
         optional: true
 
-  hammerjs@2.0.8:
-    resolution: {integrity: sha512-tSQXBXS/MWQOn/RKckawJ61vvsDpCom87JgxiYdGwHdOa0ht0vzUWDlfioofFCRU0L+6NGDt6XzbgoJvZkMeRQ==}
-    engines: {node: '>=0.8.0'}
-
   has-flag@4.0.0:
     resolution: {integrity: sha512-EykJT/Q1KjTWctppgIAgfSO0tKVuZUjhgMr17kqTumMl6Afv3EISleU7qZUzoXDFTAHTDC4NOoG/ZxU3EvlMPQ==}
     engines: {node: '>=8'}
@@ -4877,9 +4842,6 @@ packages:
     resolution: {integrity: sha512-Lo++ctinehNtQvU1SdYdIfYvhUqFtP5nOQsMvbrpFYh53TqwoS97BrS/tjWQe68cfXQaerzhKPFY1Xb1EH4mJg==}
     hasBin: true
 
-  nuxt-plotly@1.0.12:
-    resolution: {integrity: sha512-wXQE6kuH5em5rVnAPOgQb20d6ADseS5x4igU8JOxmrpj0daU6YlRh3/rq/EWcbOTRBi4Cd9AvmZwt80x83tUWA==}
-
   nuxt@4.5.2:
     resolution: {integrity: sha512-tR3fcqeHlHmmkLMpIg3V7Y+1ltr302lW8djMw/iy+myfo7QSSz+BVJDuQhg5j73b9oteSyBfOKTDYTgvMtj6TA==}
     engines: {node: ^22.19.0 || ^24.11.0 || >=26.0.0}
@@ -5119,8 +5081,8 @@ packages:
   pkg-types@2.3.1:
     resolution: {integrity: sha512-y+ichcgc2LrADuhLNAx8DFjVfgz91pRxfZdI3UDhxHvcVEZsenLO+7XaU5vOp0u/7V/wZ+plyuQxtrDlZJ+yeg==}
 
-  plotly.js-dist-min@2.35.3:
-    resolution: {integrity: sha512-sz2HLP8gkysLx/BanM2PtJTtZ1PLPwdHwMWNri2YxLBy3IOeuDsVQtlmWa4hoK3j/fi4naaD3uZJqH5ozM3zGg==}
+  plotly.js-dist-min@3.7.0:
+    resolution: {integrity: sha512-IRWNnBJZmKss3URDnicBK2nvt/VTSi/MD1GnUscAYFjwSuN6g/CTde5R1UC0RYtblehj8rkT4BL8r05e/c8j5Q==}
 
   pluralize@8.0.0:
     resolution: {integrity: sha512-Nc3IT5yHzflTfbjgqWcCPpo7DaKy4FnpB0l/zCAW0Tc7jxAiuqSxHasntB3D7887LSrA93kDJ9IXovxJYxyLCA==}
@@ -6310,11 +6272,6 @@ packages:
 
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
-
-  uuid@9.0.1:
-    resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
-    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
-    hasBin: true
 
   vary@1.1.2:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
@@ -7559,8 +7516,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@kurkle/color@0.3.4': {}
-
   '@kwsites/file-exists@1.1.1(supports-color@10.2.2)':
     dependencies:
       debug: 4.4.3(supports-color@10.2.2)
@@ -8765,8 +8720,6 @@ snapshots:
 
   '@types/estree@1.0.9': {}
 
-  '@types/hammerjs@2.0.46': {}
-
   '@types/hast@3.0.5':
     dependencies:
       '@types/unist': 3.0.3
@@ -9530,21 +9483,6 @@ snapshots:
   character-entities@2.0.2: {}
 
   character-reference-invalid@2.0.1: {}
-
-  chart.js@4.5.1:
-    dependencies:
-      '@kurkle/color': 0.3.4
-
-  chartjs-adapter-dayjs-4@1.0.4(chart.js@4.5.1)(dayjs@1.11.22):
-    dependencies:
-      chart.js: 4.5.1
-      dayjs: 1.11.22
-
-  chartjs-plugin-zoom@2.2.0(chart.js@4.5.1):
-    dependencies:
-      '@types/hammerjs': 2.0.46
-      chart.js: 4.5.1
-      hammerjs: 2.0.8
 
   chokidar@3.6.0:
     dependencies:
@@ -10565,8 +10503,6 @@ snapshots:
       srvx: 0.12.5
     optionalDependencies:
       crossws: 0.4.10(srvx@0.11.22)
-
-  hammerjs@2.0.8: {}
 
   has-flag@4.0.0: {}
 
@@ -11880,14 +11816,6 @@ snapshots:
       - magicast
       - rolldown
 
-  nuxt-plotly@1.0.12(magicast@0.5.4):
-    dependencies:
-      '@nuxt/kit': 3.21.11(magicast@0.5.4)
-      plotly.js-dist-min: 2.35.3
-      uuid: 9.0.1
-    transitivePeerDependencies:
-      - magicast
-
   nuxt@4.5.2(@babel/plugin-syntax-jsx@7.29.7(@babel/core@7.29.7(supports-color@10.2.2)))(@babel/plugin-syntax-typescript@7.29.7(@babel/core@7.29.7(supports-color@10.2.2)))(@libsql/client@0.17.4)(@oxc-project/types@0.144.0)(@types/node@26.2.0)(@vue/compiler-sfc@3.5.41)(better-sqlite3@12.11.1)(cac@7.0.0)(db0@0.3.4(@libsql/client@0.17.4)(better-sqlite3@12.11.1)(drizzle-orm@0.45.2(@libsql/client@0.17.4)(better-sqlite3@12.11.1)))(drizzle-orm@0.45.2(@libsql/client@0.17.4)(better-sqlite3@12.11.1))(esbuild@0.28.2)(eslint@10.8.1(jiti@2.7.0)(supports-color@10.2.2))(ioredis@5.11.1(supports-color@10.2.2))(lightningcss@1.33.0)(magicast@0.5.4)(optionator@0.9.4)(oxc-parser@0.139.0)(rolldown@1.2.4)(rollup-plugin-visualizer@7.1.1(rolldown@1.2.4)(rollup@4.62.4))(rollup@4.62.4)(srvx@0.11.22)(supports-color@10.2.2)(terser@5.50.0)(tsx@4.23.12)(typescript@5.9.3)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))(vue-tsc@3.3.10(typescript@5.9.3))(yaml@2.9.0):
     dependencies:
       '@dxup/nuxt': 0.5.7(esbuild@0.28.2)(magicast@0.5.4)(oxc-parser@0.139.0)(rolldown@1.2.4)(rollup@4.62.4)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))
@@ -12259,7 +12187,7 @@ snapshots:
       exsolve: 1.1.1
       pathe: 2.0.3
 
-  plotly.js-dist-min@2.35.3: {}
+  plotly.js-dist-min@3.7.0: {}
 
   pluralize@8.0.0: {}
 
@@ -13635,8 +13563,6 @@ snapshots:
       punycode: 2.3.1
 
   util-deprecate@1.0.2: {}
-
-  uuid@9.0.1: {}
 
   vary@1.1.2: {}
 
