@@ -11,7 +11,7 @@
         >
           <a
             v-ripple
-            :href="href"
+            :href="href || '#'"
             v-bind="itemProps.action"
             class="flex items-center"
             @click="navigate"

@@ -4,7 +4,7 @@ import {
   getRawEventInfo,
 } from "~~/server/utils/brazen-api/getEventInfo";
 import { hasRecentEntry, writeToDB } from "~~/server/utils/eventInfo";
-import { UpdateStatus } from "../../../../types/UpdateStatus";
+import { UpdateStatus } from "../../../../shared/types/UpdateStatus";
 
 export default eventHandler(
   async (event): Promise<{ status: UpdateStatus }> => {
@@ -32,5 +32,5 @@ export default eventHandler(
     }
 
     return { status: UpdateStatus.UPDATED };
-  }
+  },
 );

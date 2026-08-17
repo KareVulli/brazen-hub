@@ -28,7 +28,7 @@
 
 <script setup lang="ts">
 import type { EventListItem } from "~~/server/utils/eventsList";
-import { UpdateStatus } from "~~/types/UpdateStatus";
+import { UpdateStatus } from "~~/shared/types/UpdateStatus";
 import { ROLE_ADMIN } from "~~/server/db/roles";
 import type { ToastMessageOptions } from "primevue";
 

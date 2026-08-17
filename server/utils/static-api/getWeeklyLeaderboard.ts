@@ -51,13 +51,13 @@ function rtmLeaderboardFromDto(leaderboard: RTMLeaderboardDto): RTMLeaderboard {
         .split("/")
         .filter((segment) => segment);
       const iconId = Number.parseInt(
-        iconIdURLSegments[iconIdURLSegments.length - 1].replace(".png", "")
+        iconIdURLSegments[iconIdURLSegments.length - 1]!.replace(".png", ""),
       );
       const iconFrameId = Number.parseInt(
-        iconFrameIdURLSegments[iconFrameIdURLSegments.length - 1].replace(
+        iconFrameIdURLSegments[iconFrameIdURLSegments.length - 1]!.replace(
           ".png",
-          ""
-        )
+          "",
+        ),
       );
 
       return {
@@ -76,7 +76,7 @@ function rtmLeaderboardFromDto(leaderboard: RTMLeaderboardDto): RTMLeaderboard {
 
 export async function getWeeklyLeaderboard(): Promise<RTMLeaderboard> {
   const response = await staticApiClient<RTMLeaderboardDto>(
-    "/leaderboard/weekly/latest.json"
+    "/leaderboard/weekly/latest.json",
   );
   return rtmLeaderboardFromDto(response);
 }

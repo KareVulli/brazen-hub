@@ -18,7 +18,7 @@
             <a
               v-ripple
               :class="isActive ? 'p-menubar-item-active rounded-md' : ''"
-              :href="href"
+              :href="href || '#'"
               v-bind="props.action"
               @click="navigate"
             >

@@ -5,7 +5,12 @@
       ><PanelMenu :model="items" class="w-full mt-4">
         <template #item="{ item }">
           <NuxtLink v-slot="{ href, navigate }" :to="item.route" custom>
-            <a v-ripple class="block px-2 py-1" :href="href" @click="navigate">
+            <a
+              v-ripple
+              class="block px-2 py-1"
+              :href="href || '#'"
+              @click="navigate"
+            >
               {{ item.label }}
             </a>
           </NuxtLink>
