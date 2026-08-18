@@ -60,8 +60,8 @@ importers:
         specifier: ^0.3.4
         version: 0.3.4(tailwindcss@3.4.19(tsx@4.23.12)(yaml@2.9.0))
       vee-validate:
-        specifier: ^4.15.1
-        version: 4.15.1(vue@3.5.41(typescript@5.9.3))
+        specifier: 5.0.0-beta.0
+        version: 5.0.0-beta.0(vue@3.5.41(typescript@5.9.3))
       zod:
         specifier: ^4.4.3
         version: 4.4.3
@@ -1643,6 +1643,7 @@ packages:
     engines: {node: '>=20.0.0'}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
 
   '@oxc-parser/binding-linux-x64-musl@0.139.0':
     resolution: {integrity: sha512-ePxBvvtzISmSsJ0RIj8FNikSCn58i1jtccj7XR4U9Li4iSzhkFyYlnJ51cQTUwkairz8WMTD4SpKoot8RyTnQA==}
@@ -2142,6 +2143,9 @@ packages:
 
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
+
+  '@standard-schema/utils@0.3.0':
+    resolution: {integrity: sha512-e7Mew686owMaPJVNNLs55PUvgz371nKgwsc4vxE49zsODpJEnxgxRo2y/OKrqueavXgZNMDVj3DdHFlaSAeU8g==}
 
   '@stylistic/eslint-plugin@5.10.0':
     resolution: {integrity: sha512-nPK52ZHvot8Ju/0A4ucSX1dcPV2/1clx0kLcH5wDmrE4naKso7TUC/voUyU1O9OTKTrR6MYip6LP0ogEMQ9jPQ==}
@@ -6277,8 +6281,8 @@ packages:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
     engines: {node: '>= 0.8'}
 
-  vee-validate@4.15.1:
-    resolution: {integrity: sha512-DkFsiTwEKau8VIxyZBGdO6tOudD+QoUBPuHj3e6QFqmbfCRj1ArmYWue9lEp6jLSWBIw4XPlDLjFIZNLdRAMSg==}
+  vee-validate@5.0.0-beta.0:
+    resolution: {integrity: sha512-uGIRnODDMM0A8Weu8AJcZFFJceUpgbSX6G4UYZgWhBc90VcXDK+v7yO16G+sj+6vU1eML11M2BH4HxwoPE62rw==}
     peerDependencies:
       vue: ^3.4.26
 
@@ -8691,6 +8695,8 @@ snapshots:
   '@sqlite.org/sqlite-wasm@3.53.0-build1': {}
 
   '@standard-schema/spec@1.1.0': {}
+
+  '@standard-schema/utils@0.3.0': {}
 
   '@stylistic/eslint-plugin@5.10.0(eslint@10.8.1(jiti@2.7.0)(supports-color@10.2.2))':
     dependencies:
@@ -13566,8 +13572,10 @@ snapshots:
 
   vary@1.1.2: {}
 
-  vee-validate@4.15.1(vue@3.5.41(typescript@5.9.3)):
+  vee-validate@5.0.0-beta.0(vue@3.5.41(typescript@5.9.3)):
     dependencies:
+      '@standard-schema/spec': 1.1.0
+      '@standard-schema/utils': 0.3.0
       '@vue/devtools-api': 7.7.10
       type-fest: 4.41.0
       vue: 3.5.41(typescript@5.9.3)

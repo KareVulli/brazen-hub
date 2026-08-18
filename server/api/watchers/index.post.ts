@@ -9,6 +9,7 @@ import { createWatcher } from "~~/server/utils/roomSession";
 import { watcherSchema } from "~~/validation/watcherSchema";
 
 export default defineEventHandler(async (event): Promise<void> => {
+  // TODO: Add rate limiting and allow access to anyone.
   const session = await requireUserSession(event);
 
   if (session.user.role !== ROLE_ADMIN) {

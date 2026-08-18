@@ -1,15 +1,21 @@
 <template>
   <main>
     <PageTitle title="Welcome to Brazen Hub!" />
-    <div v-if="data" class="grid lg:grid-cols-2 grid-flow-dense gap-4 mb-4">
-      <WeeklyChallengeOverview :weekly="data.weekly" />
-      <PublicRoomsList :public-rooms="data.publicRooms" />
+    <div
+      v-if="data"
+      class="grid lg:grid-cols-2 grid-flow-dense gap-4 mb-4 items-start"
+    >
+      <MatchesOverview :latest-matches="data.matches" />
+      <div class="space-y-4">
+        <PublicRoomsList :public-rooms="data.publicRooms" />
+        <WeeklyChallengeOverview :weekly="data.weekly" />
+      </div>
     </div>
   </main>
 </template>
 
 <script setup lang="ts">
-import { PublicRoomsList } from "#components";
+import { PublicRoomsList, MatchesOverview } from "#components";
 
 const { data } = useFetch("/api/home");
 </script>

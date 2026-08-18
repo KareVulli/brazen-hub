@@ -5,6 +5,8 @@ import { getPublicRooms } from "../../utils/brazen-api/getPublicRooms";
 import { getCurrentWeekly } from "../../utils/eventInfo";
 import type { BrazenUser } from "../../utils/user";
 import { getUserFromDB } from "../../utils/user";
+import { getPaginatedMatches } from "~~/server/utils/match";
+import { matchTable } from "~~/server/db/schema";
 
 export interface HomePublicRoom extends BrazenApiPublicRoom {
   user: BrazenUser | null;
@@ -15,6 +17,7 @@ export interface HomePublicRoom extends BrazenApiPublicRoom {
 export interface HomeInfo {
   weekly: EventInfo | null;
   publicRooms: HomePublicRoom[];
+  matches: MatchDto[];
 }
 
 async function publicRoomsToHomePublicRooms(
@@ -41,20 +44,23 @@ async function publicRoomsToHomePublicRooms(
   return homePublicRooms;
 }
 
-export default cachedEventHandler(
-  async (event): Promise<HomeInfo> => {
-    const config = useRuntimeConfig(event);
+export default eventHandler(async (event): Promise<HomeInfo> => {
+  const config = useRuntimeConfig(event);
 
-    const publicRooms = await getPublicRooms(config.bzToken);
-    return {
-      weekly: await getCurrentWeekly(),
-      publicRooms: await publicRoomsToHomePublicRooms(
-        config.bzToken,
-        publicRooms,
-      ),
-    };
-  },
-  {
-    swr: false,
-  },
-);
+  const publicRooms = await getPublicRooms(config.bzToken);
+  return {
+    weekly: await getCurrentWeekly(),
+    publicRooms: await publicRoomsToHomePublicRooms(
+      config.bzToken,
+      publicRooms,
+    ),
+    matches: (
+      await getPaginatedMatches({
+        page: 1,
+        pageSize: 5,
+        sort: matchTable.createdAt,
+        sortDirection: "desc",
+      })
+    ).results,
+  };
+});

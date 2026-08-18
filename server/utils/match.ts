@@ -1,10 +1,22 @@
+import { inArray } from "drizzle-orm";
 import type { MatchSchema } from "~~/validation/matchSchema";
 import type { MatchUpdateSchema } from "~~/validation/matchUpdateSchema";
 import { buildConflictUpdateColumns } from "../db/buildConflictUpdateColumns";
 import { getColumns } from "../db/getColumns";
-import { matchTable, teamTable, teamUserTable, userTable } from "../db/schema";
+import {
+  characterTable,
+  gameRuleTable,
+  itemTable,
+  matchTable,
+  stageTable,
+  teamTable,
+  teamUserTable,
+  userTable,
+} from "../db/schema";
 import type { DBRoomSession, DBTeamUserInsert } from "./drizzle";
 import type { GameRule } from "./gameRule";
+import type { PaginatedResponse, PaginationOptions } from "./pagination";
+import { paginateResults } from "./pagination";
 import type { Team, TeamDto } from "./team";
 import { teamToDto } from "./team";
 
@@ -99,6 +111,96 @@ export async function getMatches(): Promise<Match[]> {
       orderBy: desc(matchTable.id),
     })) || null
   );
+}
+
+function getMatchesQuery() {
+  return useDrizzle()
+    .select({
+      ...getColumns(matchTable),
+      stage: getColumns(stageTable),
+      gameRule: getColumns(gameRuleTable),
+      team: getColumns(teamTable),
+      teamUser: getColumns(teamUserTable),
+      user: getColumns(userTable),
+      character: getColumns(characterTable),
+      subWeapon: getColumns(itemTable),
+    })
+    .from(matchTable)
+    .innerJoin(stageTable, eq(stageTable.id, matchTable.stageId))
+    .innerJoin(gameRuleTable, eq(gameRuleTable.id, matchTable.gameRuleId))
+    .leftJoin(teamTable, eq(teamTable.matchId, matchTable.id))
+    .leftJoin(teamUserTable, eq(teamUserTable.teamId, teamTable.id))
+    .leftJoin(userTable, eq(userTable.id, teamUserTable.userId))
+    .leftJoin(characterTable, eq(characterTable.id, teamUserTable.characterId))
+    .leftJoin(itemTable, eq(itemTable.id, teamUserTable.subWeaponId))
+    .$dynamic();
+}
+
+function mergeRows(rows: Awaited<ReturnType<typeof getMatchesQuery>>): Match[] {
+  const results: Match[] = [];
+
+  for (const row of rows) {
+    const { team, teamUser, user, character, subWeapon, ...rest } = row;
+
+    let match: Match | undefined = results.find((value) => value.id === row.id);
+    if (!match) {
+      match = { teams: [], ...rest };
+      results.push(match);
+    }
+
+    let existingTeam: Team | undefined;
+    if (team) {
+      existingTeam = match.teams.find((value) => value.id === team.id);
+      if (!existingTeam) {
+        existingTeam = { teamUsers: [], ...team };
+        match.teams.push(existingTeam);
+      }
+    }
+
+    let existingTeamUser: TeamUser | undefined;
+    if (existingTeam && teamUser && user && character && subWeapon) {
+      existingTeamUser = existingTeam.teamUsers.find(
+        (value) => value.id === teamUser.id,
+      );
+      if (!existingTeamUser) {
+        existingTeamUser = {
+          user: user,
+          character: character,
+          subWeapon: subWeapon,
+          ...teamUser,
+        };
+        existingTeam.teamUsers.push(existingTeamUser);
+      }
+    }
+  }
+
+  return results;
+}
+
+export async function getPaginatedMatches(
+  paginationOptions: PaginationOptions,
+): Promise<PaginatedResponse<MatchDto>> {
+  const query = useDrizzle()
+    .select({ id: matchTable.id })
+    .from(matchTable)
+    .$dynamic();
+  const paginatedResults = await paginateResults(query, paginationOptions);
+  const results = await getMatchesQuery()
+    .where(
+      inArray(
+        matchTable.id,
+        paginatedResults.results.map((item) => item.id),
+      ),
+    )
+    .orderBy(
+      paginationOptions.sortDirection === "asc"
+        ? asc(paginationOptions.sort)
+        : desc(paginationOptions.sort),
+    );
+  return {
+    ...paginatedResults,
+    results: mergeRows(results).map(matchToDto),
+  };
 }
 
 export async function createMatch(
