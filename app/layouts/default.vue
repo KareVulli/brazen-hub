@@ -15,7 +15,9 @@
       </Transition>
       <Menubar :model="items">
         <template #start>
-          <NuxtLink to="/" class="font-bold mx-4 hover:text-red-600 transition"
+          <NuxtLink
+            to="/"
+            class="font-bold mx-4 hover:text-red-600 transition whitespace-nowrap"
             >Brazen Hub</NuxtLink
           >
         </template>

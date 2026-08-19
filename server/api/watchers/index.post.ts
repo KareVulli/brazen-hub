@@ -1,4 +1,3 @@
-import { ROLE_ADMIN } from "~~/server/db/roles";
 import { getPrivateMatchRoomStatus } from "~~/server/utils/brazen-api/getPrivateMatchRoomStatus";
 import {
   matchInvitationAccept,
@@ -9,15 +8,7 @@ import { createWatcher } from "~~/server/utils/roomSession";
 import { watcherSchema } from "~~/validation/watcherSchema";
 
 export default defineEventHandler(async (event): Promise<void> => {
-  // TODO: Add rate limiting and allow access to anyone.
-  const session = await requireUserSession(event);
-
-  if (session.user.role !== ROLE_ADMIN) {
-    throw createError({
-      statusCode: 403,
-      message: `Forbidden`,
-    });
-  }
+  await requireUserSession(event);
 
   const data = await readValidatedBody(event, watcherSchema.parse);
 

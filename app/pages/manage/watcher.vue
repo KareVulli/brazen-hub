@@ -2,7 +2,7 @@
   <main>
     <PageTitle title="Watcher sessions" />
     <ManageWatchersTable v-if="data" :entries="data" @closed="refresh" />
-    <CreateWatcherForm @created="refresh" />
+    <CreateWatcherForm class="mt-4" @created="refresh" />
   </main>
 </template>
 

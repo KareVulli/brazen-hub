@@ -1,7 +1,7 @@
 <template>
   <NuxtLink :to="`/matches/${match.id}`" class="w-full">
     <Card
-      class="border hover:bg-gray-100 dark:hover:bg-gray-800 duration-100"
+      class="border hover:bg-gray-100 dark:hover:bg-gray-800 duration-100 h-full"
       :class="{
         'border-green-400': match.endedAt === null,
         'border-slate-800': match.endedAt !== null,
@@ -37,17 +37,14 @@
             class="flex justify-between px-2 py-0.5"
           >
             <p class="font-semibold">
-              <template
+              <UserName
                 v-for="(teamUser, index) in team.teamUsers"
                 :key="index"
-              >
-                <UserName
-                  class="mr-2"
-                  :user="teamUser.user"
-                  inline
-                  variant="small"
-                />
-              </template>
+                class="mr-2"
+                :user="teamUser.user"
+                inline
+                variant="small"
+              />
             </p>
             <p
               class="font-bold"
