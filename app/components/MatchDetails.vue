@@ -19,19 +19,35 @@
     </Panel>
 
     <div
-      v-if="teamBasedGameRules.includes(match.gameRule.name)"
+      v-if="teamBasedGameRuleTypes.includes(match.gameRule.gameRuleType)"
       class="grid grid-cols-2 gap-4"
     >
       <div>
         <div class="text-center font-bold my-4">
-          <p>Team 1</p>
+          <p
+            v-if="
+              match.teams[0]?.teamUsers.length === 1 &&
+              match.teams[0]?.teamUsers[0]?.user.name
+            "
+          >
+            {{ match.teams[0].teamUsers[0].user.name }}
+          </p>
+          <p v-else>Team 1</p>
           <p class="text-red-600 text-xl">{{ match.teams[0]?.wins ?? "-" }}</p>
         </div>
         <UserMatchStatsTable :team-users="match.teams[0]?.teamUsers" />
       </div>
       <div>
         <div class="text-center font-bold my-4">
-          <p>Team 2</p>
+          <p
+            v-if="
+              match.teams[1]?.teamUsers.length === 1 &&
+              match.teams[1]?.teamUsers[0]?.user.name
+            "
+          >
+            {{ match.teams[1].teamUsers[0].user.name }}
+          </p>
+          <p v-else>Team 2</p>
           <p class="text-green-600 text-xl">
             {{ match.teams[1]?.wins ?? "-" }}
           </p>
@@ -40,14 +56,16 @@
       </div>
     </div>
     <div v-else>
-      <UserMatchStatsTable :team-users="allPlayers" />
+      <UserMatchStatsTable :team-users="allPlayers" show-placement />
     </div>
-    <hr class="border-t border-slate-600 my-4" />
+    <hr class="border-t border-surface-200 dark:border-surface-700 my-4" />
     <PageTitle title="Match Log" />
     <div class="space-y-2">
       <div class="flex gap-4">
         <p class="flex-shrink-0">19:31:04</p>
-        <Card class="border border-slate-800 flex-grow">
+        <Card
+          class="border border-surface-200 dark:border-surface-700 flex-grow"
+        >
           <template #content>
             <p>
               <span class="font-semibold text-blue-500">CareFully</span> died
@@ -57,7 +75,9 @@
       </div>
       <div class="flex gap-4">
         <p class="flex-shrink-0">19:30:30</p>
-        <Card class="border border-slate-800 flex-grow">
+        <Card
+          class="border border-surface-200 dark:border-surface-700 flex-grow"
+        >
           <template #content>
             <p>Round 2 started</p>
           </template>
@@ -65,7 +85,9 @@
       </div>
       <div class="flex gap-4">
         <p class="flex-shrink-0">19:30:22</p>
-        <Card class="border border-slate-800 flex-grow">
+        <Card
+          class="border border-surface-200 dark:border-surface-700 flex-grow"
+        >
           <template #content>
             <div class="px-2 py-0.5">
               <div class="flex justify-between items-center">
@@ -74,7 +96,9 @@
               </div>
               <p>Winner: <span class="font-semibold">Team 2</span></p>
             </div>
-            <hr class="border-t border-gray-400 mx-2 my-2" />
+            <hr
+              class="border-t border-surface-200 dark:border-surface-700 mx-2 my-2"
+            />
             <div class="grid grid-cols-2 gap-4">
               <div>
                 <div class="text-center font-bold my-4">
@@ -102,7 +126,9 @@
       </div>
       <div class="flex gap-4">
         <p class="flex-shrink-0">19:27:12</p>
-        <Card class="border border-slate-800 flex-grow">
+        <Card
+          class="border border-surface-200 dark:border-surface-700 flex-grow"
+        >
           <template #content>
             <p>
               <span class="font-semibold text-red-500">Shroom</span>
@@ -114,7 +140,9 @@
       </div>
       <div class="flex gap-4">
         <p class="flex-shrink-0">19:27:10</p>
-        <Card class="border border-slate-800 flex-grow">
+        <Card
+          class="border border-surface-200 dark:border-surface-700 flex-grow"
+        >
           <template #content>
             <p>
               <span class="font-semibold text-blue-500">LordDeath115</span>
@@ -126,7 +154,9 @@
       </div>
       <div class="flex gap-4">
         <p class="flex-shrink-0">19:27:00</p>
-        <Card class="border border-slate-800 flex-grow">
+        <Card
+          class="border border-surface-200 dark:border-surface-700 flex-grow"
+        >
           <template #content>
             <p>
               <span class="font-semibold text-blue-500">CareFully</span> killed
@@ -137,7 +167,9 @@
       </div>
       <div class="flex gap-4">
         <p class="flex-shrink-0">19:26:59</p>
-        <Card class="border border-slate-800 flex-grow">
+        <Card
+          class="border border-surface-200 dark:border-surface-700 flex-grow"
+        >
           <template #content>
             <p>
               <span class="font-semibold text-blue-500">CareFully</span> stunned
@@ -148,7 +180,9 @@
       </div>
       <div class="flex gap-4">
         <p class="flex-shrink-0">19:26:38</p>
-        <Card class="border border-slate-800 flex-grow">
+        <Card
+          class="border border-surface-200 dark:border-surface-700 flex-grow"
+        >
           <template #content>
             <p>Round 1 started</p>
           </template>
@@ -165,7 +199,7 @@ const props = defineProps<{ matchId: number }>();
 const dayjs = useDayjs();
 const formatDuration = useFormatDuration();
 
-const teamBasedGameRules = ["Round Team Match BO5", "Round Team Match BO3"];
+const teamBasedGameRuleTypes = ["RoundMatch", "StockMatch", "Duel"];
 
 const { data: match } = await useFetch(`/api/matches/${props.matchId}`);
 
@@ -177,7 +211,7 @@ const winnerTeam = computed(() => {
   if (!winnerTeam) {
     return "";
   }
-  if (teamBasedGameRules.includes(match.value.gameRule.name)) {
+  if (teamBasedGameRuleTypes.includes(match.value.gameRule.gameRuleType)) {
     return `Team ${winnerTeam.team} (${winnerTeam.teamUsers.map((teamUser) => teamUser.user.name).join(", ")})`;
   } else {
     return winnerTeam.teamUsers[0]?.user.name || "";
@@ -189,7 +223,13 @@ const allPlayers = computed(() => {
     return [];
   }
   return match.value.teams.reduce<TeamUserDto[]>(
-    (acc, team) => [...acc, ...team.teamUsers],
+    (acc, team) => [
+      ...acc,
+      ...team.teamUsers.map((teamUser) => ({
+        ...teamUser,
+        placement: team.placement,
+      })),
+    ],
     [],
   );
 });

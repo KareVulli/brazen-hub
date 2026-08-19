@@ -5,6 +5,7 @@ export const matchUpdateSchema = z.object({
     z.string().regex(/^\d+$/),
     z.object({
       wins: z.coerce.number().int().nonnegative(),
+      placement: z.coerce.number().int().nonnegative(),
     }),
   ),
   players: z.record(

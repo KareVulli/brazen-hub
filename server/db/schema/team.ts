@@ -14,6 +14,7 @@ export const teamTable = sqliteTable(
       .notNull(),
     team: integer("team").notNull(),
     wins: integer("wins").notNull().default(0),
+    placement: integer("placement").notNull().default(0),
     updatedAt: updatedAt,
     createdAt: createdAt,
   },

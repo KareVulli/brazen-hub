@@ -104,6 +104,7 @@ export async function getMatches(): Promise<Match[]> {
               },
             },
           },
+          orderBy: asc(teamTable.placement),
         },
         stage: true,
         gameRule: true,
@@ -196,6 +197,7 @@ export async function getPaginatedMatches(
       paginationOptions.sortDirection === "asc"
         ? asc(paginationOptions.sort)
         : desc(paginationOptions.sort),
+      asc(teamTable.placement),
     );
   return {
     ...paginatedResults,
@@ -328,7 +330,7 @@ export async function updateMatchStats(
     .values(teamInserts)
     .onConflictDoUpdate({
       target: [teamTable.matchId, teamTable.team],
-      set: buildConflictUpdateColumns(teamTable, ["team", "wins"]),
+      set: buildConflictUpdateColumns(teamTable, ["team", "wins", "placement"]),
     });
 
   await useDrizzle()

@@ -1,5 +1,21 @@
 <template>
-  <DataTable :value="teamUsers" size="small">
+  <DataTable
+    :value="teamUsers"
+    size="small"
+    :sort-field="showPlacement ? 'placement' : 'user.name'"
+    :sort-order="1"
+  >
+    <Column
+      v-if="showPlacement"
+      class="max-w-20"
+      field="placement"
+      header="Placement"
+      sortable
+      sort-field="placement"
+      ><template #body="slotProps">
+        #{{ slotProps.data.placement || "-" }}
+      </template></Column
+    >
     <Column
       class="min-w-40"
       field="user"
@@ -51,7 +67,8 @@
 
 <script setup lang="ts">
 defineProps<{
-  teamUsers: TeamUserDto[] | undefined;
+  teamUsers: (TeamUserDto[] & { placement?: number }) | undefined;
   compact?: boolean;
+  showPlacement?: boolean;
 }>();
 </script>

@@ -6,6 +6,7 @@ export interface Team {
   matchId: number;
   team: number;
   wins: number;
+  placement: number;
   teamUsers: TeamUser[];
   updatedAt: Date;
   createdAt: Date;
@@ -16,6 +17,7 @@ export interface TeamDto {
   matchId: number;
   team: number;
   wins: number;
+  placement: number;
   teamUsers: TeamUserDto[];
   updatedAt: number;
   createdAt: number;
@@ -27,6 +29,7 @@ export function teamToDto(team: Team): TeamDto {
     matchId: team.matchId,
     team: team.team,
     wins: team.wins,
+    placement: team.placement,
     teamUsers: team.teamUsers.map(teamUserToDto),
     updatedAt: Math.floor(team.updatedAt.getTime() / 1000),
     createdAt: Math.floor(team.createdAt.getTime() / 1000),
