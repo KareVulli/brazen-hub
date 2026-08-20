@@ -3,23 +3,16 @@
     v-if="teamBasedGameRuleTypes.includes(match.gameRule.gameRuleType)"
     class="space-y-0.5"
   >
-    <div
-      v-for="team in match.teams"
-      :key="team.id"
-      class="flex justify-between"
-    >
-      <p class="">
-        <UserName
-          v-for="(teamUser, index) in team.teamUsers"
-          :key="index"
-          class="mr-2"
-          :user="teamUser.user"
-          inline
-          variant="small"
-        />
-      </p>
+    <div v-for="team in match.teams" :key="team.id" class="flex">
+      <UserName
+        v-for="(teamUser, index) in team.teamUsers"
+        :key="index"
+        class="mr-2"
+        :user="teamUser.user"
+        variant="small"
+      />
       <p
-        class="font-bold"
+        class="font-bold ml-auto"
         :class="{
           'text-green-500': isWinnerTeam(match, team.team),
           'text-red-500': !isWinnerTeam(match, team.team),
@@ -42,7 +35,6 @@
         v-if="team.teamUsers[0]"
         class="mr-2"
         :user="team.teamUsers[0].user"
-        inline
         variant="small"
       />
       <p
@@ -59,7 +51,7 @@
       :key="index"
       class="flex justify-between"
     >
-      <UserName class="mr-2" :user="player.user" inline variant="small" />
+      <UserName class="mr-2" :user="player.user" variant="small" />
       <p class="font-bold" :class="rankClass[index] || 'opacity-20'">
         {{ player.kills }}
       </p>

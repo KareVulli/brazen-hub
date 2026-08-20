@@ -1,5 +1,5 @@
 <template>
-  <NuxtLink :to="`/matches/${match.id}`" class="w-full">
+  <NuxtLink :to="`/matches/${match.id}`" class="w-full min-w-0">
     <Card
       class="border border-surface-200 dark:border-surface-700 hover:bg-gray-100 dark:hover:bg-gray-800 duration-100 h-full"
       :class="{
@@ -8,7 +8,7 @@
       }"
     >
       <template #content>
-        <div class="flex justify-between items-center">
+        <div class="flex justify-between lg:items-center flex-col lg:flex-row">
           <p class="font-semibold">
             <span
               v-if="match.endedAt === null"

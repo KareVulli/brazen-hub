@@ -1,5 +1,8 @@
 <template>
-  <Panel header="Recent recorded matches">
+  <Panel
+    header="Recent recorded matches"
+    :pt="{ contentWrapper: { class: 'min-w-0' } }"
+  >
     <template #icons>
       <AppLink class="text-sm" :to="{ path: `/matches` }"
         >Go to custom matches</AppLink

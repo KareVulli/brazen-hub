@@ -13,11 +13,27 @@
       to add a watcher to your custom room</Message
     >
   </AuthState>
-  <template v-if="matches.length">
-    <PageTitle title="Match history" />
+  <PageTitle title="Match history">
+    <template #actions>
+      <Button
+        label="Refresh"
+        icon="pi pi-refresh"
+        size="small"
+        severity="secondary"
+        :disabled="isFetching"
+        @click="reset"
+      />
+    </template>
+  </PageTitle>
+  <template v-if="isFetching || matches.length">
     <div class="grid gap-2 2xl:grid-cols-2">
       <MatchItem v-for="match in matches" :key="match.id" :match="match" />
     </div>
+    <ProgressSpinner
+      v-if="isFetching"
+      class="block text-center size-8 my-4"
+      stroke-width="8"
+    />
   </template>
   <template v-else>
     <p class="font-semibold mb-4">No custom matches yet</p>
@@ -29,5 +45,45 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{ matches: MatchDto[] }>();
+import { useQueryClient } from "@tanstack/vue-query";
+
+const { data, isFetching, fetchNextPage, hasNextPage, refetch } =
+  await useInfiniteMatches();
+const queryClient = useQueryClient();
+
+const el = ref<Document | null>(null);
+
+const matches = computed(() => {
+  return (
+    data.value?.pages.reduce<MatchDto[]>(
+      (acc, page) => [...acc, ...page.results],
+      [],
+    ) || []
+  );
+});
+
+function reset() {
+  queryClient.removeQueries({ queryKey: ["infiniteMatches"] });
+  refetch();
+}
+
+useInfiniteScroll(
+  el,
+  () => {
+    fetchNextPage();
+  },
+  {
+    distance: 100,
+    canLoadMore: () => {
+      return !isFetching.value && hasNextPage.value;
+    },
+  },
+);
+
+onMounted(() => {
+  el.value = document;
+});
+onUnmounted(() => {
+  queryClient.removeQueries({ queryKey: ["infiniteMatches"] });
+});
 </script>
