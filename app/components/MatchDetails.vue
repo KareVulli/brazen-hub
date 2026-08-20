@@ -2,7 +2,11 @@
   <template v-if="match">
     <PageTitle :title="`Match #${match.id}`">
       <template #actions>
-        <p>Wednesday, July 1, 2026 at 6:10 AM</p>
+        <NuxtTime
+          :datetime="new Date(match.createdAt * 1000)"
+          date-style="full"
+          time-style="short"
+        />
       </template>
     </PageTitle>
     <Panel :header="match.gameRule.name" class="mb-4">
@@ -18,195 +22,146 @@
       </p>
     </Panel>
 
-    <div
-      v-if="teamBasedGameRuleTypes.includes(match.gameRule.gameRuleType)"
-      class="grid grid-cols-2 gap-4"
-    >
-      <div>
-        <div class="text-center font-bold my-4">
-          <p
-            v-if="
-              match.teams[0]?.teamUsers.length === 1 &&
-              match.teams[0]?.teamUsers[0]?.user.name
-            "
-          >
-            {{ match.teams[0].teamUsers[0].user.name }}
-          </p>
-          <p v-else>Team 1</p>
-          <p class="text-red-600 text-xl">{{ match.teams[0]?.wins ?? "-" }}</p>
-        </div>
-        <UserMatchStatsTable
-          :team-users="match.teams[0]?.teamUsers"
-          initial-sort="name"
-        />
-      </div>
-      <div>
-        <div class="text-center font-bold my-4">
-          <p
-            v-if="
-              match.teams[1]?.teamUsers.length === 1 &&
-              match.teams[1]?.teamUsers[0]?.user.name
-            "
-          >
-            {{ match.teams[1].teamUsers[0].user.name }}
-          </p>
-          <p v-else>Team 2</p>
-          <p class="text-green-600 text-xl">
-            {{ match.teams[1]?.wins ?? "-" }}
-          </p>
-        </div>
-        <UserMatchStatsTable
-          :team-users="match.teams[1]?.teamUsers"
-          initial-sort="name"
-        />
-      </div>
-    </div>
-    <div v-else-if="match.gameRule.gameRuleType === 'Survival'">
-      <UserMatchStatsTable
-        :team-users="allPlayers"
-        initial-sort="placement"
-        show-placement
-      />
-    </div>
-    <div v-else>
-      <UserMatchStatsTable :team-users="allPlayers" initial-sort="kills" />
-    </div>
+    <MatchStats :game-rule="match.gameRule" :teams="match.teams" />
     <hr class="border-t border-surface-200 dark:border-surface-700 my-4" />
-    <PageTitle title="Match Log" />
+    <PageTitle title="Match log">
+      <template #actions>
+        <Button
+          v-if="match.endedAt === null"
+          label="Refresh"
+          icon="pi pi-refresh"
+          size="small"
+          severity="secondary"
+          :disabled="pending"
+          @click="onRefresh"
+        />
+      </template>
+    </PageTitle>
     <div class="space-y-2">
-      <div class="flex gap-4">
-        <p class="flex-shrink-0">19:31:04</p>
+      <div v-for="event in hydratedEvents" :key="event.id" class="flex gap-4">
+        <p class="flex-shrink-0 w-24">
+          <NuxtTime
+            class="whitespace-nowrap"
+            :datetime="event.eventAt"
+            time-style="medium"
+          />
+        </p>
         <Card
           class="border border-surface-200 dark:border-surface-700 flex-grow"
         >
           <template #content>
-            <p>
-              <span class="font-semibold text-blue-500">CareFully</span> died
+            <p v-if="event.name === 'kill'">
+              <template v-if="event.data.sourceUser && event.data.targetUser">
+                <span
+                  class="font-semibold"
+                  :class="getTeamClass(event.data.sourceUser)"
+                >
+                  {{ event.data.sourceUser.user.name }}
+                </span>
+                killed
+                <span
+                  class="font-semibold"
+                  :class="getTeamClass(event.data.targetUser)"
+                >
+                  {{ event.data.targetUser.user.name }}
+                </span>
+              </template>
+              <template v-else-if="event.data.targetUser">
+                <span
+                  class="font-semibold"
+                  :class="getTeamClass(event.data.targetUser)"
+                >
+                  {{ event.data.targetUser.user.name }}
+                </span>
+                died
+              </template>
             </p>
-          </template>
-        </Card>
-      </div>
-      <div class="flex gap-4">
-        <p class="flex-shrink-0">19:30:30</p>
-        <Card
-          class="border border-surface-200 dark:border-surface-700 flex-grow"
-        >
-          <template #content>
-            <p>Round 2 started</p>
-          </template>
-        </Card>
-      </div>
-      <div class="flex gap-4">
-        <p class="flex-shrink-0">19:30:22</p>
-        <Card
-          class="border border-surface-200 dark:border-surface-700 flex-grow"
-        >
-          <template #content>
-            <div class="px-2 py-0.5">
+            <p v-else-if="event.name === 'stun'">
+              <template v-if="event.data.sourceUser && event.data.targetUser">
+                <span
+                  class="font-semibold"
+                  :class="getTeamClass(event.data.sourceUser)"
+                >
+                  {{ event.data.sourceUser.user.name }}
+                </span>
+                stunned
+                <span
+                  class="font-semibold"
+                  :class="getTeamClass(event.data.targetUser)"
+                >
+                  {{ event.data.targetUser.user.name }}
+                </span>
+              </template>
+              <template v-else-if="event.data.targetUser">
+                <span
+                  class="font-semibold"
+                  :class="getTeamClass(event.data.targetUser)"
+                >
+                  {{ event.data.targetUser.user.name }}
+                </span>
+                got stunned
+              </template>
+            </p>
+            <p v-else-if="event.name === 'revive'">
+              <template v-if="event.data.sourceUser && event.data.targetUser">
+                <span
+                  class="font-semibold"
+                  :class="getTeamClass(event.data.sourceUser)"
+                >
+                  {{ event.data.sourceUser.user.name }}
+                </span>
+                revived
+                <span
+                  class="font-semibold"
+                  :class="getTeamClass(event.data.targetUser)"
+                  >{{ event.data.targetUser.user.name }}</span
+                >
+              </template>
+              <template v-else-if="event.data.targetUser">
+                <span
+                  class="font-semibold"
+                  :class="getTeamClass(event.data.targetUser)"
+                >
+                  {{ event.data.targetUser.user.name }}
+                </span>
+                revived
+              </template>
+            </p>
+            <p v-else-if="event.name === 'round-start'">
+              Round {{ event.data.round }} started
+            </p>
+            <div v-else-if="event.name === 'round-end'">
               <div class="flex justify-between items-center">
-                <p class="font-semibold">Round 1 stats</p>
-                <p>3 minutes 40 seconds</p>
+                <p class="font-semibold">Round {{ event.data.round }} stats</p>
+                <p>{{ event.data.duration }}</p>
               </div>
-              <p>Winner: <span class="font-semibold">Team 2</span></p>
-            </div>
-            <hr
-              class="border-t border-surface-200 dark:border-surface-700 mx-2 my-2"
-            />
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <div class="text-center font-bold my-4">
-                  <p>Team 1</p>
-                  <p class="text-red-600 text-xl">0</p>
-                </div>
-                <UserMatchStatsTable
-                  :team-users="match.teams[0]?.teamUsers"
-                  compact
-                />
-              </div>
-              <div>
-                <div class="text-center font-bold my-4">
-                  <p>Team 2</p>
-                  <p class="text-green-600 text-xl">1</p>
-                </div>
-                <UserMatchStatsTable
-                  :team-users="match.teams[1]?.teamUsers"
-                  compact
-                />
-              </div>
+              <p>
+                Winner:
+                <span class="font-semibold">
+                  {{ getTeamName(event.data.winnerTeam) }}
+                </span>
+              </p>
+              <hr
+                class="border-t border-surface-200 dark:border-surface-700 mt-2"
+              />
+              <MatchStats
+                :game-rule="match.gameRule"
+                :teams="event.data.teams"
+                compact
+              />
             </div>
           </template>
         </Card>
       </div>
-      <div class="flex gap-4">
-        <p class="flex-shrink-0">19:27:12</p>
-        <Card
-          class="border border-surface-200 dark:border-surface-700 flex-grow"
-        >
-          <template #content>
-            <p>
-              <span class="font-semibold text-red-500">Shroom</span>
-              revived
-              <span class="font-semibold text-red-500">Omni</span>
-            </p>
-          </template>
-        </Card>
-      </div>
-      <div class="flex gap-4">
-        <p class="flex-shrink-0">19:27:10</p>
-        <Card
-          class="border border-surface-200 dark:border-surface-700 flex-grow"
-        >
-          <template #content>
-            <p>
-              <span class="font-semibold text-blue-500">LordDeath115</span>
-              stunned
-              <span class="font-semibold text-red-500">Omni</span>
-            </p>
-          </template>
-        </Card>
-      </div>
-      <div class="flex gap-4">
-        <p class="flex-shrink-0">19:27:00</p>
-        <Card
-          class="border border-surface-200 dark:border-surface-700 flex-grow"
-        >
-          <template #content>
-            <p>
-              <span class="font-semibold text-blue-500">CareFully</span> killed
-              <span class="font-semibold text-red-500">Cheeseman</span>
-            </p>
-          </template>
-        </Card>
-      </div>
-      <div class="flex gap-4">
-        <p class="flex-shrink-0">19:26:59</p>
-        <Card
-          class="border border-surface-200 dark:border-surface-700 flex-grow"
-        >
-          <template #content>
-            <p>
-              <span class="font-semibold text-blue-500">CareFully</span> stunned
-              <span class="font-semibold text-red-500">Cheeseman</span>
-            </p>
-          </template>
-        </Card>
-      </div>
-      <div class="flex gap-4">
-        <p class="flex-shrink-0">19:26:38</p>
-        <Card
-          class="border border-surface-200 dark:border-surface-700 flex-grow"
-        >
-          <template #content>
-            <p>Round 1 started</p>
-          </template>
-        </Card>
-      </div>
+      <p v-if="!hydratedEvents.length" class="font-semibold mb-4">
+        Nothing has happened yet...
+      </p>
     </div>
   </template>
 </template>
 
 <script setup lang="ts">
-import UserMatchStatsTable from "./UserMatchStatsTable.vue";
+import type { TeamUserDto } from "~~/server/utils/teamUser.ts";
 const props = defineProps<{ matchId: number }>();
 
 const dayjs = useDayjs();
@@ -214,7 +169,12 @@ const formatDuration = useFormatDuration();
 
 const teamBasedGameRuleTypes = ["RoundMatch", "StockMatch", "Duel"];
 
-const { data: match } = await useFetch(`/api/matches/${props.matchId}`);
+const { data, refresh, pending } = await useFetch(
+  `/api/matches/${props.matchId}`,
+);
+
+const match = computed(() => data.value?.match);
+const events = computed(() => data.value?.events || []);
 
 const winnerTeam = computed(() => {
   if (!match.value) {
@@ -235,16 +195,104 @@ const allPlayers = computed(() => {
   if (!match.value) {
     return [];
   }
-  return match.value.teams.reduce<TeamUserDto[]>(
+  return match.value.teams.reduce<(TeamUserDto & { team: TeamDto })[]>(
     (acc, team) => [
       ...acc,
       ...team.teamUsers.map((teamUser) => ({
         ...teamUser,
-        placement: team.placement,
+        team: team,
       })),
     ],
     [],
   );
+});
+
+async function onRefresh() {
+  await refresh();
+}
+
+function getPlayerByUserKey(userKey: string) {
+  return (
+    allPlayers.value.find((player) => player.user.userKey === userKey) || null
+  );
+}
+
+function getTeamClass(player: TeamUserDto & { team: TeamDto }) {
+  return teamClass[player.team.team - 1];
+}
+
+function getTeamName(team?: TeamDto) {
+  if (!team) {
+    return "";
+  }
+  if (team.teamUsers.length === 1 && team.teamUsers[0]?.user.name) {
+    return team.teamUsers[0].user.name;
+  } else {
+    return `Team ${team.team}`;
+  }
+}
+
+const hydratedEvents = computed(() => {
+  const hydratedEvents = [];
+  for (const event of events.value) {
+    const eventAt = new Date(event.eventAt * 1000);
+    if (
+      event.name === "kill" ||
+      event.name === "stun" ||
+      event.name === "revive"
+    ) {
+      const sourceUser = event.data.sourceUserKey
+        ? getPlayerByUserKey(event.data.sourceUserKey)
+        : null;
+      const targetUser = getPlayerByUserKey(event.data.targetUserKey);
+      hydratedEvents.push({
+        ...event,
+        data: {
+          ...event.data,
+          sourceUser: sourceUser,
+          targetUser: targetUser,
+        },
+        eventAt: eventAt,
+      });
+    } else if (event.name === "round-end") {
+      const teams = new Map<number, TeamDto>();
+      const teamStats = event.data.teams;
+      for (const [userKey, stats] of Object.entries(event.data.players)) {
+        const player = getPlayerByUserKey(userKey);
+        if (!player) {
+          continue;
+        }
+        let team = teams.get(player.team.team);
+        if (!team) {
+          team = {
+            ...player.team,
+            ...teamStats[player.team.team],
+            teamUsers: [],
+          };
+          teams.set(player.team.team, team);
+        }
+        team.teamUsers.push({ ...player, ...stats });
+      }
+      const winnerTeam = teams.get(event.data.winnerTeamIndex)!;
+      hydratedEvents.push({
+        ...event,
+        eventAt: eventAt,
+        data: {
+          ...event.data,
+          duration: formatDuration(
+            dayjs(event.data.endedAt * 1000).diff(
+              dayjs(event.data.startedAt * 1000),
+            ),
+          ),
+          teams: [...teams.values()].sort((a, b) => a.team - b.team),
+          winnerTeam: winnerTeam,
+        },
+      });
+    } else {
+      hydratedEvents.push({ ...event, eventAt: eventAt });
+    }
+  }
+  return hydratedEvents;
 });
 
 const duration = computed(() => {
@@ -259,4 +307,13 @@ const duration = computed(() => {
     dayjs(match.value.endedAt * 1000).diff(dayjs(match.value.createdAt * 1000)),
   );
 });
+
+const teamClass = [
+  "text-blue-500",
+  "text-red-500",
+  "text-green-500",
+  "text-teal-500",
+  "text-purple-500",
+  "text-yellow-500",
+];
 </script>

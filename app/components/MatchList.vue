@@ -26,7 +26,7 @@
     </template>
   </PageTitle>
   <template v-if="isFetching || matches.length">
-    <div class="grid gap-2 2xl:grid-cols-2">
+    <div class="grid gap-2 xl:grid-cols-2">
       <MatchItem v-for="match in matches" :key="match.id" :match="match" />
     </div>
     <div class="text-center my-4">

@@ -15,3 +15,4 @@ export * from "./host";
 export * from "./team";
 export * from "./teamUser";
 export * from "./match";
+export * from "./matchEvent";

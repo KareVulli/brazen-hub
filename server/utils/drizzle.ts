@@ -22,6 +22,7 @@ export type DBRoom = typeof schema.roomTable.$inferSelect;
 export type DBRoomSession = typeof schema.roomSessionTable.$inferSelect;
 export type DBRoomUser = typeof schema.roomUserTable.$inferSelect;
 export type DBMatch = typeof schema.matchTable.$inferSelect;
+export type DBMatchEvent = typeof schema.matchEventTable.$inferSelect;
 export type DBTeam = typeof schema.teamTable.$inferSelect;
 export type DBTeamUser = typeof schema.teamUserTable.$inferSelect;
 

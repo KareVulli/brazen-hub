@@ -8,21 +8,15 @@
     <Column
       v-if="showPlacement"
       class="max-w-20"
-      field="placement"
+      field="team"
       header="Placement"
       sortable
-      sort-field="placement"
+      sort-field="team.placement"
       ><template #body="slotProps">
-        #{{ slotProps.data.placement || "-" }}
+        #{{ slotProps.data.team?.placement || "-" }}
       </template></Column
     >
-    <Column
-      class="min-w-40"
-      field="user"
-      header="User"
-      sortable
-      sort-field="user.name"
-    >
+    <Column field="user" header="User" sortable sort-field="user.name">
       <template #body="slotProps">
         <LinkedUserName :user="slotProps.data.user" />
       </template>
@@ -32,7 +26,6 @@
       class="min-w-32"
       field="character"
       header="Character"
-      sortable
       sort-field="character.name"
     >
       <template #body="slotProps">
@@ -47,8 +40,7 @@
       v-if="!compact"
       class="min-w-32"
       field="subWeapon"
-      header="Sub-Weapon"
-      sortable
+      header="Sub-weapon"
       sort-field="subWeapon.name"
     >
       <template #body="slotProps">
@@ -67,14 +59,14 @@
 
 <script setup lang="ts">
 const props = defineProps<{
-  teamUsers: (TeamUserDto[] & { placement?: number }) | undefined;
+  teamUsers: (TeamUserDto & { team?: TeamDto })[] | undefined;
   compact?: boolean;
   showPlacement?: boolean;
   initialSort?: "placement" | "name" | "kills";
 }>();
 
 const sortMap = {
-  placement: { field: "placement", direction: 1 },
+  placement: { field: "team.placement", direction: 1 },
   name: { field: "user.name", direction: 1 },
   kills: { field: "kills", direction: -1 },
 };

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="container mx-auto px-4 py-4">
+    <div class="mx-auto px-4 py-4">
       <Transition
         leave-active-class="transition-opacity duration-1000 ease-in"
         leave-from-class="opacity-80"

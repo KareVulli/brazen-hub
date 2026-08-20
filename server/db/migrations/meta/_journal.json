@@ -253,6 +253,13 @@
       "when": 1787172166308,
       "tag": "0035_aspiring_spitfire",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "6",
+      "when": 1787243942123,
+      "tag": "0036_thin_wildside",
+      "breakpoints": true
     }
   ]
 }
