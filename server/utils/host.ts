@@ -1,4 +1,4 @@
-import { notExists } from "drizzle-orm";
+import { inArray, notExists } from "drizzle-orm";
 import { getColumns } from "../db/getColumns";
 import { hostTable, roomSessionTable } from "../db/schema";
 import { createGuest } from "./brazen-api/createGuest";
@@ -36,6 +36,7 @@ export async function getFreeHost(): Promise<DBHost> {
 
   return createHost();
 }
+
 async function createHost(): Promise<DBHost> {
   const host = await createGuest();
   const dbHost = (
@@ -55,4 +56,15 @@ async function createHost(): Promise<DBHost> {
   );
 
   return dbHost;
+}
+
+export async function getHostsByUserKeys(
+  userKeys: string[],
+): Promise<DBHost[]> {
+  const hosts = await useDrizzle()
+    .select()
+    .from(hostTable)
+    .where(inArray(hostTable.userKey, userKeys));
+
+  return hosts;
 }

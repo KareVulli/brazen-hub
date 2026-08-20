@@ -8,7 +8,7 @@ interface InvitationAcceptTeamInfoDto {
   SupportItemsSettings: number;
 }
 
-interface MatchInvitationAcceptDto {
+export interface MatchInvitationAcceptDto {
   GroupType: string;
   GroupId: string;
   TeamInfo: InvitationAcceptTeamInfoDto | null;

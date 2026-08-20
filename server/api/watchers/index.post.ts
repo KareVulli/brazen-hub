@@ -4,6 +4,7 @@ import {
   MatchInvitationError,
   MatchInvitationErrorReason,
 } from "~~/server/utils/brazen-api/matchInvitationAccept";
+import { getHostsByUserKeys } from "~~/server/utils/host";
 import { createWatcher } from "~~/server/utils/roomSession";
 import { watcherSchema } from "~~/validation/watcherSchema";
 
@@ -51,6 +52,16 @@ export default defineEventHandler(async (event): Promise<void> => {
     host.token,
     invitation.GroupId,
   );
+  const playerUserKeys = privateMatchRoom.players
+    .map((player) => player.userKey)
+    .filter((key) => key !== host.userKey);
+  const existingWatchers = await getHostsByUserKeys(playerUserKeys);
+  if (existingWatchers.length) {
+    throw createError({
+      statusCode: 400,
+      message: `Room already has a watcher`,
+    });
+  }
 
   await createWatcher(host, privateMatchRoom);
 });
