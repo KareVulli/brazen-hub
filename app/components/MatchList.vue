@@ -29,11 +29,13 @@
     <div class="grid gap-2 2xl:grid-cols-2">
       <MatchItem v-for="match in matches" :key="match.id" :match="match" />
     </div>
-    <ProgressSpinner
-      v-if="isFetching"
-      class="block text-center size-8 my-4"
-      stroke-width="8"
-    />
+    <div class="text-center my-4">
+      <ProgressSpinner
+        v-if="isFetching"
+        style="width: 32px; height: 32px"
+        stroke-width="8"
+      />
+    </div>
   </template>
   <template v-else>
     <p class="font-semibold mb-4">No custom matches yet</p>
