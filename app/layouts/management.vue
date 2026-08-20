@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="container mx-auto px-4 py-4">
+    <div class="mx-auto px-4 py-4">
       <Menubar :model="items">
         <template #start>
           <NuxtLink
