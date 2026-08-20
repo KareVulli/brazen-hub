@@ -35,7 +35,10 @@
           <p v-else>Team 1</p>
           <p class="text-red-600 text-xl">{{ match.teams[0]?.wins ?? "-" }}</p>
         </div>
-        <UserMatchStatsTable :team-users="match.teams[0]?.teamUsers" />
+        <UserMatchStatsTable
+          :team-users="match.teams[0]?.teamUsers"
+          initial-sort="name"
+        />
       </div>
       <div>
         <div class="text-center font-bold my-4">
@@ -52,11 +55,21 @@
             {{ match.teams[1]?.wins ?? "-" }}
           </p>
         </div>
-        <UserMatchStatsTable :team-users="match.teams[1]?.teamUsers" />
+        <UserMatchStatsTable
+          :team-users="match.teams[1]?.teamUsers"
+          initial-sort="name"
+        />
       </div>
     </div>
+    <div v-else-if="match.gameRule.gameRuleType === 'Survival'">
+      <UserMatchStatsTable
+        :team-users="allPlayers"
+        initial-sort="placement"
+        show-placement
+      />
+    </div>
     <div v-else>
-      <UserMatchStatsTable :team-users="allPlayers" show-placement />
+      <UserMatchStatsTable :team-users="allPlayers" initial-sort="kills" />
     </div>
     <hr class="border-t border-surface-200 dark:border-surface-700 my-4" />
     <PageTitle title="Match Log" />

@@ -2,8 +2,8 @@
   <DataTable
     :value="teamUsers"
     size="small"
-    :sort-field="showPlacement ? 'placement' : 'user.name'"
-    :sort-order="1"
+    :sort-field="sort.field"
+    :sort-order="sort.direction"
   >
     <Column
       v-if="showPlacement"
@@ -58,17 +58,26 @@
         <i v-else class="opacity-50">Unknown</i>
       </template>
     </Column>
-    <Column field="kills" header="Kills" />
-    <Column field="deaths" header="Deaths" />
-    <Column field="stuns" header="Stuns" />
-    <Column field="damage" header="Damage" />
+    <Column field="kills" header="Kills" sortable />
+    <Column field="deaths" header="Deaths" sortable />
+    <Column field="stuns" header="Stuns" sortable />
+    <Column field="damage" header="Damage" sortable />
   </DataTable>
 </template>
 
 <script setup lang="ts">
-defineProps<{
+const props = defineProps<{
   teamUsers: (TeamUserDto[] & { placement?: number }) | undefined;
   compact?: boolean;
   showPlacement?: boolean;
+  initialSort?: "placement" | "name" | "kills";
 }>();
+
+const sortMap = {
+  placement: { field: "placement", direction: 1 },
+  name: { field: "user.name", direction: 1 },
+  kills: { field: "kills", direction: -1 },
+};
+
+const sort = computed(() => sortMap[props.initialSort || "name"]);
 </script>

@@ -53,7 +53,7 @@ export default defineNuxtConfig({
     "@vueuse/nuxt",
     "nuxt-auth-utils",
   ],
-  css: ["primeicons/primeicons.css"],
+  css: ["~/assets/css/main.css", "primeicons/primeicons.css"],
   app: {
     head: {
       link: [
