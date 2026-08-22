@@ -19,6 +19,7 @@ import type { PaginatedResponse, PaginationOptions } from "./pagination";
 import { paginateResults } from "./pagination";
 import type { Team, TeamDto } from "./team";
 import { teamToDto } from "./team";
+import { alias } from "drizzle-orm/sqlite-core";
 
 export interface SimpleMatch {
   id: number;
@@ -178,13 +179,59 @@ function mergeRows(rows: Awaited<ReturnType<typeof getMatchesQuery>>): Match[] {
   return results;
 }
 
-export async function getPaginatedMatches(
-  paginationOptions: PaginationOptions,
-): Promise<PaginatedResponse<MatchDto>> {
-  const query = useDrizzle()
+export interface MatchFilters {
+  userId?: number;
+  gameRuleId?: number;
+}
+
+function getFilteredQuery({ userId, gameRuleId }: MatchFilters) {
+  let query = useDrizzle()
     .select({ id: matchTable.id })
     .from(matchTable)
     .$dynamic();
+
+  if (userId !== undefined) {
+    const filteredTeamTable = alias(teamTable, "t1");
+    const filteredTeamUserTable = alias(teamUserTable, "tu1");
+    const filteredMatchTable = alias(matchTable, "m1");
+    const filteredMatchesSubquery = useDrizzle()
+      .select({ id: filteredMatchTable.id })
+      .from(filteredMatchTable)
+      .innerJoin(
+        filteredTeamTable,
+        eq(filteredTeamTable.matchId, filteredMatchTable.id),
+      )
+      .innerJoin(
+        filteredTeamUserTable,
+        eq(filteredTeamUserTable.teamId, filteredTeamTable.id),
+      )
+      .where(eq(filteredTeamUserTable.userId, userId))
+      .orderBy(desc(filteredMatchTable.id))
+      .as("m1");
+
+    query = query.innerJoin(
+      filteredMatchesSubquery,
+      eq(matchTable.id, filteredMatchesSubquery.id),
+    );
+  }
+  if (gameRuleId !== undefined) {
+    const filteredGameRuleTable = alias(gameRuleTable, "gr1");
+    query = query
+      .innerJoin(
+        filteredGameRuleTable,
+        eq(matchTable.id, filteredGameRuleTable.id),
+      )
+      .where(eq(filteredGameRuleTable.gameRuleId, gameRuleId));
+  }
+
+  return query;
+}
+
+export async function getPaginatedMatches(
+  paginationOptions: PaginationOptions,
+  filters: MatchFilters = {},
+): Promise<PaginatedResponse<MatchDto>> {
+  const query = getFilteredQuery(filters);
   const paginatedResults = await paginateResults(query, paginationOptions);
   const results = await getMatchesQuery()
     .where(

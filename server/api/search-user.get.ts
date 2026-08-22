@@ -4,6 +4,7 @@ import type { BrazenAPIDetailedUser } from "../utils/brazen-api/models/apiUser";
 import type { UserScore } from "../utils/score";
 import { getUserTopScores } from "../utils/score";
 import type { DetailedBrazenUser } from "../utils/user";
+import { matchTable } from "../db/schema";
 
 const requestSchema = z.object({
   query: z.coerce.string().min(1).max(64),
@@ -16,16 +17,7 @@ export interface SearchUserMultipleResults {
 export interface SearchUserResult {
   user: DetailedBrazenUser;
   topScores: UserScore[];
-}
-
-function usersSearchResultDtoToSearchUserResult(
-  user: DetailedBrazenUser,
-  topScores: UserScore[],
-): SearchUserResult {
-  return {
-    user: user,
-    topScores: topScores,
-  };
+  recentMatches: MatchDto[];
 }
 
 export default cachedEventHandler(
@@ -44,11 +36,21 @@ export default cachedEventHandler(
       const user = users[0]!;
       const userId = await updateUserInDB(user);
       const topScores = await getUserTopScores(userId);
-
-      return usersSearchResultDtoToSearchUserResult(
-        { id: userId, ...user },
-        topScores,
+      const recentMatches = await getPaginatedMatches(
+        {
+          page: 1,
+          pageSize: 5,
+          sort: matchTable.createdAt,
+          sortDirection: "desc",
+        },
+        { userId: userId },
       );
+
+      return {
+        user: { id: userId, ...user },
+        topScores: topScores,
+        recentMatches: recentMatches.results,
+      };
     }
 
     return { users: users };

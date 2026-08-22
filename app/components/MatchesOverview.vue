@@ -8,7 +8,7 @@
         >Go to custom matches</AppLink
       >
     </template>
-    <DataView :value="latestMatches" data-key="id">
+    <DataView :value="matches" data-key="id">
       <template #empty>No recent custom matches. </template>
       <template #list="slotProps">
         <div class="flex flex-col">
@@ -32,6 +32,6 @@
 
 <script setup lang="ts">
 defineProps<{
-  latestMatches: MatchDto[];
+  matches: MatchDto[];
 }>();
 </script>

@@ -2,26 +2,7 @@
   <div
     :class="`${inline ? 'inline-flex' : 'flex min-w-0'} items-center ${variant === 'small' ? 'gap-1' : 'gap-2'}`"
   >
-    <div v-if="variant === 'normal'" class="relative w-8 flex-shrink-0">
-      <img
-        class="h-8"
-        :src="`https://static.prod.brazenblaze.com/public-assets/profile-icon/thumbnail/${user.iconId}.png`"
-      />
-      <img
-        class="h-8 absolute left-0 top-0"
-        :src="`https://static.prod.brazenblaze.com/public-assets/profile-icon-frame/thumbnail/${user.iconFrameId}.png`"
-      />
-    </div>
-    <div v-if="variant === 'small'" class="relative w-5 flex-shrink-0">
-      <img
-        class="h-5"
-        :src="`https://static.prod.brazenblaze.com/public-assets/profile-icon/thumbnail/${user.iconId}.png`"
-      />
-      <img
-        class="h-5 absolute left-0 top-0"
-        :src="`https://static.prod.brazenblaze.com/public-assets/profile-icon-frame/thumbnail/${user.iconFrameId}.png`"
-      />
-    </div>
+    <UserIcon v-if="variant !== 'text'" :user="user" :variant="variant" />
     <div class="flex-shrink overflow-hidden">
       <p
         v-if="showKey"
