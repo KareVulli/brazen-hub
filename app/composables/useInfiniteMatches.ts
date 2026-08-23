@@ -5,7 +5,7 @@ export function useInfiniteMatches(
   userKey?: MaybeRefOrGetter<string | undefined>,
 ) {
   const query = useInfiniteQuery({
-    queryKey: ["infiniteMatches", pageSize, userKey],
+    queryKey: ["infiniteMatches", toValue(pageSize), toValue(userKey)],
     queryFn: async ({ pageParam }) => {
       return await $fetch("/api/matches", {
         query: {
