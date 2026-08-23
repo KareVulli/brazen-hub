@@ -41,7 +41,7 @@ const props = defineProps<{
 const items = computed((): MenuItem[] => {
   return props.users.map((user) => ({
     label: user.name,
-    route: { path: "/search-user", query: { query: user.userKey } },
+    route: { path: "/users", query: { query: user.userKey } },
     user: user,
   }));
 });

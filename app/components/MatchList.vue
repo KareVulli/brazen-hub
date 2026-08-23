@@ -1,30 +1,4 @@
 <template>
-  <PageTitle title="Custom Matches" />
-
-  <AuthState v-slot="{ loggedIn }">
-    <div
-      v-if="loggedIn"
-      class="border-b border-surface-200 dark:border-surface-700 mb-4 pb-4"
-    >
-      <CreateWatcherForm />
-    </div>
-    <Message v-else class="mb-4"
-      ><a href="/auth/discord" class="hover:underline font-semibold">Log in</a>
-      to add a watcher to your custom room</Message
-    >
-  </AuthState>
-  <PageTitle title="Match history">
-    <template #actions>
-      <Button
-        label="Refresh"
-        icon="pi pi-refresh"
-        size="small"
-        severity="secondary"
-        :disabled="isFetching"
-        @click="reset"
-      />
-    </template>
-  </PageTitle>
   <template v-if="isFetching || matches.length">
     <div class="grid gap-2 xl:grid-cols-2">
       <MatchItem v-for="match in matches" :key="match.id" :match="match" />
@@ -49,8 +23,11 @@
 <script setup lang="ts">
 import { useQueryClient } from "@tanstack/vue-query";
 
-const { data, isFetching, fetchNextPage, hasNextPage, refetch } =
-  await useInfiniteMatches();
+const props = defineProps<{
+  userKey?: string;
+}>();
+const { data, isFetching, fetchNextPage, hasNextPage } =
+  await useInfiniteMatches(20, () => props.userKey);
 const queryClient = useQueryClient();
 
 const el = ref<Document | null>(null);
@@ -63,11 +40,6 @@ const matches = computed(() => {
     ) || []
   );
 });
-
-function reset() {
-  queryClient.removeQueries({ queryKey: ["infiniteMatches"] });
-  refetch();
-}
 
 useInfiniteScroll(
   el,

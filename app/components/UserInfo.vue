@@ -12,8 +12,11 @@
     </span>
     <span v-else>Offline</span>
   </div>
-  <MatchesOverview :matches="user.recentMatches" />
-  <Panel header="Known best Target Challenge scores">
+  <UserMatches :user-key="user.user.userKey" :matches="user.recentMatches" />
+  <Panel
+    header="Known best Target Challenge scores"
+    :pt="{ contentWrapper: { class: 'min-w-0' } }"
+  >
     <UserScoreTable :scores="user.topScores" />
   </Panel>
 </template>

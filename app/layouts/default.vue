@@ -153,7 +153,7 @@ const items = ref<MenuItem[]>([
   },
   {
     label: "Player search",
-    route: "/search-user",
+    route: "/users",
   },
   {
     label: "Characters",

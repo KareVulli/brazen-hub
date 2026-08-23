@@ -1,6 +1,6 @@
 <template>
   <NuxtLink
-    :to="{ path: '/search-user', query: { query: user.userKey } }"
+    :to="{ path: '/users', query: { query: user.userKey } }"
     class="hover:text-blue-600 hover:dark:text-blue-500 hover:underline"
     :class="[variant === 'normal' ? 'font-semibold' : 'font-medium']"
   >
