@@ -44,6 +44,9 @@ export default defineNuxtConfig({
   // Nuxt 4 directory structure and features
   // https://nuxt.com/docs/getting-started/upgrade#testing-nuxt-4
   future: { compatibilityVersion: 4 },
+  sourcemap: {
+    server: true,
+  },
   modules: [
     "@nuxt/content",
     "@nuxt/eslint",
@@ -80,7 +83,7 @@ export default defineNuxtConfig({
       openAPI: true,
     },
   },
-  devtools: { enabled: true },
+  devtools: { enabled: false },
   primevue: {
     components: {
       exclude: ["Editor", "Chart", "Form", "FormField"],
