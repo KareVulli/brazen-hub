@@ -10,6 +10,13 @@
       sort-field="rule.name"
     />
     <Column
+      class="min-w-24"
+      field="rule.stageName"
+      header="Stage"
+      sortable
+      sort-field="rule.stageName"
+    />
+    <Column
       class="min-w-48"
       field="user"
       header="User"
