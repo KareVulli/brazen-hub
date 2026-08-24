@@ -4,7 +4,17 @@ export default defineContentConfig({
   collections: {
     wiki: defineCollection({
       type: "page",
-      source: "**/*.md",
+      source: {
+        include: "wiki/**/*.md",
+        prefix: "/",
+      },
+    }),
+    changelog: defineCollection({
+      type: "page",
+      source: {
+        include: "changelog/**/*.md",
+        prefix: "/",
+      },
     }),
   },
 });

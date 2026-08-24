@@ -9,6 +9,7 @@
       <div class="space-y-4">
         <PublicRoomsList :public-rooms="data.publicRooms" />
         <WeeklyChallengeOverview :weekly="data.weekly" />
+        <ChangeLog />
       </div>
     </div>
   </main>
