@@ -7,6 +7,11 @@
           date-style="full"
           time-style="short"
         />
+        <CopyLinkButton
+          class="shrink-0 whitespace-nowrap"
+          :content="fullUrl"
+          label="Copy match link"
+        />
       </template>
     </PageTitle>
     <Panel :header="match.gameRule.name" class="mb-4">
@@ -167,10 +172,13 @@
 
 <script setup lang="ts">
 import type { TeamUserDto } from "~~/server/utils/teamUser.ts";
+import CopyButton from "./CopyButton.vue";
 const props = defineProps<{ matchId: number }>();
 
 const dayjs = useDayjs();
 const formatDuration = useFormatDuration();
+const url = useRequestURL();
+const fullUrl = computed(() => url.toString());
 
 const teamBasedGameRuleTypes = ["RoundMatch", "StockMatch", "Duel"];
 

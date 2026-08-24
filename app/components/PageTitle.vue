@@ -1,5 +1,5 @@
 <template>
-  <div class="mb-4 flex flex-col sm:flex-row gap-2">
+  <div class="mb-4 flex flex-col sm:flex-row gap-2 items-center">
     <h1 class="text-lg mr-auto">{{ title }}</h1>
     <slot name="actions" />
   </div>
