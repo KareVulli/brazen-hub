@@ -22,7 +22,7 @@
       <p v-if="match.endedAt === null" class="text-green-500 font-semibold">
         Match in progress
       </p>
-      <p v-else>
+      <p v-else-if="match.gameRule.gameRuleType !== 'PlayGround'">
         Winner: <span class="font-semibold">{{ winnerTeam }}</span>
       </p>
     </Panel>
