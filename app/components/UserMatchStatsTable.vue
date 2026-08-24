@@ -4,6 +4,7 @@
     size="small"
     :sort-field="sort.field"
     :sort-order="sort.direction"
+    :row-class="(data) => (data.disconnectedAt === null ? '' : 'opacity-50')"
   >
     <Column
       v-if="showPlacement"
@@ -18,7 +19,14 @@
     >
     <Column field="user" header="User" sortable sort-field="user.name">
       <template #body="slotProps">
-        <LinkedUserName :user="slotProps.data.user" />
+        <LinkedUserName
+          v-tooltip.top="
+            slotProps.data.disconnectedAt !== null
+              ? 'Disconnected before match end'
+              : undefined
+          "
+          :user="slotProps.data.user"
+        />
       </template>
     </Column>
     <Column

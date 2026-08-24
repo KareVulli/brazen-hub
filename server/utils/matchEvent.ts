@@ -57,6 +57,13 @@ type MatchEventType =
         startedAt: number;
         endedAt: number;
       };
+    }
+  | {
+      name: "disconnect";
+      data: {
+        targetUserKey: string;
+      };
+      eventAt: number;
     };
 
 export type MatchEventDto = MatchEventType & {

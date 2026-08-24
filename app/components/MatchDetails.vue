@@ -160,6 +160,18 @@
                 compact
               />
             </div>
+            <p v-else-if="event.name === 'disconnect'">
+              <template v-if="event.data.targetUser">
+                <span class="pi pi-wave-pulse mr-2 text-gray-500" />
+                <span
+                  class="font-semibold"
+                  :class="getTeamClass(event.data.targetUser)"
+                >
+                  {{ event.data.targetUser.user.name }}
+                </span>
+                disconnected
+              </template>
+            </p>
           </template>
         </Card>
       </div>
@@ -172,7 +184,6 @@
 
 <script setup lang="ts">
 import type { TeamUserDto } from "~~/server/utils/teamUser.ts";
-import CopyButton from "./CopyButton.vue";
 const props = defineProps<{ matchId: number }>();
 
 const dayjs = useDayjs();
@@ -300,6 +311,16 @@ const hydratedEvents = computed(() => {
           teams: [...teams.values()].sort((a, b) => a.team - b.team),
           winnerTeam: winnerTeam,
         },
+      });
+    } else if (event.name === "disconnect") {
+      const targetUser = getPlayerByUserKey(event.data.targetUserKey);
+      hydratedEvents.push({
+        ...event,
+        data: {
+          ...event.data,
+          targetUser: targetUser,
+        },
+        eventAt: eventAt,
       });
     } else {
       hydratedEvents.push({ ...event, eventAt: eventAt });

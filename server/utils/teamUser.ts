@@ -16,6 +16,7 @@ export interface TeamUser {
   ultimate: number;
   aliveDuration: number;
   createdAt: Date;
+  disconnectedAt: Date | null;
 }
 
 export interface TeamUserDto {
@@ -34,6 +35,7 @@ export interface TeamUserDto {
   ultimate: number;
   aliveDuration: number;
   createdAt: number;
+  disconnectedAt: number | null;
 }
 
 export function teamUserToDto(teamUser: TeamUser): TeamUserDto {
@@ -53,5 +55,8 @@ export function teamUserToDto(teamUser: TeamUser): TeamUserDto {
     ultimate: teamUser.ultimate,
     aliveDuration: teamUser.aliveDuration,
     createdAt: Math.floor(teamUser.createdAt.getTime() / 1000),
+    disconnectedAt: teamUser.disconnectedAt
+      ? Math.floor(teamUser.disconnectedAt.getTime() / 1000)
+      : null,
   };
 }

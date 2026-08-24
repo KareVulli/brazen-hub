@@ -398,6 +398,7 @@ export async function updateMatchStats(
         "ultimate",
         "damage",
         "aliveDuration",
+        "disconnectedAt",
       ]),
     });
 }
