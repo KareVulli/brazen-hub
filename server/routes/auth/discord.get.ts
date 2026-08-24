@@ -7,16 +7,17 @@ export default defineOAuthDiscordEventHandler({
     scope: ["identify"],
   },
   async onSuccess(event, { user }) {
+    const displayName = user.global_name || user.username;
     const account = await updateAccountInDB({
       discordId: user.id,
       username: user.username,
-      displayName: user.global_name,
+      displayName,
     });
     await setUserSession(event, {
       user: {
         discordId: user.id,
         username: user.username,
-        displayName: user.global_name,
+        displayName,
         avatar: user.avatar,
         role: account?.role || ROLE_USER,
       },
