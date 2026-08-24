@@ -260,6 +260,13 @@
       "when": 1787243942123,
       "tag": "0036_thin_wildside",
       "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "6",
+      "when": 1787591445932,
+      "tag": "0037_dusty_champions",
+      "breakpoints": true
     }
   ]
 }

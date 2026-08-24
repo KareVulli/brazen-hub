@@ -1,0 +1,1 @@
+ALTER TABLE `team_user` ADD `disconnected_at` integer;

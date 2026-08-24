@@ -362,6 +362,9 @@ export async function updateMatchStats(
       subWeaponId: player.teamUser.subWeaponId,
       userId: player.teamUser.userId,
       ...stats,
+      disconnectedAt: stats.disconnectedAt
+        ? new Date(stats.disconnectedAt * 1000)
+        : null,
     });
   }
 

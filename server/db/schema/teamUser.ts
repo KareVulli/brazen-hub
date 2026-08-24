@@ -29,8 +29,8 @@ export const teamUserTable = sqliteTable("team_user", {
   skill: integer("skill").notNull().default(0),
   ultimate: integer("ultimate").notNull().default(0),
   aliveDuration: integer("alive_duration").notNull().default(0),
+  disconnectedAt: integer("disconnected_at", { mode: "timestamp" }),
   createdAt: createdAt,
-  // updatedAt: updatedAt, // TODO: Add when clearing local db
 });
 
 export const teamUserRelations = relations(teamUserTable, ({ one }) => ({

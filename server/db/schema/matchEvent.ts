@@ -9,6 +9,7 @@ const MATCH_EVENT_NAMES = [
   "revive",
   "round-start",
   "round-end",
+  "disconnect",
 ] as const;
 
 export const matchEventTable = sqliteTable("match_event", {

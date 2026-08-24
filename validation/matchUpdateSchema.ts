@@ -20,6 +20,7 @@ export const matchUpdateSchema = z.object({
       ultimate: z.coerce.number().int(),
       damage: z.coerce.number().int(),
       aliveDuration: z.coerce.number().int(),
+      disconnectedAt: z.coerce.number().int().nullable().default(null),
     }),
   ),
   endedAt: z.coerce.number().int().optional().nullable().default(null),

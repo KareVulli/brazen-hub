@@ -47,12 +47,21 @@ const roundEndEventSchema = z.object({
   eventAt: z.coerce.number().int(),
 });
 
+const disconnectEventSchema = z.object({
+  name: z.literal("disconnect"),
+  data: z.object({
+    targetUserKey: z.string(),
+  }),
+  eventAt: z.coerce.number().int(),
+});
+
 export const matchEventSchema = z.discriminatedUnion("name", [
   reviveEventSchema,
   stunEventSchema,
   killEventSchema,
   roundStartEventSchema,
   roundEndEventSchema,
+  disconnectEventSchema,
 ]);
 
 export type MatchEventSchema = z.infer<typeof matchEventSchema>;
