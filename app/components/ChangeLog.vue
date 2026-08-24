@@ -4,7 +4,7 @@
     :pt="{ contentWrapper: { class: 'min-w-0' } }"
   >
     <div
-      className="prose dark:prose-invert max-w-none prose-sm prose-headings:mt-0"
+      className="prose dark:prose-invert max-w-none prose-sm prose-headings:mt-0 prose-code:before:hidden prose-code:after:hidden"
     >
       <ContentRenderer v-if="data" :value="data" :components="headings" />
     </div>

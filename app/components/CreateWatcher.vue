@@ -1,14 +1,11 @@
 <template>
   <AuthState v-slot="{ loggedIn }">
-    <div
-      v-if="loggedIn"
-      class="border-b border-surface-200 dark:border-surface-700 mb-4 pb-4"
-    >
+    <div v-if="loggedIn">
       <CreateWatcherForm />
     </div>
-    <Message v-else class="mb-4"
+    <Message v-else
       ><a href="/auth/discord" class="hover:underline font-semibold">Log in</a>
-      to add a watcher to your custom room</Message
+      to add StatsBot for recording your custom matches</Message
     >
   </AuthState>
 </template>

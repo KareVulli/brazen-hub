@@ -1,4 +1,4 @@
 ### 2026-08-24
 
-- Added changelog to home
-- Added Watcher form to home page for easier access
+- Added `Changelog` to home.
+- Added `Watcher Form` to home page for easier access and renamed watcher to `StatsBot`.

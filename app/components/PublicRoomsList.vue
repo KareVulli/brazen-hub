@@ -37,7 +37,7 @@
             <div>
               <div class="flex items-center gap-2">
                 <Tag
-                  class="block"
+                  class="block whitespace-nowrap"
                   :value="
                     room.state === 'active' ? 'Open' : 'Match in progress'
                   "

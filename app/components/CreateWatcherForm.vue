@@ -1,6 +1,6 @@
 <template>
   <form class="space-y-4" @submit="onSubmit">
-    <h2>Invite a watcher to your custom match by entering your room code:</h2>
+    <h2>Invite StatsBot to your custom room by entering the room code:</h2>
     <div class="flex flex-row gap-2 items-start">
       <FormTextInput
         name="code"
@@ -12,9 +12,10 @@
       <Button
         class="flex-shrink-0"
         type="submit"
-        severity="secondary"
-        label="Add watcher"
+        severity="primary"
+        label="Add StatsBot!"
         :loading="loading"
+        :disabled="!values.code"
       />
     </div>
   </form>
@@ -32,7 +33,7 @@ const emit = defineEmits<{
 }>();
 const loading = ref<boolean>(false);
 
-const { handleSubmit } = useForm({
+const { handleSubmit, values } = useForm({
   validationSchema: watcherSchema,
 });
 

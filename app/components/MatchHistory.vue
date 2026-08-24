@@ -1,6 +1,7 @@
 <template>
   <PageTitle title="Custom Matches" />
   <CreateWatcher />
+  <hr class="my-4 border-surface-200 dark:border-surface-700" />
   <PageTitle title="Match history">
     <template #actions>
       <Button

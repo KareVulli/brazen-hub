@@ -5,7 +5,15 @@
       v-if="data"
       class="grid lg:grid-cols-2 grid-flow-dense gap-4 mb-4 items-start"
     >
-      <MatchesOverview :matches="data.matches" />
+      <div class="space-y-4">
+        <Panel
+          header="Record matches"
+          :pt="{ contentWrapper: { class: 'min-w-0' } }"
+        >
+          <CreateWatcher />
+        </Panel>
+        <MatchesOverview :matches="data.matches" />
+      </div>
       <div class="space-y-4">
         <PublicRoomsList :public-rooms="data.publicRooms" />
         <WeeklyChallengeOverview :weekly="data.weekly" />
