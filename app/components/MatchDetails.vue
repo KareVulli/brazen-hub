@@ -38,8 +38,12 @@
       </template>
     </PageTitle>
     <div class="space-y-2">
-      <div v-for="event in hydratedEvents" :key="event.id" class="flex gap-4">
-        <p class="flex-shrink-0 w-24">
+      <div
+        v-for="event in hydratedEvents"
+        :key="event.id"
+        class="flex flex-col lg:flex-row lg:gap-4"
+      >
+        <p class="flex-shrink-0 w-24 py-2">
           <NuxtTime
             class="whitespace-nowrap"
             :datetime="event.eventAt"
@@ -48,6 +52,7 @@
         </p>
         <Card
           class="border border-surface-200 dark:border-surface-700 flex-grow"
+          :pt="{ body: { class: 'py-2 px-4' } }"
         >
           <template #content>
             <p v-if="event.name === 'kill'">
@@ -130,7 +135,7 @@
             <p v-else-if="event.name === 'round-start'">
               Round {{ event.data.round }} started
             </p>
-            <div v-else-if="event.name === 'round-end'">
+            <div v-else-if="event.name === 'round-end'" class="py-2">
               <div class="flex justify-between items-center">
                 <p class="font-semibold">Round {{ event.data.round }} stats</p>
                 <p>{{ event.data.duration }}</p>

@@ -3,7 +3,7 @@
     v-if="teamBasedGameRuleTypes.includes(gameRule.gameRuleType)"
     class="grid 2xl:grid-cols-2 gap-2"
   >
-    <div>
+    <div class="min-w-0">
       <div class="text-center font-bold my-4">
         <p>{{ getTeamName(teams[0]) }}</p>
         <p
@@ -19,7 +19,7 @@
         :compact="compact"
       />
     </div>
-    <div>
+    <div class="min-w-0">
       <div class="text-center font-bold my-4">
         <p>{{ getTeamName(teams[1]) }}</p>
         <p
@@ -36,7 +36,7 @@
       />
     </div>
   </div>
-  <div v-else-if="gameRule.gameRuleType === 'Survival'">
+  <div v-else-if="gameRule.gameRuleType === 'Survival'" class="min-w-0">
     <UserMatchStatsTable
       :team-users="allPlayers"
       initial-sort="placement"
@@ -44,7 +44,7 @@
       show-placement
     />
   </div>
-  <div v-else>
+  <div v-else class="min-w-0">
     <UserMatchStatsTable
       :team-users="allPlayers"
       initial-sort="kills"
