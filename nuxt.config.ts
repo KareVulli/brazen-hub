@@ -83,7 +83,7 @@ export default defineNuxtConfig({
       openAPI: true,
     },
   },
-  devtools: { enabled: false },
+  devtools: { enabled: true },
   primevue: {
     components: {
       exclude: ["Editor", "Chart", "Form", "FormField"],
