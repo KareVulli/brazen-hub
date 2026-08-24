@@ -56,7 +56,7 @@ export default defineNuxtConfig({
     "@vueuse/nuxt",
     "nuxt-auth-utils",
   ],
-  css: ["~/assets/css/main.css", "primeicons/primeicons.css"],
+  css: ["primeicons/primeicons.css"],
   app: {
     head: {
       link: [
@@ -84,6 +84,9 @@ export default defineNuxtConfig({
     },
   },
   devtools: { enabled: true },
+  tailwindcss: {
+    cssPath: "~/assets/css/main.css",
+  },
   primevue: {
     components: {
       exclude: ["Editor", "Chart", "Form", "FormField"],
@@ -91,6 +94,12 @@ export default defineNuxtConfig({
     options: {
       theme: {
         preset: CustomAura,
+        options: {
+          cssLayer: {
+            name: "primevue",
+            order: "tailwind-base, primevue, tailwind-utilities",
+          },
+        },
       },
       ripple: true,
     },
