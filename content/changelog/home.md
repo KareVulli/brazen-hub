@@ -1,3 +1,6 @@
+### 2026-08-25
+- Improve stability under poor network conditions
+
 ### 2026-08-24
 
 - [Detect and log player disconnections mid-match.]{.text-primary-500}
