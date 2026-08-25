@@ -1,5 +1,5 @@
 ### 2026-08-25
-- Improve stability under poor network conditions
+- Improve stability under poor network conditions.
 
 ### 2026-08-24
 
