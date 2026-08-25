@@ -1,4 +1,5 @@
 ### 2026-08-25
+- Fix issue where starting the match quickly after `StatsBot` joins causes the bot to get kicked on next return to lobby.
 - Try to rejoin the room three times after match before giving up.
 - Fix a case where `StatsBot` would fail to join match.
 - Improve stability under poor network conditions.
