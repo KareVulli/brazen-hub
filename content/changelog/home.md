@@ -1,4 +1,6 @@
 ### 2026-08-25
+- Try to rejoin the room three times after match before giving up.
+- Fix a case where `StatsBot` would fail to join match.
 - Improve stability under poor network conditions.
 
 ### 2026-08-24
