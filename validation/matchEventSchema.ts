@@ -55,6 +55,14 @@ const disconnectEventSchema = z.object({
   eventAt: z.coerce.number().int(),
 });
 
+const errorEventSchema = z.object({
+  name: z.literal("error"),
+  data: z.object({
+    message: z.string(),
+  }),
+  eventAt: z.coerce.number().int(),
+});
+
 export const matchEventSchema = z.discriminatedUnion("name", [
   reviveEventSchema,
   stunEventSchema,
@@ -62,6 +70,7 @@ export const matchEventSchema = z.discriminatedUnion("name", [
   roundStartEventSchema,
   roundEndEventSchema,
   disconnectEventSchema,
+  errorEventSchema,
 ]);
 
 export type MatchEventSchema = z.infer<typeof matchEventSchema>;

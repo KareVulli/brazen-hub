@@ -172,6 +172,12 @@
                 disconnected
               </template>
             </p>
+            <p v-else-if="event.name === 'error'">
+              <span class="pi pi-times-circle mr-2 text-gray-500" />
+              <span class="text-red-500"
+                >StatsBot connection error: {{ event.data.message }}</span
+              >
+            </p>
           </template>
         </Card>
       </div>

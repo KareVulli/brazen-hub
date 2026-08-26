@@ -64,6 +64,13 @@ type MatchEventType =
         targetUserKey: string;
       };
       eventAt: number;
+    }
+  | {
+      name: "error";
+      data: {
+        message: string;
+      };
+      eventAt: number;
     };
 
 export type MatchEventDto = MatchEventType & {

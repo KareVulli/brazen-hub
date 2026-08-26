@@ -1,3 +1,8 @@
+### 2026-08-26
+- Log an error event when `StatsBot` loses connection during a match.
+- Fix some error cases not cleaning up correctly.
+- Add `StatsBot` side network packet retransmission. Fixes some cases where `StatsBot` fails to join a room/match.
+
 ### 2026-08-25
 - Fix issue where starting the match quickly after `StatsBot` joins causes the bot to get kicked on next return to lobby.
 - Try to rejoin the room three times after match before giving up.
