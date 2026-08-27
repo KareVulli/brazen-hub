@@ -1,3 +1,6 @@
+### 2026-08-27
+- Fix revives not attributed to teammates.
+
 ### 2026-08-26
 - Log an error event when `StatsBot` loses connection during a match.
 - Fix some error cases not cleaning up correctly.
