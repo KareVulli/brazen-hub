@@ -1,4 +1,4 @@
-import { inArray } from "drizzle-orm";
+import { inArray, sum } from "drizzle-orm";
 import type { MatchSchema } from "~~/validation/matchSchema";
 import type { MatchUpdateSchema } from "~~/validation/matchUpdateSchema";
 import { buildConflictUpdateColumns } from "../db/buildConflictUpdateColumns";
@@ -401,4 +401,28 @@ export async function updateMatchStats(
         "disconnectedAt",
       ]),
     });
+}
+
+export interface UserMatchStats {
+  totalKills: number;
+  totalDeaths: number;
+}
+
+export async function getUserMatchStats(
+  userId: number,
+): Promise<UserMatchStats> {
+  const totals = (
+    await useDrizzle()
+      .select({
+        kills: sum(teamUserTable.kills).mapWith(Number),
+        deaths: sum(teamUserTable.deaths).mapWith(Number),
+      })
+      .from(teamUserTable)
+      .where(eq(teamUserTable.userId, userId))
+  )[0];
+
+  return {
+    totalKills: totals?.kills ?? 0,
+    totalDeaths: totals?.deaths ?? 0,
+  };
 }

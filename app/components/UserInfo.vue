@@ -12,6 +12,27 @@
     </span>
     <span v-else>Offline</span>
   </div>
+  <Panel
+    v-if="user.recentMatches.length > 0"
+    header="Stats"
+    :pt="{ contentWrapper: { class: 'min-w-0' } }"
+  >
+    <p>
+      KDR:
+      <template v-if="user.stats.totalDeaths > 0">{{
+        (user.stats.totalKills / user.stats.totalDeaths).toFixed(2)
+      }}</template>
+      <template v-else>{{ user.stats.totalKills.toFixed(2) }}</template>
+
+      ({{ user.stats.totalKills }} kills / {{ user.stats.totalDeaths }} deaths)
+    </p>
+    <Message class="mt-4" variant="simple">
+      <template #icon>
+        <span class="pi pi-info-circle" />
+      </template>
+      Work in progress! More stats will be added later.</Message
+    >
+  </Panel>
   <UserMatches :user-key="user.user.userKey" :matches="user.recentMatches" />
   <Panel
     header="Known best Target Challenge scores"

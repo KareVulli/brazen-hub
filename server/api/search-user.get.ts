@@ -5,6 +5,8 @@ import type { UserScore } from "../utils/score";
 import { getUserTopScores } from "../utils/score";
 import type { DetailedBrazenUser } from "../utils/user";
 import { matchTable } from "../db/schema";
+import type { UserMatchStats } from "../utils/match";
+import { getUserMatchStats } from "../utils/match";
 
 const requestSchema = z.object({
   query: z.coerce.string().min(1).max(64),
@@ -18,6 +20,7 @@ export interface SearchUserResult {
   user: DetailedBrazenUser;
   topScores: UserScore[];
   recentMatches: MatchDto[];
+  stats: UserMatchStats;
 }
 
 export default cachedEventHandler(
@@ -45,11 +48,13 @@ export default cachedEventHandler(
         },
         { userId: userId },
       );
+      const stats = await getUserMatchStats(userId);
 
       return {
         user: { id: userId, ...user },
         topScores: topScores,
         recentMatches: recentMatches.results,
+        stats: stats,
       };
     }
 
