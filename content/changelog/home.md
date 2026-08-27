@@ -1,5 +1,6 @@
 ### 2026-08-27
-- Fix revives not attributed to teammates.
+- Fix a regression where `StatsBot` was not able to return back to room.
+- [Fix revives not attributed to teammates.]{.text-primary-500}
 
 ### 2026-08-26
 - Log an error event when `StatsBot` loses connection during a match.
