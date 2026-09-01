@@ -1,4 +1,5 @@
 ### 2026-09-01
+- Fix all players being marked disconnected after a mid-match disconnect in some cases.
 - Fix potential **room** error when starting a match while trying to add a second **StatsBot** to the room.
 - Fix **Add StatsBot!** button not being disabled while in loading state.
 
