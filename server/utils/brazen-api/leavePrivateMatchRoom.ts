@@ -1,6 +1,4 @@
-import { unpack } from "msgpackr";
 import { brazenMessagePackApiRequest } from "./client";
-import { FetchError } from "ofetch";
 import type { PrivateMatchRoomDto } from "./dtos/privateMatchRoomDto";
 
 interface PrivateMatchRoomLeaveDto {
