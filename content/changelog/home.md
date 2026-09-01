@@ -1,7 +1,16 @@
+### 2026-09-01
+- Fix potential **room** error when starting a match while trying to add a second **StatsBot** to the room.
+
 ### 2026-08-27
 - [Show **Kill/Death Ratio (KDR)** on user page based on recorded matches.]{.text-primary-500}
 - Fix a regression where **StatsBot** was not able to return back to room.
 - [Fix revives not attributed to teammates.]{.text-primary-500}
+
+#### Current known issues:
+- **StatsBot** may steal host when returning to lobby, crashing the lobby.
+- **StatsBot** may be too late joining back to lobby.
+- Trying to add **StatsBot** to an existing room breaks the room.
+- Attempt to rejoin lobby on connection loss when in room.
 
 ### 2026-08-26
 - Log an error event when **StatsBot** loses connection during a match.

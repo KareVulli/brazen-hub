@@ -15,7 +15,7 @@
         severity="primary"
         label="Add StatsBot!"
         :loading="loading"
-        :disabled="!values.code"
+        :disabled="!values.code || loading"
       />
     </div>
   </form>

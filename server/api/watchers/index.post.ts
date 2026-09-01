@@ -1,4 +1,5 @@
 import { getPrivateMatchRoomStatus } from "~~/server/utils/brazen-api/getPrivateMatchRoomStatus";
+import { leavePrivateMatchRoom } from "~~/server/utils/brazen-api/leavePrivateMatchRoom";
 import {
   matchInvitationAccept,
   MatchInvitationError,
@@ -57,6 +58,7 @@ export default defineEventHandler(async (event): Promise<void> => {
     .filter((key) => key !== host.userKey);
   const existingWatchers = await getHostsByUserKeys(playerUserKeys);
   if (existingWatchers.length) {
+    await leavePrivateMatchRoom(host.token, invitation.GroupId);
     throw createError({
       statusCode: 400,
       message: `Room already has a watcher`,
