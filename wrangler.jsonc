@@ -33,9 +33,9 @@
     ],
     "vars": {
         "NUXT_CACHE_TIME": "1800",
-        "NUXT_GAME_HASH": "dccf434710eef96f86eae4339c69c976cbe996f2",
-        "NUXT_GAME_VERSION": "2.18.0",
-        "NUXT_GAME_VERSION_CODE": "2026073104",
+        "NUXT_GAME_HASH": "42027997691aec728cd205a5fb8d29ac00fd75fb",
+        "NUXT_GAME_VERSION": "2.19.0",
+        "NUXT_GAME_VERSION_CODE": "2026083101",
         "NUXT_MATCHMAKING_API": "https://match.brazenhub.net",
         "NUXT_PUBLIC_MATCHMAKING_WS": "wss://match.brazenhub.net/stats"
     }
