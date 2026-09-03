@@ -1,8 +1,11 @@
 <template>
   <Panel
-    header="Brazen Hub changes"
+    header="Brazen Hub recent changes"
     :pt="{ contentWrapper: { class: 'min-w-0' } }"
   >
+    <template #icons>
+      <AppLink class="text-sm" to="/changelog">Go to full changelog</AppLink>
+    </template>
     <div
       className="prose prose-sm dark:prose-invert max-w-none prose-headings:mt-0 prose-code:before:hidden prose-code:after:hidden"
     >

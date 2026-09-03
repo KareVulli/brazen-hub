@@ -1,3 +1,5 @@
+# Brazen Hub changelog
+
 ### 2026-09-03
 
 - [Show **revives** count for players in match stats table (behind **Show more stats** toggle.)]{.text-primary-500}
@@ -28,3 +30,11 @@
 - Try to rejoin the room three times after match before giving up.
 - Fix a case where **StatsBot** would fail to join match.
 - Improve stability under poor network conditions.
+
+### 2026-08-24
+
+- [Detect and log player disconnections mid-match.]{.text-primary-500}
+- Add **Copy match link** button to **Match details** for easier sharing in VR/mobile.
+- Make **Match log** more compact and mobile friendly.
+- Add **Changelog** to home.
+- Add **Watcher Form** to home page for easier access and renamed watcher to **StatsBot**.
