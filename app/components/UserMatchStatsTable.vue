@@ -5,6 +5,8 @@
     :sort-field="sort.field"
     :sort-order="sort.direction"
     :row-class="(data) => (data.disconnectedAt === null ? '' : 'opacity-50')"
+    data-key="id"
+    :expanded-rows="expandedRows"
   >
     <Column
       v-if="showPlacement"
@@ -62,16 +64,44 @@
     <Column field="deaths" header="Deaths" sortable />
     <Column field="stuns" header="Stuns" sortable />
     <Column field="damage" header="Damage" sortable />
+    <template #expansion="{ data }">
+      <div class="flex items-center">
+        <p class="flex items-baseline">
+          Revives: {{ data.revives }}
+          <InfoButton
+            message="How many times the player revived their teammates"
+          />
+        </p>
+        <!-- <Divider layout="vertical" />
+        <p class="flex items-baseline ml-3">
+          Skill used: <i class="text-sm opacity-50 ml-1"> Coming soon!</i>
+          <InfoButton message="How many times the player used their skill" />
+        </p>
+        <Divider layout="vertical" />
+        <p class="flex items-baseline ml-3">
+          Ultimate used: <i class="text-sm opacity-50 ml-1"> Coming soon!</i>
+          <InfoButton message="How many times the player used their ultimate" />
+        </p> -->
+      </div>
+    </template>
   </DataTable>
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{
-  teamUsers: (TeamUserDto & { team?: TeamDto })[] | undefined;
-  compact?: boolean;
-  showPlacement?: boolean;
-  initialSort?: "placement" | "name" | "kills";
-}>();
+const props = withDefaults(
+  defineProps<{
+    teamUsers?: (TeamUserDto & { team?: TeamDto })[];
+    compact?: boolean;
+    showPlacement?: boolean;
+    initialSort?: "placement" | "name" | "kills";
+    showDetails?: boolean;
+  }>(),
+  {
+    teamUsers: () => [],
+    initialSort: "name",
+    showDetails: false,
+  },
+);
 
 const sortMap = {
   placement: { field: "team.placement", direction: 1 },
@@ -80,4 +110,15 @@ const sortMap = {
 };
 
 const sort = computed(() => sortMap[props.initialSort || "name"]);
+
+const expandedRows = computed<Record<number, boolean>>(() => {
+  if (props.showDetails) {
+    return props.teamUsers.reduce<Record<number, boolean>>(
+      (acc, p) => ({ ...acc, [p.id]: true }),
+      {},
+    );
+  } else {
+    return [];
+  }
+});
 </script>

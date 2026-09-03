@@ -1,7 +1,15 @@
 <template>
+  <div class="flex items-center justify-end gap-2 my-2">
+    <FormFieldLabel
+      class="cursor-pointer"
+      :name="switchId"
+      label="Show more stats"
+    />
+    <InputSwitch v-model="showDetails" :input-id="switchId" />
+  </div>
   <div
     v-if="teamBasedGameRuleTypes.includes(gameRule.gameRuleType)"
-    class="grid 2xl:grid-cols-2 gap-2"
+    class="grid gap-2"
   >
     <div class="min-w-0">
       <div class="text-center font-bold my-4">
@@ -17,6 +25,7 @@
         :team-users="teams[0]?.teamUsers"
         initial-sort="name"
         :compact="compact"
+        :show-details="showDetails"
       />
     </div>
     <div class="min-w-0">
@@ -33,6 +42,7 @@
         :team-users="teams[1]?.teamUsers"
         initial-sort="name"
         :compact="compact"
+        :show-details="showDetails"
       />
     </div>
   </div>
@@ -41,6 +51,7 @@
       :team-users="allPlayers"
       initial-sort="placement"
       :compact="compact"
+      :show-details="showDetails"
       show-placement
     />
   </div>
@@ -49,6 +60,7 @@
       :team-users="allPlayers"
       initial-sort="kills"
       :compact="compact"
+      :show-details="showDetails"
     />
   </div>
 </template>
@@ -65,6 +77,8 @@ const props = defineProps<{
 
 const teamBasedGameRuleTypes = ["RoundMatch", "StockMatch", "Duel"];
 
+const switchId = useId();
+const showDetails = ref<boolean>(false);
 const allPlayers = computed(() => {
   return props.teams.reduce<(TeamUserDto & { team: TeamDto })[]>(
     (acc, team) => [
