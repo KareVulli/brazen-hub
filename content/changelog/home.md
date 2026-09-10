@@ -1,3 +1,7 @@
+### 2026-09-10
+
+- [Show **Average Damage per Round (ADR)** on user page based on full completed RTM recorded matches.]{.text-primary-500}
+
 ### 2026-09-03
 
 - [Show **revives** count for players in match stats table (behind **Show more stats** toggle.)]{.text-primary-500}
@@ -21,10 +25,3 @@
 - Log an error event when **StatsBot** loses connection during a match.
 - Fix some error cases not cleaning up correctly.
 - Add **StatsBot** side network packet retransmission. Fixes some cases where **StatsBot** fails to join a room/match.
-
-### 2026-08-25
-
-- Fix issue where starting the match quickly after **StatsBot** joins causes the bot to get kicked on next return to lobby.
-- Try to rejoin the room three times after match before giving up.
-- Fix a case where **StatsBot** would fail to join match.
-- Improve stability under poor network conditions.

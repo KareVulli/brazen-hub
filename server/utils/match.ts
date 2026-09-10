@@ -1,4 +1,5 @@
-import { inArray, sum } from "drizzle-orm";
+import { count, inArray, isNotNull, notExists, sum } from "drizzle-orm";
+import { alias } from "drizzle-orm/sqlite-core";
 import type { MatchSchema } from "~~/validation/matchSchema";
 import type { MatchUpdateSchema } from "~~/validation/matchUpdateSchema";
 import { buildConflictUpdateColumns } from "../db/buildConflictUpdateColumns";
@@ -7,6 +8,7 @@ import {
   characterTable,
   gameRuleTable,
   itemTable,
+  matchEventTable,
   matchTable,
   stageTable,
   teamTable,
@@ -19,7 +21,6 @@ import type { PaginatedResponse, PaginationOptions } from "./pagination";
 import { paginateResults } from "./pagination";
 import type { Team, TeamDto } from "./team";
 import { teamToDto } from "./team";
-import { alias } from "drizzle-orm/sqlite-core";
 
 export interface SimpleMatch {
   id: number;
@@ -406,6 +407,59 @@ export async function updateMatchStats(
 export interface UserMatchStats {
   totalKills: number;
   totalDeaths: number;
+  damagePerRound: number;
+  damagePerRoundMatches: number;
+}
+
+async function getDamagePerRound(userId: number) {
+  const roundsPerMatch = useDrizzle()
+    .select({
+      matchId: matchEventTable.matchId,
+      rounds: count().as("rounds"),
+    })
+    .from(matchEventTable)
+    .where(eq(matchEventTable.name, "round-end"))
+    .groupBy(matchEventTable.matchId)
+    .as("sq");
+
+  const damage = (
+    await useDrizzle()
+      .select({
+        damagePerRound:
+          sql`cast(sum(${teamUserTable.damage}) as real) / cast(sum(${roundsPerMatch.rounds}) as real)`.mapWith(
+            Number,
+          ),
+        matches: count(),
+      })
+      .from(teamUserTable)
+      .innerJoin(teamTable, eq(teamTable.id, teamUserTable.teamId))
+      .innerJoin(matchTable, eq(matchTable.id, teamTable.matchId))
+      .innerJoin(roundsPerMatch, eq(roundsPerMatch.matchId, matchTable.id))
+      .innerJoin(gameRuleTable, eq(gameRuleTable.id, matchTable.gameRuleId))
+      .where(
+        and(
+          isNotNull(matchTable.endedAt),
+          eq(teamUserTable.userId, userId),
+          eq(gameRuleTable.gameRuleType, "RoundMatch"),
+          notExists(
+            useDrizzle()
+              .select({
+                matchId: matchEventTable.matchId,
+              })
+              .from(matchEventTable)
+              .where(
+                and(
+                  eq(matchEventTable.name, "disconnect"),
+                  eq(matchEventTable.matchId, teamTable.matchId),
+                ),
+              )
+              .limit(1),
+          ),
+        ),
+      )
+  )[0];
+
+  return damage;
 }
 
 export async function getUserMatchStats(
@@ -421,8 +475,12 @@ export async function getUserMatchStats(
       .where(eq(teamUserTable.userId, userId))
   )[0];
 
+  const damage = await getDamagePerRound(userId);
+
   return {
     totalKills: totals?.kills ?? 0,
     totalDeaths: totals?.deaths ?? 0,
+    damagePerRound: damage?.damagePerRound ?? 0,
+    damagePerRoundMatches: damage?.matches ?? 0,
   };
 }

@@ -1,5 +1,9 @@
 # Brazen Hub changelog
 
+### 2026-09-10
+
+- [Show **Average Damage per Round (ADR)** on user page based on full completed RTM recorded matches.]{.text-primary-500}
+
 ### 2026-09-03
 
 - [Show **revives** count for players in match stats table (behind **Show more stats** toggle.)]{.text-primary-500}

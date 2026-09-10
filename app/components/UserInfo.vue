@@ -15,16 +15,43 @@
   <Panel
     v-if="user.recentMatches.length > 0"
     header="Stats"
-    :pt="{ contentWrapper: { class: 'min-w-0' } }"
+    :pt="{
+      contentWrapper: { class: 'min-w-0' },
+    }"
   >
     <p>
-      KDR:
-      <template v-if="user.stats.totalDeaths > 0">{{
-        (user.stats.totalKills / user.stats.totalDeaths).toFixed(2)
-      }}</template>
-      <template v-else>{{ user.stats.totalKills.toFixed(2) }}</template>
+      <span
+        v-tooltip="{
+          value: 'Kill / Death Ratio',
+          pt: {
+            text: 'text-sm',
+            root: 'max-w-96',
+          },
+        }"
+      >
+        KDR:
+        <template v-if="user.stats.totalDeaths > 0">{{
+          (user.stats.totalKills / user.stats.totalDeaths).toFixed(2)
+        }}</template>
+        <template v-else>{{ user.stats.totalKills.toFixed(2) }}</template>
 
-      ({{ user.stats.totalKills }} kills / {{ user.stats.totalDeaths }} deaths)
+        ({{ user.stats.totalKills }} kills /
+        {{ user.stats.totalDeaths }} deaths)
+      </span>
+    </p>
+    <p v-if="user.stats.damagePerRound > 0">
+      <span
+        v-tooltip="{
+          value: `Average Damage per Round (based on ${user.stats.damagePerRoundMatches} Round Team Matches)`,
+          pt: {
+            text: 'text-sm',
+            root: 'max-w-96',
+          },
+        }"
+      >
+        ADR:
+        {{ Math.round(user.stats.damagePerRound) }}
+      </span>
     </p>
     <Message class="mt-4" variant="simple">
       <template #icon>
