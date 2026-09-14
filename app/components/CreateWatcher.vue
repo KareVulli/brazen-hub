@@ -17,7 +17,7 @@ const statsbot: BrazenUser = {
       <CreateWatcherForm />
       <template v-if="showInvite">
         <Divider>or</Divider>
-        <p class="flex gap-1 flex-wrap">
+        <div class="flex gap-1 flex-wrap">
           Follow
           <LinkedUserName
             class="text-primary-500"
@@ -26,7 +26,7 @@ const statsbot: BrazenUser = {
             inline
           />
           in game and invite it to your room!
-        </p>
+        </div>
       </template>
     </div>
     <Message v-else>
