@@ -3,7 +3,7 @@
 ### 2026-09-14
 
 - [**StatsBot** can now be invited directly from in game.]{.text-primary-500}
-- Add page specific title to all pages.
+- Add page specific titles to all pages.
 - Fix consistency issues with navigation menu item name formatting.
 
 ### 2026-09-10
