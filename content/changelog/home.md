@@ -1,3 +1,10 @@
+### 2026-09-14
+
+- [**StatsBot** can now be invited directly from in game.]{.text-primary-500}
+- Add page specific title to all pages.
+- Fix consistency issues with navigation menu item name formatting.
+
+
 ### 2026-09-10
 
 - [Show **Average Damage per Round (ADR)** on user page based on full completed RTM recorded matches.]{.text-primary-500}
@@ -19,9 +26,3 @@
 - [Show **Kill/Death Ratio (KDR)** on user page based on recorded matches.]{.text-primary-500}
 - Fix a regression where **StatsBot** was not able to return back to room.
 - [Fix revives not attributed to teammates.]{.text-primary-500}
-
-### 2026-08-26
-
-- Log an error event when **StatsBot** loses connection during a match.
-- Fix some error cases not cleaning up correctly.
-- Add **StatsBot** side network packet retransmission. Fixes some cases where **StatsBot** fails to join a room/match.
