@@ -13,6 +13,12 @@ const props = defineProps<{
   ruleset: RuleDto;
 }>();
 
+useHead({
+  title: computed(() => {
+    return `${props.ruleset.name} - ${props.ruleset.stageName}`;
+  }),
+});
+
 const { data } = await useFetch(`/api/target-challenges/${props.ruleset.id}`);
 
 const scores = computed(() => data.value?.scores || []);

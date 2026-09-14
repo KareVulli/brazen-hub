@@ -5,6 +5,10 @@
 <script setup lang="ts">
 const route = useRoute();
 
+useHead({
+  title: `Match #${route.params.id}`,
+});
+
 const matchId = computed(() => {
   if (typeof route.params.id === "string") {
     return Number.parseInt(route.params.id);

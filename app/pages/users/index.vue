@@ -23,11 +23,24 @@ import { useRoute } from "#app";
 
 const route = useRoute();
 
+const username = computed(() => route.query.query);
+
+const { data, error } = await useFetch("/api/search-user", {
+  query: { query: username },
+});
+
+useHead({
+  title: computed(() => {
+    if (data.value && "user" in data.value) {
+      return `${data.value.user.name} - Player Info`;
+    }
+    return "Player Search";
+  }),
+});
+
 const schema = z.object({
   username: z.string().min(1).max(64),
 });
-
-const username = computed(() => route.query.query);
 
 const { handleSubmit } = useForm({
   validationSchema: schema,
@@ -42,9 +55,5 @@ const onSubmit = handleSubmit(async (values) => {
       query: values.username,
     },
   });
-});
-
-const { data, error } = await useFetch("/api/search-user", {
-  query: { query: username },
 });
 </script>

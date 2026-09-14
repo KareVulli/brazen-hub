@@ -1,8 +1,7 @@
-import { createWatcherByCode } from "~~/server/utils/watcher";
 import { watcherSchema } from "~~/validation/watcherSchema";
 
 export default defineEventHandler(async (event): Promise<void> => {
-  await requireUserSession(event);
+  await checkAllowedToUpdate(event);
 
   const data = await readValidatedBody(event, watcherSchema.parse);
 

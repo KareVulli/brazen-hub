@@ -60,6 +60,7 @@
               />
             </AuthState>
             <Button
+              class="collapse lg:visible"
               as="a"
               icon="pi pi-github"
               aria-label="Open Brazen Hub GitHub repository"
@@ -90,11 +91,11 @@ const config = useRuntimeConfig();
 
 const items = ref<MenuItem[]>([
   {
-    label: "Custom matches",
+    label: "Custom Matches",
     route: "/matches",
   },
   {
-    label: "Round team match",
+    label: "Round Team Match",
     route: "/rtm",
   },
   {
@@ -102,17 +103,17 @@ const items = ref<MenuItem[]>([
 
     items: [
       {
-        label: "Weekly challenges",
+        label: "Weekly Challenges",
         route: "/weekly-challenges",
       },
       {
-        label: "Target challenges",
+        label: "Target Challenges",
         route: "/target-challenges",
       },
     ],
   },
   {
-    label: "Player search",
+    label: "Player Search",
     route: "/users",
   },
   {

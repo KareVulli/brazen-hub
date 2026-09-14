@@ -1,6 +1,7 @@
 import { unpack } from "msgpackr";
 import { brazenMessagePackApiRequest } from "./client";
 import { FetchError } from "ofetch";
+
 interface InvitationAcceptTeamInfoDto {
   GameRule: string;
   GameRuleId: number;
@@ -30,7 +31,7 @@ export class MatchInvitationError extends Error {
 
 export async function matchInvitationAccept(
   token: string,
-  code: string,
+  params: { code: string } | { invitationId: string },
 ): Promise<MatchInvitationAcceptDto> {
   try {
     return await brazenMessagePackApiRequest<MatchInvitationAcceptDto>(
@@ -38,8 +39,8 @@ export async function matchInvitationAccept(
       "POST",
       { Authorization: `Bearer ${token}` },
       {
-        InvitationCode: code,
-        InvitationId: null,
+        InvitationCode: "code" in params ? params.code : null,
+        InvitationId: "invitationId" in params ? params.invitationId : null,
         PlayZone: "us",
         Latency: 100,
       },

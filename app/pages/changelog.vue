@@ -5,6 +5,10 @@
 </template>
 
 <script setup>
+useHead({
+  title: "Changelog",
+});
+
 const { data } = await useAsyncData(`changelog-full`, () => {
   return queryCollection("changelog").path(`/full`).first();
 });

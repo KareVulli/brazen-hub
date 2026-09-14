@@ -10,7 +10,7 @@
           header="Record matches"
           :pt="{ contentWrapper: { class: 'min-w-0' } }"
         >
-          <CreateWatcher />
+          <CreateWatcher show-invite />
         </Panel>
         <MatchesOverview :matches="data.matches" />
       </div>
@@ -25,6 +25,10 @@
 
 <script setup lang="ts">
 import { PublicRoomsList, MatchesOverview } from "#components";
+
+useHead({
+  title: "Home",
+});
 
 const { data } = useFetch("/api/home");
 </script>

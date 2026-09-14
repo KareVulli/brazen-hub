@@ -89,7 +89,17 @@ const props = defineProps<{
   eventId?: string;
   showChart: boolean;
 }>();
+
 const { data: eventInfo } = await useFetch(
   props?.eventId ? `/api/weekly/${props.eventId}` : "/api/weekly",
 );
+
+useHead({
+  title: computed(() => {
+    if (eventInfo.value) {
+      return `Weekly Challenge #${eventInfo.value.event?.week}`;
+    }
+    return `Weekly Challenge`;
+  }),
+});
 </script>

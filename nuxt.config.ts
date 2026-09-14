@@ -117,6 +117,8 @@ export default defineNuxtConfig({
     public: {
       matchmakingWs: "",
       showWiki: 0,
+      statsbotUserKey: "",
+      statsbotUsername: "",
     },
   },
   dayjs: {

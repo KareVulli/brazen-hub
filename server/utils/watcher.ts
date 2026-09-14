@@ -1,0 +1,66 @@
+import { createWatcherSession } from "./roomSession";
+
+export async function createWatcherByCode(code: string) {
+  return await createWatcher({ code: code });
+}
+
+export async function createWatcherByInvitationId(invitationId: string) {
+  return await createWatcher({ invitationId: invitationId });
+}
+
+async function createWatcher(
+  params: { code: string } | { invitationId: string },
+) {
+  const host = await getFreeHost(); // FIXME: Race condition
+
+  let invitation;
+  try {
+    invitation = await matchInvitationAccept(host.token, params);
+  } catch (error) {
+    if (error instanceof MatchInvitationError) {
+      switch (error.reason) {
+        case MatchInvitationErrorReason.MATCH_IN_PROGRESS:
+          throw createError({
+            statusCode: 400,
+            statusMessage: `Match in progress`,
+          });
+        case MatchInvitationErrorReason.ROOM_FULL:
+          throw createError({
+            statusCode: 400,
+            statusMessage: `Room full`,
+          });
+        default:
+          throw createError({
+            statusCode: 400,
+            statusMessage: `Invalid room code`,
+          });
+      }
+    }
+    throw error;
+  }
+
+  if (invitation.GroupType !== "private_match_room") {
+    throw createError({
+      statusCode: 400,
+      message: `Unsupported match type`,
+    });
+  }
+
+  const privateMatchRoom = await getPrivateMatchRoomStatus(
+    host.token,
+    invitation.GroupId,
+  );
+  const playerUserKeys = privateMatchRoom.players
+    .map((player) => player.userKey)
+    .filter((key) => key !== host.userKey);
+  const existingWatchers = await getHostsByUserKeys(playerUserKeys);
+  if (existingWatchers.length) {
+    await leavePrivateMatchRoom(host.token, invitation.GroupId);
+    throw createError({
+      statusCode: 400,
+      message: `Room already has a watcher`,
+    });
+  }
+
+  await createWatcherSession(host, privateMatchRoom);
+}

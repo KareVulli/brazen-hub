@@ -34,6 +34,15 @@ const user = computed(() => {
   return null;
 });
 
+useHead({
+  title: computed(() => {
+    if (user.value) {
+      return `${user.value.name} - Matches`;
+    }
+    return "Player Matches";
+  }),
+});
+
 async function reset() {
   queryClient.resetQueries(
     { queryKey: ["infiniteMatches"] },

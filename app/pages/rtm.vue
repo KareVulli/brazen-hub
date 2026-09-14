@@ -77,6 +77,10 @@
 <script setup lang="ts">
 import { FilterMatchMode } from "@primevue/core/api";
 
+useHead({
+  title: "Round Team Match",
+});
+
 const { data } = await useFetch("/api/rtm");
 
 const filters = ref({

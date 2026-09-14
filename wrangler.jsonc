@@ -37,6 +37,8 @@
         "NUXT_GAME_VERSION": "2.19.0",
         "NUXT_GAME_VERSION_CODE": "2026083101",
         "NUXT_MATCHMAKING_API": "https://match.brazenhub.net",
-        "NUXT_PUBLIC_MATCHMAKING_WS": "wss://match.brazenhub.net/stats"
+        "NUXT_PUBLIC_MATCHMAKING_WS": "wss://match.brazenhub.net/stats",
+        "NUXT_PUBLIC_STATSBOT_USER_ID": "3312204810",
+        "NUXT_PUBLIC_STATSBOT_USERNAME": "StatsBot"
     }
 }

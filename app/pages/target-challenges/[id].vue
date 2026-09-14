@@ -7,6 +7,10 @@
 </template>
 
 <script setup lang="ts">
+useHead({
+  title: "Target Challenge",
+});
+
 const route = useRoute();
 
 const eventId = computed(() => {

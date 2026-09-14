@@ -8,6 +8,10 @@
 </template>
 
 <script setup lang="ts">
+useHead({
+  title: "Weekly Challenge",
+});
+
 const route = useRoute();
 
 const eventId = computed(() => {

@@ -61,7 +61,7 @@ export async function getSessionById(
   return session || null;
 }
 
-export async function createWatcher(
+export async function createWatcherSession(
   host: DBHost,
   privateMatchRoom: BrazenAPIRoom,
 ): Promise<void> {
