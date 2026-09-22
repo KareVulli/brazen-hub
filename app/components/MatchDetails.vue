@@ -7,6 +7,12 @@
           date-style="full"
           time-style="short"
         />
+        <span
+          >(<NuxtTime
+            :datetime="new Date(match.createdAt * 1000)"
+            relative
+          />)</span
+        >
         <CopyLinkButton
           class="shrink-0 whitespace-nowrap"
           :content="fullUrl"

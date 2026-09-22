@@ -1,5 +1,10 @@
 # Brazen Hub changelog
 
+### 2026-09-22
+- [Show user's most played **characters**, **sub-weapons**, **stages** and **rulesets** in user page.]{.text-primary-500}
+- Show relative time of the match in **Custom Matches** list and details page.
+- Remove match duration from **Custom Matches** list page.
+
 ### 2026-09-14
 
 - [**StatsBot** can now be invited directly from in game.]{.text-primary-500}

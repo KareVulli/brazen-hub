@@ -15,15 +15,15 @@
               class="text-green-500 font-semibold"
               >LIVE!</span
             >
-            Match #{{ match.id }} @
-            <NuxtTime
-              :datetime="new Date(match.createdAt * 1000)"
-              date-style="full"
-              time-style="short"
-            />
+            Match #{{ match.id }}
           </p>
           <p>
-            {{ matchDuration(match) }}
+            <NuxtTime
+              :datetime="new Date(match.createdAt * 1000)"
+              date-style="medium"
+              time-style="short"
+            />
+            (<NuxtTime :datetime="new Date(match.createdAt * 1000)" relative />)
           </p>
         </div>
         <p>{{ match.gameRule.name }} | {{ match.stage.name }}</p>
@@ -36,20 +36,4 @@
 
 <script setup lang="ts">
 defineProps<{ match: MatchDto }>();
-
-const dayjs = useDayjs();
-const formatDuration = useFormatDuration();
-
-function matchDuration(match: MatchDto) {
-  if (!match) {
-    return "";
-  }
-  if (match.endedAt === null) {
-    return formatDuration(dayjs().diff(dayjs(match.createdAt * 1000)));
-  }
-
-  return formatDuration(
-    dayjs(match.endedAt * 1000).diff(dayjs(match.createdAt * 1000)),
-  );
-}
 </script>
