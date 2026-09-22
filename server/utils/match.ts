@@ -530,7 +530,7 @@ async function getMostPlayedGameRules(
     .innerJoin(teamTable, eq(teamTable.id, teamUserTable.teamId))
     .innerJoin(matchTable, eq(matchTable.id, teamTable.matchId))
     .innerJoin(gameRuleTable, eq(gameRuleTable.id, matchTable.gameRuleId))
-    .groupBy(matchTable.gameRuleId)
+    .groupBy(gameRuleTable.gameRuleId)
     .where(eq(teamUserTable.userId, userId));
 
   return gameRules
