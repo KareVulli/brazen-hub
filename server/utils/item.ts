@@ -1,3 +1,5 @@
+import { inArray } from "drizzle-orm";
+import { SUB_WEAPON_ITEMS } from "~~/shared/constants";
 import { getColumns } from "../db/getColumns";
 import { itemTable } from "../db/schema/item";
 import type { DBItem } from "./drizzle";
@@ -69,9 +71,13 @@ export async function getItemByItemId(itemId: number): Promise<Item | null> {
 
 export async function getItemsByGameVersion(
   gameVersion: string | number,
+  subWeaponsOnly: boolean = false,
 ): Promise<Item[]> {
   const dbItems = await useDrizzle().query.itemTable.findMany({
-    where: eq(itemTable.gameVersion, gameVersion + ""),
+    where: and(
+      eq(itemTable.gameVersion, gameVersion + ""),
+      subWeaponsOnly ? inArray(itemTable.itemId, SUB_WEAPON_ITEMS) : undefined,
+    ),
     orderBy: [asc(itemTable.itemId)],
   });
   return dbItems.map((item) => itemFromDB(item));
@@ -90,6 +96,13 @@ export async function getIndexedItemsByGameVersion(
       acc[item.itemId] = item;
       return acc;
     }, {});
+}
+
+export async function getLatestItems(
+  subWeaponsOnly: boolean = false,
+): Promise<Item[]> {
+  const config = useRuntimeConfig();
+  return await getItemsByGameVersion(config.gameVersionCode, subWeaponsOnly);
 }
 
 export function getLatestItemsSubquery() {

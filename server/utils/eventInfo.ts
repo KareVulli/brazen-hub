@@ -11,7 +11,7 @@ import type {
   EventInfoDto,
 } from "./brazen-api/getEventInfo";
 import type { Character } from "./character";
-import { getCharactersByGameVersion } from "./character";
+import { getLatestCharacters } from "./character";
 import type {
   DBRule,
   DBScore,
@@ -376,9 +376,7 @@ interface DBEventInfo extends DBWeekly {
 }
 async function eventInfoFromDB(weekly: DBEventInfo): Promise<EventInfo> {
   let worldRecord: Score | null = null;
-  const characters = await getCharactersByGameVersion(
-    process.env.NUXT_GAME_VERSION_CODE || "not-found",
-  );
+  const characters = await getLatestCharacters();
   const items = await getIndexedItemsByGameVersion(
     process.env.NUXT_GAME_VERSION_CODE || "not-found",
   );

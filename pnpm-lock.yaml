@@ -48,8 +48,8 @@ importers:
         specifier: 0.5.30
         version: 0.5.30(magic-string@1.2.0)(magicast@0.5.4)(oxc-parser@0.139.0)(rolldown@1.2.4)(unplugin@3.3.0(esbuild@0.28.2)(rolldown@1.2.4)(rollup@4.62.4)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0)))
       plotly.js-dist-min:
-        specifier: ^3.7.0
-        version: 3.7.0
+        specifier: ^4.1.1
+        version: 4.1.1
       primeicons:
         specifier: ^7.0.0
         version: 7.0.0
@@ -81,9 +81,6 @@ importers:
       '@tailwindcss/typography':
         specifier: ^0.5.20
         version: 0.5.20(tailwindcss@3.4.19(tsx@4.23.12)(yaml@2.9.0))
-      '@types/plotly.js-dist-min':
-        specifier: ^2.3.4
-        version: 2.3.4
       drizzle-kit:
         specifier: ^0.31.10
         version: 0.31.10
@@ -2210,12 +2207,6 @@ packages:
   '@types/parse-path@7.1.0':
     resolution: {integrity: sha512-EULJ8LApcVEPbrfND0cRQqutIOdiIgJ1Mgrhpy755r14xMohPTEpkV/k28SJvuOs9bHRFW8x+KeDAEPiGQPB9Q==}
     deprecated: This is a stub types definition. parse-path provides its own type definitions, so you do not need this installed.
-
-  '@types/plotly.js-dist-min@2.3.4':
-    resolution: {integrity: sha512-ISwLFV6Zs/v3DkaRFLyk2rvYAfVdnYP2VVVy7h+fBDWw52sn7sMUzytkWiN4M75uxr1uz1uiBioePTDpAfoFIg==}
-
-  '@types/plotly.js@3.0.13':
-    resolution: {integrity: sha512-mWI1NZRDHDoiFiPEvUjR0P12fv21kmT8XSLrEjfNwIDahELaXXkSz38n6o+5SYsq0YEGxkK3ANqqM0cRl8uZdg==}
 
   '@types/pluralize@0.0.33':
     resolution: {integrity: sha512-JOqsl+ZoCpP4e8TDke9W79FDcSgPAR0l6pixx2JHkhnRjvShyYiAYw2LVsnA7K08Y6DeOnaU6ujmENO4os/cYg==}
@@ -5107,8 +5098,8 @@ packages:
   pkg-types@2.3.1:
     resolution: {integrity: sha512-y+ichcgc2LrADuhLNAx8DFjVfgz91pRxfZdI3UDhxHvcVEZsenLO+7XaU5vOp0u/7V/wZ+plyuQxtrDlZJ+yeg==}
 
-  plotly.js-dist-min@3.7.0:
-    resolution: {integrity: sha512-IRWNnBJZmKss3URDnicBK2nvt/VTSi/MD1GnUscAYFjwSuN6g/CTde5R1UC0RYtblehj8rkT4BL8r05e/c8j5Q==}
+  plotly.js-dist-min@4.1.1:
+    resolution: {integrity: sha512-4Jg6n9FKcn5WBuqHESZmueEBYOLjGlsz8ivzMCl03WCX+GAAOgIALvdONwIi54JDMq0tkxbu+vs5Yj7QSPQtgg==}
 
   pluralize@8.0.0:
     resolution: {integrity: sha512-Nc3IT5yHzflTfbjgqWcCPpo7DaKy4FnpB0l/zCAW0Tc7jxAiuqSxHasntB3D7887LSrA93kDJ9IXovxJYxyLCA==}
@@ -8798,12 +8789,6 @@ snapshots:
     dependencies:
       parse-path: 7.1.0
 
-  '@types/plotly.js-dist-min@2.3.4':
-    dependencies:
-      '@types/plotly.js': 3.0.13
-
-  '@types/plotly.js@3.0.13': {}
-
   '@types/pluralize@0.0.33': {}
 
   '@types/resolve@1.20.2': {}
@@ -12245,7 +12230,7 @@ snapshots:
       exsolve: 1.1.1
       pathe: 2.0.3
 
-  plotly.js-dist-min@3.7.0: {}
+  plotly.js-dist-min@4.1.1: {}
 
   pluralize@8.0.0: {}
 

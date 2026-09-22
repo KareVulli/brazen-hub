@@ -1,6 +1,8 @@
+import { inArray } from "drizzle-orm";
 import { getColumns } from "../db/getColumns";
 import { gameRuleTable } from "../db/schema/gameRule";
 import type { DBGameRule } from "./drizzle";
+import { MULTIPLAYER_GAMERULES } from "~~/shared/constants";
 
 export interface GameRuleDto {
   id: number;
@@ -153,18 +155,38 @@ export async function getGameRuleByGameRuleId(
 
 async function getDBGameRulesByGameVersion(
   gameVersion: string | number,
+  multiplayerOnly: boolean = false,
 ): Promise<DBGameRule[]> {
   return await useDrizzle().query.gameRuleTable.findMany({
-    where: eq(gameRuleTable.gameVersion, gameVersion + ""),
+    where: and(
+      eq(gameRuleTable.gameVersion, gameVersion + ""),
+      multiplayerOnly
+        ? inArray(gameRuleTable.gameRuleId, MULTIPLAYER_GAMERULES)
+        : undefined,
+    ),
     orderBy: [asc(gameRuleTable.gameRuleId)],
   });
 }
 
 export async function getGameRulesByGameVersion(
   gameVersion: string | number,
+  multiplayerOnly: boolean = false,
 ): Promise<GameRule[]> {
-  const dbGameRules = await getDBGameRulesByGameVersion(gameVersion);
+  const dbGameRules = await getDBGameRulesByGameVersion(
+    gameVersion,
+    multiplayerOnly,
+  );
   return dbGameRules.map((gameRule) => gameRuleFromDB(gameRule));
+}
+
+export async function getLatestGameRules(
+  multiplayerOnly: boolean = false,
+): Promise<GameRule[]> {
+  const config = useRuntimeConfig();
+  return await getGameRulesByGameVersion(
+    config.gameVersionCode,
+    multiplayerOnly,
+  );
 }
 
 export function getLatestGameRulesSubquery() {

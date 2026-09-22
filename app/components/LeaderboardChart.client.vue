@@ -8,7 +8,6 @@
 </template>
 
 <script setup lang="ts">
-import type * as Plotly from "plotly.js-dist-min";
 import type { LeaderboardGraphPlayer } from "~~/server/utils/eventInfo";
 import type { NuxtPlotlyConfig, NuxtPlotlyData } from "./NuxtPlotly.vue";
 
@@ -20,7 +19,7 @@ const props = defineProps<{
 
 const chart = useTemplateRef("chart");
 const isDark = usePreferredDark();
-const { $plotly }: { $plotly: typeof Plotly } = useNuxtApp();
+const { $plotly } = useNuxtApp();
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const chartOptions: any = computed(

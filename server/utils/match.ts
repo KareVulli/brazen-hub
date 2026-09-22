@@ -1,5 +1,6 @@
 import { count, inArray, isNotNull, notExists, sum } from "drizzle-orm";
 import { alias } from "drizzle-orm/sqlite-core";
+import type { UserStatGraphItem } from "~~/shared/types/UserStatGraphItem";
 import type { MatchSchema } from "~~/validation/matchSchema";
 import type { MatchUpdateSchema } from "~~/validation/matchUpdateSchema";
 import { buildConflictUpdateColumns } from "../db/buildConflictUpdateColumns";
@@ -15,12 +16,14 @@ import {
   teamUserTable,
   userTable,
 } from "../db/schema";
+import { getLatestCharacters } from "./character";
 import type { DBRoomSession, DBTeamUserInsert } from "./drizzle";
-import type { GameRule } from "./gameRule";
+import { getLatestGameRules, type GameRule } from "./gameRule";
 import type { PaginatedResponse, PaginationOptions } from "./pagination";
 import { paginateResults } from "./pagination";
 import type { Team, TeamDto } from "./team";
 import { teamToDto } from "./team";
+import { getLatestItems } from "./item";
 
 export interface SimpleMatch {
   id: number;
@@ -289,7 +292,7 @@ export async function createMatch(
     (acc, team) => ({ ...acc, [team.teamIndex]: team.id }),
     {},
   );
-  const characters = await getCharactersByGameVersion(config.gameVersionCode);
+  const characters = await getLatestCharacters();
   const items = await getIndexedItemsByGameVersion(config.gameVersionCode);
 
   for (const [team, data] of Object.entries(teams)) {
@@ -409,6 +412,144 @@ export interface UserMatchStats {
   totalDeaths: number;
   damagePerRound: number;
   damagePerRoundMatches: number;
+  mostUsedCharacters: UserStatGraphItem[];
+  mostUsedItems: UserStatGraphItem[];
+  mostPlayedStages: UserStatGraphItem[];
+  mostPlayedGameRules: UserStatGraphItem[];
+}
+
+async function getMostUsedCharacters(
+  userId: number,
+): Promise<UserStatGraphItem[]> {
+  const characters = await getLatestCharacters();
+
+  const stats = await useDrizzle()
+    .select({
+      characterId: characterTable.characterId,
+      value: count().as("count"),
+    })
+    .from(teamUserTable)
+    .innerJoin(characterTable, eq(characterTable.id, teamUserTable.characterId))
+    .groupBy(characterTable.characterId)
+    .where(eq(teamUserTable.userId, userId));
+
+  return Object.values(characters)
+    .filter((character) => character !== undefined)
+    .map((character) => {
+      const stat = stats.find(
+        (item) => item.characterId === character.characterId,
+      );
+      if (!stat) {
+        return {
+          label: character.displayName,
+          value: 0,
+        };
+      }
+      return {
+        label: character.displayName,
+        value: stat.value,
+      };
+    })
+    .sort((a, b) => b.value - a.value);
+}
+
+async function getMostUsedItems(userId: number): Promise<UserStatGraphItem[]> {
+  const subWeapons = await getLatestItems(true);
+
+  const stats = await useDrizzle()
+    .select({
+      subWeaponId: itemTable.itemId,
+      value: count().as("count"),
+    })
+    .from(teamUserTable)
+    .innerJoin(itemTable, eq(itemTable.id, teamUserTable.subWeaponId))
+    .groupBy(itemTable.itemId)
+    .where(eq(teamUserTable.userId, userId));
+
+  return subWeapons
+    .map((subWeapon) => {
+      const stat = stats.find((item) => item.subWeaponId === subWeapon.itemId);
+      if (!stat) {
+        return {
+          label: subWeapon.name,
+          value: 0,
+        };
+      }
+      return {
+        label: subWeapon.name,
+        value: stat.value,
+      };
+    })
+    .sort((a, b) => b.value - a.value);
+}
+
+async function getMostPlayedStages(
+  userId: number,
+): Promise<UserStatGraphItem[]> {
+  const stages = await getStages(true);
+
+  const stats = await useDrizzle()
+    .select({
+      stageId: matchTable.stageId,
+      value: count().as("count"),
+    })
+    .from(teamUserTable)
+    .innerJoin(teamTable, eq(teamTable.id, teamUserTable.teamId))
+    .innerJoin(matchTable, eq(matchTable.id, teamTable.matchId))
+    .groupBy(matchTable.stageId)
+    .where(eq(teamUserTable.userId, userId));
+
+  return stages
+    .map((stage) => {
+      const stat = stats.find((item) => item.stageId === stage.id);
+      if (!stat) {
+        return {
+          label: stage.name,
+          value: 0,
+        };
+      }
+      return {
+        label: stage.name,
+        value: stat.value,
+      };
+    })
+    .sort((a, b) => b.value - a.value);
+}
+
+async function getMostPlayedGameRules(
+  userId: number,
+): Promise<UserStatGraphItem[]> {
+  const gameRules = await getLatestGameRules(true);
+
+  const stats = await useDrizzle()
+    .select({
+      gameRuleId: gameRuleTable.gameRuleId,
+      value: count().as("count"),
+    })
+    .from(teamUserTable)
+    .innerJoin(teamTable, eq(teamTable.id, teamUserTable.teamId))
+    .innerJoin(matchTable, eq(matchTable.id, teamTable.matchId))
+    .innerJoin(gameRuleTable, eq(gameRuleTable.id, matchTable.gameRuleId))
+    .groupBy(matchTable.gameRuleId)
+    .where(eq(teamUserTable.userId, userId));
+
+  return gameRules
+    .map((gameRule) => {
+      const stat = stats.find(
+        (item) => item.gameRuleId === gameRule.gameRuleId,
+      );
+      if (!stat) {
+        return {
+          label: gameRule.name,
+          value: 0,
+        };
+      }
+      return {
+        label: gameRule.name,
+        value: stat.value,
+      };
+    })
+    .sort((a, b) => b.value - a.value);
 }
 
 async function getDamagePerRound(userId: number) {
@@ -475,12 +616,28 @@ export async function getUserMatchStats(
       .where(eq(teamUserTable.userId, userId))
   )[0];
 
-  const damage = await getDamagePerRound(userId);
+  const [
+    damage,
+    mostUsedCharacters,
+    mostUsedItems,
+    mostPlayedGameRules,
+    mostPlayedStages,
+  ] = await Promise.all([
+    getDamagePerRound(userId),
+    getMostUsedCharacters(userId),
+    getMostUsedItems(userId),
+    getMostPlayedGameRules(userId),
+    getMostPlayedStages(userId),
+  ]);
 
   return {
     totalKills: totals?.kills ?? 0,
     totalDeaths: totals?.deaths ?? 0,
     damagePerRound: damage?.damagePerRound ?? 0,
     damagePerRoundMatches: damage?.matches ?? 0,
+    mostUsedCharacters: mostUsedCharacters,
+    mostUsedItems: mostUsedItems,
+    mostPlayedGameRules: mostPlayedGameRules,
+    mostPlayedStages: mostPlayedStages,
   };
 }

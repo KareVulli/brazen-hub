@@ -20,15 +20,7 @@
     }"
   >
     <p>
-      <span
-        v-tooltip="{
-          value: 'Kill / Death Ratio',
-          pt: {
-            text: 'text-sm',
-            root: 'max-w-96',
-          },
-        }"
-      >
+      <span>
         KDR:
         <template v-if="user.stats.totalDeaths > 0">{{
           (user.stats.totalKills / user.stats.totalDeaths).toFixed(2)
@@ -37,28 +29,39 @@
 
         ({{ user.stats.totalKills }} kills /
         {{ user.stats.totalDeaths }} deaths)
+        <InfoButton message="Kill / Death Ratio" />
       </span>
     </p>
     <p v-if="user.stats.damagePerRound > 0">
-      <span
-        v-tooltip="{
-          value: `Average Damage per Round (based on ${user.stats.damagePerRoundMatches} Round Team Matches)`,
-          pt: {
-            text: 'text-sm',
-            root: 'max-w-96',
-          },
-        }"
-      >
+      <span>
         ADR:
         {{ Math.round(user.stats.damagePerRound) }}
+        <InfoButton
+          :message="`Average Damage per Round (based on ${user.stats.damagePerRoundMatches} Round Team Matches)`"
+        />
       </span>
     </p>
-    <Message class="mt-4" variant="simple">
-      <template #icon>
-        <span class="pi pi-info-circle" />
-      </template>
-      Work in progress! More stats will be added later.</Message
-    >
+    <div class="grid xl:grid-cols-2">
+      <div>
+        <span>Most used characters</span>
+        <UserStatChart :stats="user.stats.mostUsedCharacters" />
+      </div>
+      <div>
+        <span>Most used sub-weapons</span>
+        <UserStatChart :stats="user.stats.mostUsedItems" />
+      </div>
+      <div>
+        <span>Most played stages</span>
+        <UserStatChart
+          :stats="user.stats.mostPlayedStages"
+          :force-x-axis-angle="20"
+        />
+      </div>
+      <div>
+        <span>Most played rulesets</span>
+        <UserStatChart :stats="user.stats.mostPlayedGameRules" />
+      </div>
+    </div>
   </Panel>
   <UserMatches :user-key="user.user.userKey" :matches="user.recentMatches" />
   <Panel

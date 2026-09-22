@@ -186,6 +186,13 @@ export async function getDetailedCharactersByGameVersion(
   return dbCharacters.map((character) => detailedCharacterFromDB(character));
 }
 
+export async function getLatestCharacters(): Promise<
+  Record<number, Character | undefined>
+> {
+  const config = useRuntimeConfig();
+  return await getCharactersByGameVersion(config.gameVersionCode);
+}
+
 export function getLatestCharactersSubquery() {
   const subQuery = useDrizzle()
     .$with("characters_with_row_number")

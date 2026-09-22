@@ -1,4 +1,6 @@
+import { inArray } from "drizzle-orm";
 import { stageTable } from "../db/schema";
+import { MULTIPLAYER_STAGES } from "~~/shared/constants";
 
 export interface Stage {
   id: number;
@@ -30,8 +32,14 @@ export async function writeStageToDB(stage: StageDto) {
   });
 }
 
-export async function getStages(): Promise<Stage[]> {
-  return await useDrizzle().query.stageTable.findMany();
+export async function getStages(
+  multiplayerOnly: boolean = false,
+): Promise<Stage[]> {
+  return await useDrizzle().query.stageTable.findMany({
+    where: and(
+      multiplayerOnly ? inArray(stageTable.id, MULTIPLAYER_STAGES) : undefined,
+    ),
+  });
 }
 
 export async function getStageById(id: number): Promise<Stage | null> {
