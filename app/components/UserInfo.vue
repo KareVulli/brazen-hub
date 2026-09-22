@@ -52,10 +52,7 @@
       </div>
       <div>
         <span>Most played stages</span>
-        <UserStatChart
-          :stats="user.stats.mostPlayedStages"
-          :force-x-axis-angle="20"
-        />
+        <UserStatChart :stats="user.stats.mostPlayedStages" />
       </div>
       <div>
         <span>Most played rulesets</span>
