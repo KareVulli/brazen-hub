@@ -1,3 +1,7 @@
+### 2026-09-23
+
+- Show instructions to follow **StatsBot** also when not logged in.
+
 ### 2026-09-22
 - [Show user's most played **characters**, **sub-weapons**, **stages** and **rulesets** in user page.]{.text-primary-500}
 - Show relative time of the match in **Custom Matches** list and details page.
@@ -19,9 +23,3 @@
 - [Show **revives** count for players in match stats table (behind **Show more stats** toggle.)]{.text-primary-500}
 - Show only five latest days with changes in home page **changelog** panel.
 - Add **full changelog** page.
-
-### 2026-09-01
-
-- Fix all players being marked disconnected after a mid-match disconnect in some cases.
-- Fix potential **room** error when starting a match while trying to add a second **StatsBot** to the room.
-- Fix **Add StatsBot!** button not being disabled while in loading state.

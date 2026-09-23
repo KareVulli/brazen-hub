@@ -15,23 +15,29 @@ const statsbot: BrazenUser = {
   <AuthState v-slot="{ loggedIn }">
     <div v-if="loggedIn">
       <CreateWatcherForm />
-      <template v-if="showInvite">
-        <Divider>or</Divider>
-        <div class="flex gap-1 flex-wrap">
-          Follow
-          <LinkedUserName
-            class="text-primary-500"
-            :user="statsbot"
-            variant="small"
-            inline
-          />
-          in game and invite it to your room!
-        </div>
-      </template>
     </div>
-    <Message v-else>
-      <a href="/auth/discord" class="hover:underline font-semibold">Log in</a>
+    <div v-else>
+      <AppLink
+        class="hover:underline font-semibold"
+        to="/auth/discord"
+        external
+      >
+        Log in
+      </AppLink>
       to add StatsBot for recording your custom matches
-    </Message>
+    </div>
+    <template v-if="showInvite">
+      <Divider class="my-2">or</Divider>
+      <div class="flex gap-1 flex-wrap">
+        Follow
+        <LinkedUserName
+          class="text-primary-500"
+          :user="statsbot"
+          variant="small"
+          inline
+        />
+        in game and invite it to your room!
+      </div>
+    </template>
   </AuthState>
 </template>

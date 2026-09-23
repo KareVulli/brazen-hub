@@ -1,5 +1,9 @@
 # Brazen Hub changelog
 
+### 2026-09-23
+
+- Show instructions to follow **StatsBot** also when not logged in.
+
 ### 2026-09-22
 - [Show user's most played **characters**, **sub-weapons**, **stages** and **rulesets** in user page.]{.text-primary-500}
 - Show relative time of the match in **Custom Matches** list and details page.

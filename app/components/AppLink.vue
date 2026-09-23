@@ -1,5 +1,9 @@
 <template>
-  <NuxtLink :to="to" class="font-medium text-primary-500 hover:underline">
+  <NuxtLink
+    :to="to"
+    class="font-medium text-primary-500 hover:underline"
+    :external="external"
+  >
     <slot />
   </NuxtLink>
 </template>
@@ -7,5 +11,9 @@
 <script setup lang="ts">
 import type { NuxtLinkProps } from "#app";
 
-defineProps<{ to: NuxtLinkProps["to"]; target?: NuxtLinkProps["target"] }>();
+defineProps<{
+  to: NuxtLinkProps["to"];
+  target?: NuxtLinkProps["target"];
+  external?: boolean;
+}>();
 </script>
