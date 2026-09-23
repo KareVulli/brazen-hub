@@ -2,6 +2,8 @@
 
 ### 2026-09-23
 
+- [Collect and show **skill usage** count (behind **Show more stats** toggle).]{.text-primary-500}
+- [Collect and show **ultimate usage** count (behind **Show more stats** toggle).]{.text-primary-500}
 - Show instructions to follow **StatsBot** also when not logged in.
 
 ### 2026-09-22

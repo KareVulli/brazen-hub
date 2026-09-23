@@ -60,28 +60,48 @@
         <i v-else class="opacity-50">Unknown</i>
       </template>
     </Column>
-    <Column field="kills" header="Kills" sortable />
-    <Column field="deaths" header="Deaths" sortable />
-    <Column field="stuns" header="Stuns" sortable />
-    <Column field="damage" header="Damage" sortable />
+    <Column field="kills" sortable>
+      <template #header>
+        <span class="collapse lg:visible font-semibold">Kills</span>
+        <span class="visible lg:collapse font-semibold">K</span>
+      </template>
+    </Column>
+    <Column field="deaths" sortable>
+      <template #header>
+        <span class="collapse lg:visible font-semibold">Deaths</span>
+        <span class="visible lg:collapse font-semibold">D</span>
+      </template>
+    </Column>
+    <Column field="stuns" sortable>
+      <template #header>
+        <span class="collapse lg:visible font-semibold">Stuns</span>
+        <span class="visible lg:collapse font-semibold">S</span>
+      </template>
+    </Column>
+    <Column field="damage" sortable>
+      <template #header>
+        <span class="collapse lg:visible font-semibold">Damage</span>
+        <span class="visible lg:collapse font-semibold">Dmg</span>
+      </template>
+    </Column>
     <template #expansion="{ data }">
-      <div class="flex items-center">
+      <div class="lg:flex lg:items-center">
         <p class="flex items-baseline">
           Revives: {{ data.revives }}
           <InfoButton
             message="How many times the player revived their teammates"
           />
         </p>
-        <!-- <Divider layout="vertical" />
-        <p class="flex items-baseline ml-3">
-          Skill used: <i class="text-sm opacity-50 ml-1"> Coming soon!</i>
+        <Divider class="hidden lg:block" layout="vertical" />
+        <p class="flex items-baseline lg:ml-3">
+          Skill used: {{ data.skill }}
           <InfoButton message="How many times the player used their skill" />
         </p>
-        <Divider layout="vertical" />
-        <p class="flex items-baseline ml-3">
-          Ultimate used: <i class="text-sm opacity-50 ml-1"> Coming soon!</i>
+        <Divider class="hidden lg:block" layout="vertical" />
+        <p class="flex items-baseline lg:ml-3">
+          Ultimate used: {{ data.ultimate }}
           <InfoButton message="How many times the player used their ultimate" />
-        </p> -->
+        </p>
       </div>
     </template>
   </DataTable>

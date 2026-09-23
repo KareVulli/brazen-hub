@@ -34,8 +34,7 @@
     </Panel>
 
     <MatchStats :game-rule="match.gameRule" :teams="match.teams" />
-    <hr class="border-t border-surface-200 dark:border-surface-700 my-4" />
-    <PageTitle title="Match log">
+    <PageTitle title="Match log" class="mt-4">
       <template #actions>
         <Button
           v-if="match.endedAt === null"
