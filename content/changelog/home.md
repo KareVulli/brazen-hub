@@ -1,6 +1,6 @@
 ### 2026-09-26
 
-- Fix spacing issues in mobile browsers, where short labels are used.
+- Fix spacing issues in mobile browsers where short labels are used.
 
 ### 2026-09-23
 
