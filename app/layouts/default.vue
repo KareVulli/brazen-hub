@@ -60,7 +60,7 @@
               />
             </AuthState>
             <Button
-              class="collapse lg:visible"
+              class="hidden lg:flex"
               as="a"
               icon="pi pi-github"
               aria-label="Open Brazen Hub GitHub repository"

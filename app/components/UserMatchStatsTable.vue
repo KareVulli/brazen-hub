@@ -62,26 +62,26 @@
     </Column>
     <Column field="kills" sortable>
       <template #header>
-        <span class="collapse lg:visible font-semibold">Kills</span>
-        <span class="visible lg:collapse font-semibold">K</span>
+        <span class="hidden lg:inline font-semibold">Kills</span>
+        <span class="inline lg:hidden font-semibold">K</span>
       </template>
     </Column>
     <Column field="deaths" sortable>
       <template #header>
-        <span class="collapse lg:visible font-semibold">Deaths</span>
-        <span class="visible lg:collapse font-semibold">D</span>
+        <span class="hidden lg:inline font-semibold">Deaths</span>
+        <span class="inline lg:hidden font-semibold">D</span>
       </template>
     </Column>
     <Column field="stuns" sortable>
       <template #header>
-        <span class="collapse lg:visible font-semibold">Stuns</span>
-        <span class="visible lg:collapse font-semibold">S</span>
+        <span class="hidden lg:inline font-semibold">Stuns</span>
+        <span class="inline lg:hidden font-semibold">S</span>
       </template>
     </Column>
     <Column field="damage" sortable>
       <template #header>
-        <span class="collapse lg:visible font-semibold">Damage</span>
-        <span class="visible lg:collapse font-semibold">Dmg</span>
+        <span class="hidden lg:inline font-semibold">Damage</span>
+        <span class="inline lg:hidden font-semibold">Dmg</span>
       </template>
     </Column>
     <template #expansion="{ data }">
