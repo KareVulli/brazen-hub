@@ -1,4 +1,5 @@
 import z from "zod";
+import { setMatchErrored } from "~~/server/utils/match";
 import { createMatchEvent } from "~~/server/utils/matchEvent";
 import { matchEventSchema } from "~~/validation/matchEventSchema";
 
@@ -21,4 +22,8 @@ export default defineEventHandler(async (event): Promise<void> => {
   }
 
   await createMatchEvent(id, data);
+
+  if (data.name === "error") {
+    await setMatchErrored(match.id);
+  }
 });

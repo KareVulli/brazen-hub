@@ -16,6 +16,7 @@ export const matchTable = sqliteTable("match", {
   gameRuleId: integer("game_rule_id")
     .references(() => gameRuleTable.id)
     .notNull(),
+  errored: integer("errored", { mode: "boolean" }).default(false).notNull(),
   updatedAt: updatedAt,
   createdAt: createdAt,
   endedAt: integer("ended_at", { mode: "timestamp" }),

@@ -30,6 +30,7 @@ export interface SimpleMatch {
   roomSessionId: number;
   gameRule: GameRule;
   stage: Stage;
+  errored: boolean;
   endedAt: Date | null;
   updatedAt: Date;
   createdAt: Date;
@@ -40,6 +41,7 @@ export interface SimpleMatchDto {
   roomSessionId: number;
   gameRule: GameRuleDto;
   stage: StageDto;
+  errored: boolean;
   endedAt: number | null;
   updatedAt: number;
   createdAt: number;
@@ -59,6 +61,7 @@ export function simpleMatchToDto(match: SimpleMatch): SimpleMatchDto {
     roomSessionId: match.roomSessionId,
     gameRule: gameRuleToDto(match.gameRule),
     stage: match.stage,
+    errored: match.errored,
     endedAt: match.endedAt ? Math.floor(match.endedAt.getTime() / 1000) : null,
     updatedAt: Math.floor(match.updatedAt.getTime() / 1000),
     createdAt: Math.floor(match.createdAt.getTime() / 1000),
@@ -405,6 +408,13 @@ export async function updateMatchStats(
         "disconnectedAt",
       ]),
     });
+}
+
+export async function setMatchErrored(matchId: number): Promise<void> {
+  await useDrizzle()
+    .update(matchTable)
+    .set({ errored: true })
+    .where(eq(matchTable.id, matchId));
 }
 
 export interface UserMatchStats {

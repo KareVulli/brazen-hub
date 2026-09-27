@@ -1,3 +1,7 @@
+### 2026-09-27
+
+- Add indication to incomplete match recordings in **Custom Matches** list page.
+
 ### 2026-09-26
 
 - Fix spacing issues in mobile browsers where short labels are used.
@@ -23,9 +27,3 @@
 ### 2026-09-10
 
 - [Show **Average Damage per Round (ADR)** on user page based on full completed RTM recorded matches.]{.text-primary-500}
-
-### 2026-09-03
-
-- [Show **revives** count for players in match stats table (behind **Show more stats** toggle.)]{.text-primary-500}
-- Show only five latest days with changes in home page **changelog** panel.
-- Add **full changelog** page.

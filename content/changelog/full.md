@@ -1,5 +1,9 @@
 # Brazen Hub changelog
 
+### 2026-09-27
+
+- Add indication to incomplete match recordings in **Custom Matches** list page.
+
 ### 2026-09-26
 
 - Fix spacing issues in mobile browsers where short labels are used.

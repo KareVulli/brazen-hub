@@ -1,10 +1,23 @@
 <template>
   <NuxtLink :to="`/matches/${match.id}`" class="w-full min-w-0">
     <Card
+      v-tooltip.bottom="
+        match.errored
+          ? {
+              value:
+                'StatsBot had issues during this match. The data may be incomplete.',
+              pt: {
+                text: 'text-sm',
+                root: '!max-w-md',
+              },
+            }
+          : undefined
+      "
       class="border border-surface-200 dark:border-surface-700 hover:bg-gray-100 dark:hover:bg-gray-800 duration-100 h-full"
       :class="{
         'border-green-400': match.endedAt === null,
         'border-slate-800': match.endedAt !== null,
+        'opacity-50': match.errored,
       }"
     >
       <template #content>
@@ -15,6 +28,10 @@
               class="text-green-500 font-semibold"
               >LIVE!</span
             >
+            <span
+              v-if="match.errored"
+              class="pi pi-times-circle text-gray-500"
+            />
             Match #{{ match.id }}
           </p>
           <p>
