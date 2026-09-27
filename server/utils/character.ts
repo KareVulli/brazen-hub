@@ -60,9 +60,6 @@ export async function replaceCharactersInDB(
   gameVersion: string,
   characters: DetailedCharacterDto[],
 ) {
-  await useDrizzle()
-    .delete(characterTable)
-    .where(eq(characterTable.gameVersion, gameVersion));
   for (const character of characters) {
     await writeCharacterToDB(gameVersion, character);
   }
@@ -72,7 +69,7 @@ export async function writeCharacterToDB(
   gameVersion: string,
   characterDto: DetailedCharacterDto,
 ) {
-  await useDrizzle().insert(characterTable).values({
+  const values = {
     gameVersion: gameVersion,
     characterId: characterDto.id,
     name: characterDto.name,
@@ -94,7 +91,14 @@ export async function writeCharacterToDB(
     punchDamage: characterDto.punchDamage,
     boostPunchDamage: characterDto.boostPunchDamage,
     passivePunchDamage: characterDto.passivePunchDamage,
-  });
+  };
+  await useDrizzle()
+    .insert(characterTable)
+    .values(values)
+    .onConflictDoUpdate({
+      target: [characterTable.characterId, characterTable.gameVersion],
+      set: values,
+    });
 }
 
 export function characterFromDB(character: DBCharacter): Character {

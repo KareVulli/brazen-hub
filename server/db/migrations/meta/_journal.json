@@ -267,6 +267,20 @@
       "when": 1787591445932,
       "tag": "0037_dusty_champions",
       "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "6",
+      "when": 1790501995620,
+      "tag": "0038_curved_mystique",
+      "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "6",
+      "when": 1790503056020,
+      "tag": "0039_striped_prism",
+      "breakpoints": true
     }
   ]
 }

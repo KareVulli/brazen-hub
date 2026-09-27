@@ -78,9 +78,6 @@ export async function replaceGameRulesInDB(
   gameVersion: string,
   gameRules: GameRuleDto[],
 ) {
-  await useDrizzle()
-    .delete(gameRuleTable)
-    .where(eq(gameRuleTable.gameVersion, gameVersion));
   for (const gameRule of gameRules) {
     await writeGameRuleToDB(gameVersion, gameRule);
   }
@@ -90,7 +87,7 @@ export async function writeGameRuleToDB(
   gameVersion: string,
   gameRuleDto: GameRuleDto,
 ) {
-  await useDrizzle().insert(gameRuleTable).values({
+  const values = {
     gameVersion: gameVersion,
     gameRuleId: gameRuleDto.id,
     ruleDetailsId: gameRuleDto.ruleDetailsId,
@@ -111,7 +108,14 @@ export async function writeGameRuleToDB(
     collapseTime5: gameRuleDto.collapseTime5,
     collapseTimeAll: gameRuleDto.collapseTimeAll,
     collapseSteps: gameRuleDto.collapseSteps,
-  });
+  };
+  await useDrizzle()
+    .insert(gameRuleTable)
+    .values(values)
+    .onConflictDoUpdate({
+      target: [gameRuleTable.gameRuleId, gameRuleTable.gameVersion],
+      set: values,
+    });
 }
 
 export function gameRuleFromDB(gameRule: DBGameRule): GameRule {

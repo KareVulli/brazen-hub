@@ -1,7 +1,9 @@
 import { z } from "zod";
+import type { AdditionalEffectDto } from "~~/server/utils/additionalEffect";
+import { replaceAdditionalEffectsInDB } from "~~/server/utils/additionalEffect";
 import { checkAllowedToUpdate } from "~~/server/utils/auth";
-import { replaceGameRulesInDB } from "~~/server/utils/gameRule";
 import type { GameRuleDto } from "~~/server/utils/gameRule";
+import { replaceGameRulesInDB } from "~~/server/utils/gameRule";
 import type { ItemDto } from "~~/server/utils/item";
 import type { StageDto } from "~~/server/utils/stage";
 import { replaceStagesInDB } from "~~/server/utils/stage";
@@ -82,6 +84,23 @@ const stageSchema = z.object({
   thumbnailName: z.string(),
 }) satisfies z.ZodType<StageDto>;
 
+const additionalEffectSchema = z.object({
+  id: z.coerce.number().positive().int(),
+  categoryType: z.string(),
+  additionalEffectType: z.string(),
+  enchantGroup: z.string(),
+  priority: z.coerce.number().int(),
+  validStun: z.boolean(),
+  validFinisher: z.boolean(),
+  cancelCondition: z.string(),
+  assetName: z.string(),
+  time: z.coerce.number(),
+  val1: z.coerce.number().int(),
+  val2: z.coerce.number().int(),
+  val3: z.coerce.number().int(),
+  val4: z.coerce.number().int(),
+}) satisfies z.ZodType<AdditionalEffectDto>;
+
 const requestSchema = z.object({
   gameVersion: z.string(),
   soloRules: z.array(ruleSchema),
@@ -89,6 +108,7 @@ const requestSchema = z.object({
   items: z.array(itemSchema),
   rules: z.array(gameRuleSchema),
   stages: z.array(stageSchema),
+  additionalEffects: z.array(additionalEffectSchema),
 });
 
 export default eventHandler(async (event): Promise<void> => {
@@ -99,4 +119,8 @@ export default eventHandler(async (event): Promise<void> => {
   await replaceitemsInDB(staticData.gameVersion, staticData.items);
   await replaceGameRulesInDB(staticData.gameVersion, staticData.rules);
   await replaceStagesInDB(staticData.stages);
+  await replaceAdditionalEffectsInDB(
+    staticData.gameVersion,
+    staticData.additionalEffects,
+  );
 });

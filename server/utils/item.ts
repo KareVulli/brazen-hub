@@ -25,16 +25,13 @@ export interface Item {
 }
 
 export async function replaceitemsInDB(gameVersion: string, items: ItemDto[]) {
-  await useDrizzle()
-    .delete(itemTable)
-    .where(eq(itemTable.gameVersion, gameVersion));
   for (const item of items) {
     await writeitemToDB(gameVersion, item);
   }
 }
 
 export async function writeitemToDB(gameVersion: string, itemDto: ItemDto) {
-  await useDrizzle().insert(itemTable).values({
+  const values = {
     gameVersion: gameVersion,
     itemId: itemDto.id,
     name: itemDto.name,
@@ -42,7 +39,14 @@ export async function writeitemToDB(gameVersion: string, itemDto: ItemDto) {
     icon: itemDto.icon,
     hudIcon: itemDto.hudIcon,
     count: itemDto.count,
-  });
+  };
+  await useDrizzle()
+    .insert(itemTable)
+    .values(values)
+    .onConflictDoUpdate({
+      target: [itemTable.itemId, itemTable.gameVersion],
+      set: values,
+    });
 }
 
 export function itemFromDB(item: DBItem): Item {
