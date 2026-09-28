@@ -1,13 +1,15 @@
 <template>
   <div>
     <div class="mx-auto px-4 py-4">
+      <StatusAlerts />
       <Menubar :model="items">
         <template #start>
           <NuxtLink
             to="/"
             class="font-bold mx-4 text-cyan-500 hover:text-cyan-600 transition"
-            >Brazen Hub - Management</NuxtLink
           >
+            Brazen Hub - Management
+          </NuxtLink>
         </template>
         <template #item="{ item, props }">
           <NuxtLink
@@ -65,9 +67,15 @@
 <script setup lang="ts">
 import { NuxtLink } from "#components";
 
+useHead({
+  titleTemplate: (title) => {
+    return title ? `${title} | Brazen Hub Management` : "Brazen Hub Management";
+  },
+});
+
 const items = ref([
   {
-    label: "Custom scores",
+    label: "Custom Scores",
     route: "/manage",
   },
   {
@@ -77,6 +85,10 @@ const items = ref([
   {
     label: "Watcher",
     route: "/manage/watcher",
+  },
+  {
+    label: "Settings",
+    route: "/manage/settings",
   },
 ]);
 </script>

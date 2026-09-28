@@ -1,6 +1,7 @@
 <template>
   <div>
     <div class="mx-auto px-4 py-4">
+      <StatusAlerts />
       <Menubar :model="items">
         <template #start>
           <NuxtLink
@@ -86,6 +87,12 @@
 import { NuxtLink } from "#components";
 import type { MenuItem } from "primevue/menuitem";
 import { ROLE_ADMIN } from "~~/server/db/roles";
+
+useHead({
+  titleTemplate: (title) => {
+    return title ? `${title} | Brazen Hub` : "Brazen Hub";
+  },
+});
 
 const config = useRuntimeConfig();
 

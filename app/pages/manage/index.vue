@@ -16,5 +16,9 @@ definePageMeta({
   layout: "management",
 });
 
+useHead({
+  title: "Custom Scores",
+});
+
 const { data, refresh } = await useFetch("/api/manage/scores");
 </script>

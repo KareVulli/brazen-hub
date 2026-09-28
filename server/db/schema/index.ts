@@ -17,3 +17,4 @@ export * from "./teamUser";
 export * from "./match";
 export * from "./matchEvent";
 export * from "./additionalEffect";
+export * from "./settings";

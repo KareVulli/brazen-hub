@@ -1,3 +1,5 @@
+import { matchTable } from "~~/server/db/schema";
+import { getPaginatedMatches } from "~~/server/utils/match";
 import type { Stage } from "~~/server/utils/stage";
 import { getStageById } from "~~/server/utils/stage";
 import type { BrazenApiPublicRoom } from "../../utils/brazen-api/getPublicRooms";
@@ -5,8 +7,6 @@ import { getPublicRooms } from "../../utils/brazen-api/getPublicRooms";
 import { getCurrentWeekly } from "../../utils/eventInfo";
 import type { BrazenUser } from "../../utils/user";
 import { getUserFromDB } from "../../utils/user";
-import { getPaginatedMatches } from "~~/server/utils/match";
-import { matchTable } from "~~/server/db/schema";
 
 export interface HomePublicRoom extends BrazenApiPublicRoom {
   user: BrazenUser | null;

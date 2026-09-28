@@ -1,3 +1,7 @@
+### 2026-09-28
+
+- Add toggleable maintenance alert.
+
 ### 2026-09-27
 
 - Add indication to incomplete match recordings in **Custom Matches** list page.
@@ -17,13 +21,3 @@
 - [Show user's most played **characters**, **sub-weapons**, **stages** and **rulesets** in user page.]{.text-primary-500}
 - Show relative time of the match in **Custom Matches** list and details page.
 - Remove match duration from **Custom Matches** list page.
-
-### 2026-09-14
-
-- [**StatsBot** can now be invited directly from in game.]{.text-primary-500}
-- Add page specific titles to all pages.
-- Fix consistency issues with navigation menu item name formatting.
-
-### 2026-09-10
-
-- [Show **Average Damage per Round (ADR)** on user page based on full completed RTM recorded matches.]{.text-primary-500}

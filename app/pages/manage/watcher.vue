@@ -12,6 +12,10 @@ definePageMeta({
   layout: "management",
 });
 
+useHead({
+  title: "Watcher",
+});
+
 const config = useRuntimeConfig();
 
 const { data: _wsdata } = useWebSocket(config.public.matchmakingWs, {

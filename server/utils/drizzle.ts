@@ -25,8 +25,10 @@ export type DBMatch = typeof schema.matchTable.$inferSelect;
 export type DBMatchEvent = typeof schema.matchEventTable.$inferSelect;
 export type DBTeam = typeof schema.teamTable.$inferSelect;
 export type DBTeamUser = typeof schema.teamUserTable.$inferSelect;
+export type DBAdditionalEffect =
+  typeof schema.additionalEffectTable.$inferSelect;
+export type DBSettings = typeof schema.settingsTable.$inferSelect;
+
 export type DBScoreInsert = typeof schema.scoreTable.$inferInsert;
 export type DBRoomInsert = typeof schema.roomTable.$inferInsert;
 export type DBTeamUserInsert = typeof schema.teamUserTable.$inferInsert;
-export type DBAdditionalEffect =
-  typeof schema.additionalEffectTable.$inferSelect;
