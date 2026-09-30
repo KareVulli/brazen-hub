@@ -67,22 +67,26 @@ export async function writeLeaderboardToDB(
     });
   }
 
-  const scoreIds = await useDrizzle()
-    .insert(scoreTable)
-    .values(scoresData)
-    .returning({ scoreId: scoreTable.id });
+  if (scoresData.length) {
+    const scoreIds = await useDrizzle()
+      .insert(scoreTable)
+      .values(scoresData)
+      .returning({ scoreId: scoreTable.id });
 
-  const weeklyScoreIds = await useDrizzle()
-    .insert(weeklyScoreTable)
-    .values(
-      scoreIds.map(({ scoreId }) => ({
-        weeklyId: weeklyId,
-        scoreId: scoreId,
-      })),
-    )
-    .returning({ id: weeklyScoreTable.id });
+    const weeklyScoreIds = await useDrizzle()
+      .insert(weeklyScoreTable)
+      .values(
+        scoreIds.map(({ scoreId }) => ({
+          weeklyId: weeklyId,
+          scoreId: scoreId,
+        })),
+      )
+      .returning({ id: weeklyScoreTable.id });
 
-  return weeklyScoreIds.map((item) => item.id);
+    return weeklyScoreIds.map((item) => item.id);
+  }
+
+  return [];
 }
 
 export async function writeToDB(raw: EventInfoDto, event: BrazenApiEventInfo) {
