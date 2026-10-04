@@ -1,9 +1,11 @@
+import { inArray } from "drizzle-orm";
 import { userTable } from "../db/schema";
 import { findFirstUser } from "./brazen-api/findUser";
 import type {
   BrazenAPIDetailedUser,
   BrazenAPIUser,
 } from "./brazen-api/models/apiUser";
+import { contains } from "./drizzle";
 
 export interface BrazenUser extends BrazenAPIUser {
   id: number;
@@ -72,4 +74,39 @@ export async function getUser(
     return await fetchAndUpdateUser(apiToken, userKey);
   }
   return user;
+}
+
+export interface UserFilters {
+  query?: string;
+  userKeys?: string[];
+}
+
+function getFilteredQuery({ query: searchQuery, userKeys }: UserFilters) {
+  const filters = [];
+
+  if (userKeys !== undefined) {
+    filters.push(inArray(userTable.userKey, userKeys));
+  }
+  if (searchQuery !== undefined) {
+    filters.push(
+      or(
+        eq(userTable.userKey, searchQuery),
+        contains(userTable.name, searchQuery),
+      ),
+    );
+  }
+
+  return useDrizzle()
+    .select()
+    .from(userTable)
+    .where(and(...filters))
+    .$dynamic();
+}
+
+export async function getPaginatedUsers(
+  paginationOptions: PaginationOptions,
+  filters: UserFilters = {},
+): Promise<PaginatedResponse<BrazenUser>> {
+  const query = getFilteredQuery(filters);
+  return await paginateResults(query, paginationOptions);
 }

@@ -1,4 +1,11 @@
-import { count, inArray, isNotNull, notExists, sum } from "drizzle-orm";
+import {
+  count,
+  countDistinct,
+  inArray,
+  isNotNull,
+  notExists,
+  sum,
+} from "drizzle-orm";
 import { alias } from "drizzle-orm/sqlite-core";
 import type { UserStatGraphItem } from "~~/shared/types/UserStatGraphItem";
 import type { MatchSchema } from "~~/validation/matchSchema";
@@ -187,19 +194,22 @@ function mergeRows(rows: Awaited<ReturnType<typeof getMatchesQuery>>): Match[] {
 }
 
 export interface MatchFilters {
-  userId?: number;
+  players?: string[];
+  stageId?: number;
   gameRuleId?: number;
 }
 
-function getFilteredQuery({ userId, gameRuleId }: MatchFilters) {
+function getFilteredQuery({ players, stageId, gameRuleId }: MatchFilters) {
   let query = useDrizzle()
     .select({ id: matchTable.id })
     .from(matchTable)
     .$dynamic();
 
-  if (userId !== undefined) {
+  if (players !== undefined) {
+    const uniquePlayers = [...new Set(players)];
     const filteredTeamTable = alias(teamTable, "t1");
     const filteredTeamUserTable = alias(teamUserTable, "tu1");
+    const filteredUserTable = alias(userTable, "u1");
     const filteredMatchTable = alias(matchTable, "m1");
     const filteredMatchesSubquery = useDrizzle()
       .select({ id: filteredMatchTable.id })
@@ -212,8 +222,15 @@ function getFilteredQuery({ userId, gameRuleId }: MatchFilters) {
         filteredTeamUserTable,
         eq(filteredTeamUserTable.teamId, filteredTeamTable.id),
       )
-      .where(eq(filteredTeamUserTable.userId, userId))
-      .orderBy(desc(filteredMatchTable.id))
+      .innerJoin(
+        filteredUserTable,
+        eq(filteredUserTable.id, filteredTeamUserTable.userId),
+      )
+      .where(inArray(filteredUserTable.userKey, players))
+      .groupBy(filteredMatchTable.id)
+      .having(
+        eq(countDistinct(filteredUserTable.userKey), uniquePlayers.length),
+      )
       .as("m1");
 
     query = query.innerJoin(
@@ -223,14 +240,35 @@ function getFilteredQuery({ userId, gameRuleId }: MatchFilters) {
   }
   if (gameRuleId !== undefined) {
     const filteredGameRuleTable = alias(gameRuleTable, "gr1");
-    query = query
+    const filteredMatchTable = alias(matchTable, "m2");
+    const filteredMatchesSubquery = useDrizzle()
+      .select({ id: filteredMatchTable.id })
+      .from(filteredMatchTable)
       .innerJoin(
         filteredGameRuleTable,
-        eq(matchTable.id, filteredGameRuleTable.id),
+        eq(filteredMatchTable.gameRuleId, filteredGameRuleTable.id),
       )
-      .where(eq(filteredGameRuleTable.gameRuleId, gameRuleId));
-  }
+      .where(eq(filteredGameRuleTable.gameRuleId, gameRuleId))
+      .as("m2");
 
+    query = query.innerJoin(
+      filteredMatchesSubquery,
+      eq(matchTable.id, filteredMatchesSubquery.id),
+    );
+  }
+  if (stageId !== undefined) {
+    const filteredMatchTable = alias(matchTable, "m3");
+    const filteredMatchesSubquery = useDrizzle()
+      .select({ id: filteredMatchTable.id })
+      .from(filteredMatchTable)
+      .where(eq(filteredMatchTable.stageId, stageId))
+      .as("m3");
+
+    query = query.innerJoin(
+      filteredMatchesSubquery,
+      eq(matchTable.id, filteredMatchesSubquery.id),
+    );
+  }
   return query;
 }
 

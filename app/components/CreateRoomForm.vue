@@ -1,28 +1,31 @@
 <template>
-  <div v-if="stages && gameRules">
+  <div>
     <form class="flex flex-col gap-2 items-start mt-4" @submit="onSubmit">
       <h2>Create a room</h2>
       <div class="space-y-2 w-full">
         <div class="grid grid-cols-2 gap-2">
-          <FormSelectInput name="stageId" label="Stage" :options="stages" />
+          <FormSelectInput
+            name="stageId"
+            label="Stage"
+            :options="stageOptions"
+          />
           <FormSelectInput
             name="gameRuleId"
             label="Game rule"
-            :options="gameRules"
+            :options="gameRuleOptions"
           />
         </div>
         <FormCheckboxInput name="public" label="Make public" />
         <FormListInput
           name="players"
           label="Players"
-          :new-initial-value="{ userId: null, team: 0 }"
+          :new-initial-value="{ userKey: null, team: 0 }"
         >
           <template #fields="{ itemName }">
             <div class="flex gap-2">
               <FormPlayerInput
                 :name="`${itemName}.userKey`"
                 label="Player ID"
-                type="text"
               />
               <FormSelectInput
                 :name="`${itemName}.team`"
@@ -40,9 +43,7 @@
 
 <script setup lang="ts">
 import { useFieldValue, useForm } from "vee-validate";
-import { z } from "zod";
 import { roomSchema } from "~~/validation/roomSchema";
-import type { GameRuleDto } from "~~/server/utils/gameRule";
 
 const toast = useToast();
 
@@ -50,24 +51,7 @@ const emit = defineEmits<{
   created: [];
 }>();
 
-const roomFormSchema = roomSchema.extend(
-  z.object({
-    gameRuleId: z
-      .object({ id: z.number() })
-      .transform((gameRule) => gameRule.id),
-    stageId: z.object({ id: z.number() }).transform((stage) => stage.id),
-    players: z
-      .array(
-        z.object({
-          userKey: z
-            .object({ userKey: z.string().min(1) })
-            .transform((user) => user.userKey),
-          team: z.object({ value: z.number() }).transform((team) => team.value),
-        }),
-      )
-      .default(() => []),
-  }).shape,
-);
+const roomFormSchema = roomSchema;
 
 const { handleSubmit } = useForm({
   validationSchema: roomFormSchema,
@@ -75,8 +59,23 @@ const { handleSubmit } = useForm({
 
 const { data: stages } = await useFetch("/api/stages");
 const { data: gameRules } = await useFetch("/api/game-rules");
+const stageOptions = computed(() => {
+  return (stages.value || []).map((item) => ({
+    value: item.id,
+    name: item.name,
+  }));
+});
+const gameRuleOptions = computed(() => {
+  return (gameRules.value || []).map((item) => ({
+    value: item.id,
+    name: item.name,
+  }));
+});
 
-const gameRule = useFieldValue<GameRuleDto>("gameRuleId");
+const gameRuleId = useFieldValue<number>("gameRuleId");
+const gameRule = computed(() => {
+  return gameRules.value?.find((rule) => rule.id === gameRuleId.value);
+});
 const teams = computed(() => {
   const teamsCount = gameRule.value?.teamCount || 0;
   const options = [];

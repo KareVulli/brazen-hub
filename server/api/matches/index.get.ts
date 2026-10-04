@@ -1,9 +1,29 @@
 import z from "zod";
 import { matchTable } from "~~/server/db/schema";
 import type { PaginatedResponse } from "~~/server/utils/pagination";
+import { queryStringArraySchema } from "~~/validation/queryStringArraySchema";
+import { queryNumberSchema } from "~~/validation/queryNumberSchema";
 
 const filterSchema = z.object({
-  user: z.string().optional(),
+  players: queryStringArraySchema.pipe(z.array(z.string()).max(6).optional()),
+  stageId: queryNumberSchema(
+    z
+      .number()
+      .int()
+      .positive()
+      .nullable()
+      .optional()
+      .transform((arg) => arg ?? undefined),
+  ),
+  gameRuleId: queryNumberSchema(
+    z
+      .number()
+      .int()
+      .positive()
+      .nullable()
+      .optional()
+      .transform((arg) => arg ?? undefined),
+  ),
 });
 
 export default defineEventHandler(
@@ -15,19 +35,10 @@ export default defineEventHandler(
       ).parse,
     );
 
-    let userId: number | undefined;
-    if (query.user) {
-      userId = (await getUserFromDB(query.user))?.id;
-      if (!userId) {
-        throw createError({
-          statusCode: 400,
-          statusMessage: "Unknown user",
-        });
-      }
-    }
-
     const matches = await getPaginatedMatches(query, {
-      userId,
+      players: query.players,
+      stageId: query.stageId,
+      gameRuleId: query.gameRuleId,
     });
 
     return matches;

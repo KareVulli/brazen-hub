@@ -1,6 +1,8 @@
+import type { ilike as _ilike } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
 import * as schema from "../db/schema";
-export { sql, eq, and, or, desc, asc, lt, gt } from "drizzle-orm";
+export { and, asc, desc, eq, gt, lt, or, sql } from "drizzle-orm";
 
 export function useDrizzle() {
   const DB = process.env.DB || globalThis.__env__?.DB || globalThis.DB;
@@ -32,3 +34,8 @@ export type DBSettings = typeof schema.settingsTable.$inferSelect;
 export type DBScoreInsert = typeof schema.scoreTable.$inferInsert;
 export type DBRoomInsert = typeof schema.roomTable.$inferInsert;
 export type DBTeamUserInsert = typeof schema.teamUserTable.$inferInsert;
+
+export function contains(column: Parameters<typeof _ilike>[0], value: string) {
+  const escapedValue = `%${value.replace(/[\\%_]/g, "\\$&")}%`;
+  return sql`${column} LIKE ${escapedValue} ESCAPE '\\'`;
+}

@@ -10,9 +10,11 @@
       />
       <Button type="submit" severity="secondary" label="Search" />
     </form>
-    <UsersList v-if="data && 'users' in data" :users="data.users" />
-    <UserInfo v-if="data && 'user' in data" :user="data" />
-    <p v-if="error">Did not find a user with specified query.</p>
+    <p v-if="data && 'users' in data && data.users.length === 0">
+      Did not find a user with specified query.
+    </p>
+    <UsersList v-else-if="data && 'users' in data" :users="data.users" />
+    <UserInfo v-else-if="data && 'user' in data" :user="data" />
   </div>
 </template>
 
@@ -25,7 +27,7 @@ const route = useRoute();
 
 const username = computed(() => route.query.query);
 
-const { data, error } = await useFetch("/api/search-user", {
+const { data } = await useFetch("/api/search-user", {
   query: { query: username },
 });
 

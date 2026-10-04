@@ -12,7 +12,7 @@ import {
 import { defineNuxtPlugin, useState } from "#imports";
 
 export default defineNuxtPlugin((nuxt) => {
-  const vueQueryState = useState<DehydratedState | null>("vue-query");
+  const vueQueryState = useState<DehydratedState>("vue-query");
 
   const queryClient = new QueryClient({
     defaultOptions: { queries: { staleTime: 5000, refetchOnMount: false } },

@@ -15,7 +15,7 @@
         <FormSelectInput
           name="characterId"
           label="Character"
-          :options="characters"
+          :options="charactersOptions"
         />
         <FormSelectInput
           name="subWeaponId"
@@ -39,11 +39,9 @@ const emit = defineEmits<{
 
 const scoreFormSchema = scoreSchema.extend(
   z.object({
-    ruleId: z.object({ id: z.number() }).transform((rule) => rule.id),
-    characterId: z
-      .object({ characterId: z.number() })
-      .transform((character) => character.characterId),
-    subWeaponId: z.object({ id: z.number() }).transform((item) => item.id),
+    ruleId: z.number(),
+    characterId: z.number(),
+    subWeaponId: z.number(),
     setAt: z.date().transform((date) => Math.round(date.getTime() / 1000)),
   }).shape,
 );
@@ -59,8 +57,17 @@ const { data: items } = await useFetch("/api/items");
 const targetChallengeOptions = computed(() => {
   return (
     targetChallenges.value?.rulesets.map((rule) => ({
-      id: rule.id,
+      value: rule.id,
       name: `${rule.name} - ${rule.stageName}`,
+    })) || []
+  );
+});
+
+const charactersOptions = computed(() => {
+  return (
+    characters.value?.map((item) => ({
+      value: item.characterId,
+      name: item.name,
     })) || []
   );
 });
@@ -68,7 +75,7 @@ const targetChallengeOptions = computed(() => {
 const itemsOptions = computed(() => {
   return (
     items.value?.map((item) => ({
-      id: item.itemId,
+      value: item.itemId,
       name: `${item.name} - ${item.itemId}`,
     })) || []
   );

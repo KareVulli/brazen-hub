@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p class="mb-4">Found multiple matches. Please select one:</p>
+    <p class="mb-4">Found following users. Please select one:</p>
     <Menu :model="items">
       <template #item="{ item, props: itemProps }">
         <NuxtLink
@@ -19,10 +19,12 @@
             <div class="mr-auto">
               <UserName :user="item.user" show-key />
             </div>
-            <span v-if="item.user.online" class="text-green-500 font-bold">
-              online
-            </span>
-            <span v-else>offline</span>
+            <template v-if="'online' in item.user">
+              <span v-if="item.user.online" class="text-green-500 font-bold">
+                online
+              </span>
+              <span v-else>offline</span>
+            </template>
           </a>
         </NuxtLink>
       </template>
@@ -32,10 +34,13 @@
 
 <script setup lang="ts">
 import type { MenuItem } from "primevue/menuitem";
-import type { BrazenAPIDetailedUser } from "~~/server/utils/brazen-api/models/apiUser";
+import type {
+  BrazenAPIUser,
+  BrazenAPIDetailedUser,
+} from "~~/server/utils/brazen-api/models/apiUser";
 
 const props = defineProps<{
-  users: BrazenAPIDetailedUser[];
+  users: (BrazenAPIUser | BrazenAPIDetailedUser)[];
 }>();
 
 const items = computed((): MenuItem[] => {

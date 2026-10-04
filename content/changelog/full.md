@@ -1,5 +1,9 @@
 # Brazen Hub changelog
 
+### 2026-10-04
+
+- Add player, stage and game rule filters to **Custom Matches** list page.
+
 ### 2026-09-28
 
 - Add toggleable maintenance alert.

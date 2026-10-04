@@ -1,19 +1,19 @@
 import { z } from "zod";
+import { matchTable, userTable } from "../db/schema";
 import { findUsers } from "../utils/brazen-api/findUser";
 import type { BrazenAPIDetailedUser } from "../utils/brazen-api/models/apiUser";
-import type { UserScore } from "../utils/score";
-import { getUserTopScores } from "../utils/score";
-import type { DetailedBrazenUser } from "../utils/user";
-import { matchTable } from "../db/schema";
 import type { UserMatchStats } from "../utils/match";
 import { getUserMatchStats } from "../utils/match";
+import type { UserScore } from "../utils/score";
+import { getUserTopScores } from "../utils/score";
+import { getPaginatedUsers, type DetailedBrazenUser } from "../utils/user";
 
 const requestSchema = z.object({
-  query: z.coerce.string().min(1).max(64),
+  query: z.coerce.string().trim().min(1).max(64),
 });
 
 export interface SearchUserMultipleResults {
-  users: BrazenAPIDetailedUser[];
+  users: (BrazenAPIUser | BrazenAPIDetailedUser)[];
 }
 
 export interface SearchUserResult {
@@ -31,10 +31,19 @@ export default cachedEventHandler(
     const users = await findUsers(config.bzToken, query);
 
     if (users.length === 0) {
-      throw createError({
-        statusCode: 404,
-        message: `Did not find the requested user`,
-      });
+      return {
+        users: (
+          await getPaginatedUsers(
+            {
+              page: 1,
+              pageSize: 50,
+              sort: userTable.userKey,
+              sortDirection: "asc",
+            },
+            { query: query },
+          )
+        ).results,
+      };
     } else if (users.length === 1) {
       const user = users[0]!;
       const userId = await updateUserInDB(user);
@@ -46,7 +55,7 @@ export default cachedEventHandler(
           sort: matchTable.createdAt,
           sortDirection: "desc",
         },
-        { userId: userId },
+        { players: [user.userKey] },
       );
       const stats = await getUserMatchStats(userId);
 

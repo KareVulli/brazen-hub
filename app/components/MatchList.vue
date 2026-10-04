@@ -11,6 +11,10 @@
       />
     </div>
   </template>
+  <template v-else-if="hasFilters">
+    <p class="font-semibold mb-4">No custom matches match your filters.</p>
+    <Button @click="emit('resetFilters')">Clear filters</Button>
+  </template>
   <template v-else>
     <p class="font-semibold mb-4">No custom matches yet</p>
     <p>
@@ -22,12 +26,31 @@
 
 <script setup lang="ts">
 import { useQueryClient } from "@tanstack/vue-query";
+import { Button } from "primevue";
 
 const props = defineProps<{
-  userKey?: string;
+  players?: string[];
+  gameRuleId?: number;
+  stageId?: number;
+  resetableFilters?: boolean;
 }>();
-const { data, isFetching, fetchNextPage, hasNextPage } =
-  await useInfiniteMatches(20, () => props.userKey);
+const emit = defineEmits<{
+  resetFilters: [];
+}>();
+
+const hasFilters = computed<boolean>(() => {
+  return (
+    props.resetableFilters &&
+    (!!props.players?.length || !!props.gameRuleId || !!props.stageId)
+  );
+});
+
+const { data, isFetching, fetchNextPage, hasNextPage } = useInfiniteMatches(
+  20,
+  () => props.players ?? [],
+  () => props.gameRuleId ?? null,
+  () => props.stageId ?? null,
+);
 const queryClient = useQueryClient();
 
 const el = ref<Document | null>(null);

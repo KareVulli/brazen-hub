@@ -11,7 +11,7 @@
         />
       </template>
     </PageTitle>
-    <MatchList :user-key="userKey" />
+    <MatchList :players="[userKey]" />
   </div>
 </template>
 

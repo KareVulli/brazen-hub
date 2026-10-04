@@ -1,3 +1,7 @@
+### 2026-10-04
+
+- Add player, stage and game rule filters to **Custom Matches** list page.
+
 ### 2026-09-28
 
 - Add toggleable maintenance alert.
@@ -15,9 +19,3 @@
 - [Collect and show **skill usage** count (behind **Show more stats** toggle).]{.text-primary-500}
 - [Collect and show **ultimate usage** count (behind **Show more stats** toggle).]{.text-primary-500}
 - Show instructions to follow **StatsBot** also when not logged in.
-
-### 2026-09-22
-
-- [Show user's most played **characters**, **sub-weapons**, **stages** and **rulesets** in user page.]{.text-primary-500}
-- Show relative time of the match in **Custom Matches** list and details page.
-- Remove match duration from **Custom Matches** list page.
