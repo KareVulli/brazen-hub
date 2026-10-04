@@ -53,6 +53,7 @@ import { useQueryClient } from "@tanstack/vue-query";
 import { useForm } from "vee-validate";
 import { useStorage } from "@vueuse/core";
 import z from "zod";
+import { MULTIPLAYER_GAMERULES, MULTIPLAYER_STAGES } from "~~/shared/constants";
 
 const collapsed = useStorage<boolean>("setting-match-filters-collapsed", true);
 const queryClient = useQueryClient();
@@ -61,16 +62,20 @@ const { data: stages } = await useFetch("/api/stages");
 const { data: gameRules } = await useFetch("/api/game-rules");
 
 const stageOptions = computed(() => {
-  return (stages.value || []).map((item) => ({
-    value: item.id,
-    name: item.name,
-  }));
+  return (stages.value || [])
+    .filter((item) => MULTIPLAYER_STAGES.includes(item.id))
+    .map((item) => ({
+      value: item.id,
+      name: item.name,
+    }));
 });
 const gameRuleOptions = computed(() => {
-  return (gameRules.value || []).map((item) => ({
-    value: item.id,
-    name: item.name,
-  }));
+  return (gameRules.value || [])
+    .filter((item) => MULTIPLAYER_GAMERULES.includes(item.id))
+    .map((item) => ({
+      value: item.id,
+      name: item.name,
+    }));
 });
 
 const players = useRouteQueryArray("players", null);
