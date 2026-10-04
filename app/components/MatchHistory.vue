@@ -21,6 +21,15 @@
       header="Filters"
       toggleable
     >
+      <template #header>
+        <button
+          class="flex items-center gap-2 w-full"
+          @click="collapsed = !collapsed"
+        >
+          <span>Filters</span>
+          <Badge v-if="filterCount" :value="filterCount" size="small" />
+        </button>
+      </template>
       <form class="flex flex-col gap-2" @submit="onSubmit">
         <FormPlayerInput name="players" label="Players" type="text" multiple />
         <div class="grid gap-2 sm:grid-cols-2">
@@ -81,6 +90,19 @@ const gameRuleOptions = computed(() => {
 const players = useRouteQueryArray("players", null);
 const gameRuleId = useRouteQueryInteger("gameRuleId");
 const stageId = useRouteQueryInteger("stageId");
+const filterCount = computed(() => {
+  let count = 0;
+  if (players.value?.length) {
+    count++;
+  }
+  if (gameRuleId.value) {
+    count++;
+  }
+  if (stageId.value) {
+    count++;
+  }
+  return count;
+});
 
 async function refresh() {
   queryClient.resetQueries(
