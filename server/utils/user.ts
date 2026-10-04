@@ -108,5 +108,20 @@ export async function getPaginatedUsers(
   filters: UserFilters = {},
 ): Promise<PaginatedResponse<BrazenUser>> {
   const query = getFilteredQuery(filters);
-  return await paginateResults(query, paginationOptions);
+  const { results, pagination } = await paginateResults(
+    query,
+    paginationOptions,
+  );
+
+  // HACK to prioritise exact matches.
+  const searchQuery = filters.query?.toLowerCase();
+  if (searchQuery !== undefined) {
+    const rank = (user: DBUser) =>
+      user.userKey === filters.query || user.name.toLowerCase() === searchQuery
+        ? 0
+        : 1;
+    results.sort((a, b) => rank(a) - rank(b));
+  }
+
+  return { results, pagination };
 }
