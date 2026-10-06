@@ -45,7 +45,8 @@ type MatchEventType =
             stuns: number;
             deaths: number;
             revives: number;
-            healed: number;
+            healingDone: number;
+            healingReceived: number;
             skill: number;
             ultimate: number;
             damage: number;

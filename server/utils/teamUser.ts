@@ -11,7 +11,8 @@ export interface TeamUser {
   deaths: number;
   damage: number;
   revives: number;
-  healed: number;
+  healingDone: number;
+  healingReceived: number;
   skill: number;
   ultimate: number;
   aliveDuration: number;
@@ -30,7 +31,8 @@ export interface TeamUserDto {
   deaths: number;
   damage: number;
   revives: number;
-  healed: number;
+  healingDone: number;
+  healingReceived: number;
   skill: number;
   ultimate: number;
   aliveDuration: number;
@@ -50,7 +52,8 @@ export function teamUserToDto(teamUser: TeamUser): TeamUserDto {
     deaths: teamUser.deaths,
     damage: teamUser.damage,
     revives: teamUser.revives,
-    healed: teamUser.healed,
+    healingDone: teamUser.healingDone,
+    healingReceived: teamUser.healingReceived,
     skill: teamUser.skill,
     ultimate: teamUser.ultimate,
     aliveDuration: teamUser.aliveDuration,
