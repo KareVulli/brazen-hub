@@ -428,25 +428,27 @@ export async function updateMatchStats(
       set: buildConflictUpdateColumns(teamTable, ["team", "wins", "placement"]),
     });
 
-  await useDrizzle()
-    .insert(teamUserTable)
-    .values(teamUserInserts)
-    .onConflictDoUpdate({
-      target: [teamUserTable.id],
-      set: buildConflictUpdateColumns(teamUserTable, [
-        "kills",
-        "stuns",
-        "deaths",
-        "revives",
-        "healingDone",
-        "healingReceived",
-        "skill",
-        "ultimate",
-        "damage",
-        "aliveDuration",
-        "disconnectedAt",
-      ]),
-    });
+  for (let i = 0; i < teamUserInserts.length; i += 3) {
+    await useDrizzle()
+      .insert(teamUserTable)
+      .values(teamUserInserts.slice(i, i + 3))
+      .onConflictDoUpdate({
+        target: [teamUserTable.id],
+        set: buildConflictUpdateColumns(teamUserTable, [
+          "kills",
+          "stuns",
+          "deaths",
+          "revives",
+          "healingDone",
+          "healingReceived",
+          "skill",
+          "ultimate",
+          "damage",
+          "aliveDuration",
+          "disconnectedAt",
+        ]),
+      });
+  }
 }
 
 export async function setMatchErrored(matchId: number): Promise<void> {
