@@ -83,6 +83,9 @@
         <span class="hidden lg:inline font-semibold">Damage</span>
         <span class="inline lg:hidden font-semibold">Dmg</span>
       </template>
+      <template #body="slotProps">
+        <span>{{ `${slotProps.data.damage} HP` }}</span>
+      </template>
     </Column>
     <template #expansion="{ data }">
       <div class="lg:flex lg:items-center">
@@ -90,6 +93,18 @@
           Revives: {{ data.revives }}
           <InfoButton
             message="How many times the player revived their teammates"
+          />
+        </p>
+        <Divider class="hidden lg:block" layout="vertical" />
+        <p class="flex items-baseline">
+          Healing received: {{ data.healingReceived }} HP
+          <InfoButton message="How much healing did the player receive" />
+        </p>
+        <Divider class="hidden lg:block" layout="vertical" />
+        <p class="flex items-baseline">
+          Healing done: {{ data.healingDone }} HP
+          <InfoButton
+            message="How much the player healed others (counts self-heals and heal stations)"
           />
         </p>
         <Divider class="hidden lg:block" layout="vertical" />
