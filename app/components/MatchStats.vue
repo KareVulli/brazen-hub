@@ -8,7 +8,7 @@
     <InputSwitch v-model="showDetails" :input-id="switchId" />
   </div>
   <div
-    v-if="teamBasedGameRuleTypes.includes(gameRule.gameRuleType)"
+    v-if="TEAM_BASED_GAMERULE_TYPES.includes(gameRule.gameRuleType)"
     class="grid gap-2"
   >
     <div class="min-w-0">
@@ -66,6 +66,7 @@
 </template>
 
 <script setup lang="ts">
+import { TEAM_BASED_GAMERULE_TYPES } from "~~/shared/constants";
 import type { GameRuleDto } from "~~/server/utils/gameRule";
 import type { TeamDto } from "~~/server/utils/team";
 
@@ -74,8 +75,6 @@ const props = defineProps<{
   teams: TeamDto[];
   compact?: boolean;
 }>();
-
-const teamBasedGameRuleTypes = ["RoundMatch", "StockMatch", "Duel"];
 
 const switchId = useId();
 const showDetails = ref<boolean>(false);

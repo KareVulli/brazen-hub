@@ -11,7 +11,7 @@
         />
       </template>
     </PageTitle>
-    <MatchList :players="[userKey]" />
+    <MatchList :players="[userKey]" :highlight-player="userKey" />
   </div>
 </template>
 

@@ -1,7 +1,12 @@
 <template>
   <template v-if="isFetching || matches.length">
-    <div class="grid gap-2 xl:grid-cols-2">
-      <MatchItem v-for="match in matches" :key="match.id" :match="match" />
+    <div class="grid gap-3 xl:grid-cols-2">
+      <MatchItem
+        v-for="match in matches"
+        :key="match.id"
+        :match="match"
+        :highlight-player="highlightPlayer"
+      />
     </div>
     <div class="text-center my-4">
       <ProgressSpinner
@@ -33,6 +38,7 @@ const props = defineProps<{
   gameRuleId?: number;
   stageId?: number;
   resetableFilters?: boolean;
+  highlightPlayer?: string;
 }>();
 const emit = defineEmits<{
   resetFilters: [];

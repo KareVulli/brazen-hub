@@ -1,3 +1,7 @@
+### 2026-10-07
+
+- Highlight win or loss next to matches in **User Page** an **User Match History** page.
+
 ### 2026-10-06
 
 - [Collect and show **healing received** stat (behind **Show more stats** toggle).]{.text-primary-500}

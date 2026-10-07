@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="teamBasedGameRuleTypes.includes(match.gameRule.gameRuleType)"
+    v-if="TEAM_BASED_GAMERULE_TYPES.includes(match.gameRule.gameRuleType)"
     class="space-y-0.5"
   >
     <div v-for="team in match.teams" :key="team.id" class="flex">
@@ -8,6 +8,9 @@
         v-for="(teamUser, index) in team.teamUsers"
         :key="index"
         class="mr-2"
+        :class="{
+          'font-semibold': teamUser.user.userKey === highlightPlayer,
+        }"
         :user="teamUser.user"
         variant="small"
       />
@@ -34,6 +37,9 @@
       <UserName
         v-if="team.teamUsers[0]"
         class="mr-2"
+        :class="{
+          'font-semibold': team.teamUsers[0].user.userKey === highlightPlayer,
+        }"
         :user="team.teamUsers[0].user"
         variant="small"
       />
@@ -51,7 +57,14 @@
       :key="index"
       class="flex justify-between"
     >
-      <UserName class="mr-2" :user="player.user" variant="small" />
+      <UserName
+        class="mr-2"
+        :class="{
+          'font-semibold': player.user.userKey === highlightPlayer,
+        }"
+        :user="player.user"
+        variant="small"
+      />
       <p class="font-bold" :class="rankClass[index] || 'opacity-20'">
         {{ player.kills }}
       </p>
@@ -60,10 +73,13 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{ match: MatchDto }>();
+import { TEAM_BASED_GAMERULE_TYPES } from "~~/shared/constants";
+import { getWinnerTeam } from "~/util/getWinnerTeam";
+
+const props = defineProps<{ match: MatchDto; highlightPlayer?: string }>();
 
 function isWinnerTeam(match: MatchDto, team: number) {
-  const winnerTeam = [...match.teams].sort((a, b) => b.wins - a.wins)[0];
+  const winnerTeam = getWinnerTeam(match);
   return winnerTeam?.team === team;
 }
 
@@ -81,8 +97,6 @@ const playersByKills = computed(() => {
     )
     .sort((a, b) => b.kills - a.kills);
 });
-
-const teamBasedGameRuleTypes = ["RoundMatch", "StockMatch", "Duel"];
 
 const rankClass = [
   "text-green-500",

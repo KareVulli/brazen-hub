@@ -13,44 +13,87 @@
             }
           : undefined
       "
-      class="border border-surface-200 dark:border-surface-700 hover:bg-gray-100 dark:hover:bg-gray-800 duration-100 h-full"
+      class="border hover:bg-gray-100 dark:hover:bg-gray-800 duration-100 h-full"
       :class="{
         'border-green-400': match.endedAt === null,
-        'border-slate-800': match.endedAt !== null,
+        'border-surface-200 dark:border-surface-700': match.endedAt !== null,
         'opacity-50': match.errored,
+      }"
+      :pt="{
+        body: {
+          class: highlightPlayer && match.endedAt !== null ? 'pl-0' : null,
+        },
       }"
     >
       <template #content>
-        <div class="flex justify-between lg:items-center flex-col lg:flex-row">
-          <p class="font-semibold">
-            <span
-              v-if="match.endedAt === null"
-              class="text-green-500 font-semibold"
-              >LIVE!</span
+        <div class="flex w-full">
+          <div
+            v-if="highlightPlayer && !!match.endedAt"
+            class="w-1 mr-4 my-5 rounded-sm shrink-0"
+            :class="{
+              'bg-green-500 dark:bg-green-600':
+                isHighlightPlayerWinner === true,
+              'bg-red-500 dark:bg-red-600': isHighlightPlayerWinner === false,
+            }"
+          />
+          <div class="grow">
+            <div
+              class="flex justify-between lg:items-center flex-col lg:flex-row"
             >
-            <span
-              v-if="match.errored"
-              class="pi pi-times-circle text-gray-500"
+              <p class="font-semibold">
+                <span
+                  v-if="match.endedAt === null"
+                  class="text-green-500 font-semibold"
+                >
+                  LIVE!
+                </span>
+                <span
+                  v-if="match.errored"
+                  class="pi pi-times-circle text-gray-500"
+                />
+                Match #{{ match.id }}
+              </p>
+              <p>
+                <NuxtTime
+                  :datetime="new Date(match.createdAt * 1000)"
+                  date-style="medium"
+                  time-style="short"
+                />
+                (<NuxtTime
+                  :datetime="new Date(match.createdAt * 1000)"
+                  relative
+                />)
+              </p>
+            </div>
+            <p>{{ match.gameRule.name }} | {{ match.stage.name }}</p>
+            <hr
+              class="border-t border-surface-200 dark:border-surface-700 my-2"
             />
-            Match #{{ match.id }}
-          </p>
-          <p>
-            <NuxtTime
-              :datetime="new Date(match.createdAt * 1000)"
-              date-style="medium"
-              time-style="short"
+            <MatchItemPlayers
+              :match="match"
+              :highlight-player="highlightPlayer"
             />
-            (<NuxtTime :datetime="new Date(match.createdAt * 1000)" relative />)
-          </p>
+          </div>
         </div>
-        <p>{{ match.gameRule.name }} | {{ match.stage.name }}</p>
-        <hr class="border-t border-surface-200 dark:border-surface-700 my-2" />
-        <MatchItemPlayers :match="match" />
       </template>
     </Card>
   </NuxtLink>
 </template>
 
 <script setup lang="ts">
-defineProps<{ match: MatchDto }>();
+import { getWinnerTeam } from "~/util/getWinnerTeam";
+const props = defineProps<{ match: MatchDto; highlightPlayer?: string }>();
+
+const isHighlightPlayerWinner = computed<boolean | null>(() => {
+  if (!props.highlightPlayer) {
+    return null;
+  }
+  const winnerTeam = getWinnerTeam(props.match);
+  if (!winnerTeam) {
+    return null;
+  }
+  return !!winnerTeam.teamUsers.find(
+    (teamUser) => teamUser.user.userKey === props.highlightPlayer,
+  );
+});
 </script>

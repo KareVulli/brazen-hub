@@ -195,14 +195,15 @@
 
 <script setup lang="ts">
 import type { TeamUserDto } from "~~/server/utils/teamUser.ts";
+import { TEAM_BASED_GAMERULE_TYPES } from "~~/shared/constants";
+import { getWinnerTeam } from "~/util/getWinnerTeam";
+
 const props = defineProps<{ matchId: number }>();
 
 const dayjs = useDayjs();
 const formatDuration = useFormatDuration();
 const url = useRequestURL();
 const fullUrl = computed(() => url.toString());
-
-const teamBasedGameRuleTypes = ["RoundMatch", "StockMatch", "Duel"];
 
 const { data, refresh, pending } = await useFetch(
   `/api/matches/${props.matchId}`,
@@ -215,11 +216,11 @@ const winnerTeam = computed(() => {
   if (!match.value) {
     return "";
   }
-  const winnerTeam = [...match.value.teams].sort((a, b) => b.wins - a.wins)[0];
+  const winnerTeam = getWinnerTeam(match.value);
   if (!winnerTeam) {
     return "";
   }
-  if (teamBasedGameRuleTypes.includes(match.value.gameRule.gameRuleType)) {
+  if (TEAM_BASED_GAMERULE_TYPES.includes(match.value.gameRule.gameRuleType)) {
     return `Team ${winnerTeam.team} (${winnerTeam.teamUsers.map((teamUser) => teamUser.user.name).join(", ")})`;
   } else {
     return winnerTeam.teamUsers[0]?.user.name || "";

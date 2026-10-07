@@ -35,3 +35,6 @@ export const MULTIPLAYER_STAGES = [
   30002, // Six Star City (Night)
   10000011, // Arena
 ];
+
+export const TEAM_BASED_GAMERULE_TYPES = ["RoundMatch", "StockMatch", "Duel"];
+export const PLAYGROUND_GAMRULE_TYPE = "PlayGround";

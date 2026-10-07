@@ -35,6 +35,11 @@ const CustomAura = definePreset(Aura, {
         padding: "{navigation.item.padding}",
       },
     },
+    card: {
+      root: {
+        borderRadius: "{border.radius.sm}",
+      },
+    },
   },
 });
 

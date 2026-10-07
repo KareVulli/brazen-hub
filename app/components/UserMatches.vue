@@ -22,7 +22,7 @@
               'pb-4': index !== slotProps.items.length - 1,
             }"
           >
-            <CompactMatchItem :match="match" />
+            <CompactMatchItem :match="match" :highlight-player="userKey" />
           </div>
         </div>
       </template>
