@@ -21,7 +21,11 @@ export const weeklyTable = sqliteTable(
     characterId: integer("character_id"),
     subWeaponId: integer("sub_weapon_id"),
   },
-  (table) => [index("created_at_idx").on(table.createdAt)],
+  (table) => [
+    index("weekly_event_id_idx").on(table.eventId),
+    index("weekly_created_at_idx").on(table.createdAt),
+    index("weekly_world_record_score_id_idx").on(table.worldRecordId),
+  ],
 );
 
 export const weeklyRelations = relations(weeklyTable, ({ one, many }) => ({

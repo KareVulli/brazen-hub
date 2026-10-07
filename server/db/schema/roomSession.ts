@@ -1,24 +1,31 @@
 import { relations } from "drizzle-orm";
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { hostTable } from "./host";
 import { createdAt } from "./partials/createdAt";
 import { updatedAt } from "./partials/updatedAt";
 import { roomTable } from "./room";
 import { matchTable } from "./match";
 
-export const roomSessionTable = sqliteTable("room_session", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  roomId: integer("room_id").references(() => roomTable.id),
-  hostId: integer("host_id")
-    .references(() => hostTable.id)
-    .notNull(),
-  matchId: text("match_id").notNull(),
-  invitationCode: text("invitation_code").notNull(),
-  marsRoomId: text("mars_room_id").notNull(),
-  active: integer({ mode: "boolean" }).notNull(),
-  updatedAt: updatedAt,
-  createdAt: createdAt,
-});
+export const roomSessionTable = sqliteTable(
+  "room_session",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    roomId: integer("room_id").references(() => roomTable.id),
+    hostId: integer("host_id")
+      .references(() => hostTable.id)
+      .notNull(),
+    matchId: text("match_id").notNull(),
+    invitationCode: text("invitation_code").notNull(),
+    marsRoomId: text("mars_room_id").notNull(),
+    active: integer({ mode: "boolean" }).notNull(),
+    updatedAt: updatedAt,
+    createdAt: createdAt,
+  },
+  (table) => [
+    index("room_session_room_id_idx").on(table.roomId),
+    index("room_session_host_id_idx").on(table.hostId),
+  ],
+);
 
 export const roomSessionRelations = relations(
   roomSessionTable,

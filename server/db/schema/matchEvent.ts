@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { matchTable } from "./match";
 import { createdAt } from "./partials/createdAt";
 
@@ -13,16 +13,20 @@ const MATCH_EVENT_NAMES = [
   "error",
 ] as const;
 
-export const matchEventTable = sqliteTable("match_event", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  matchId: integer("match_id")
-    .references(() => matchTable.id)
-    .notNull(),
-  name: text("name", { enum: MATCH_EVENT_NAMES }).notNull(),
-  data: text("data", { mode: "json" }).notNull(),
-  eventAt: integer("eventAt", { mode: "timestamp" }).notNull(),
-  createdAt: createdAt,
-});
+export const matchEventTable = sqliteTable(
+  "match_event",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    matchId: integer("match_id")
+      .references(() => matchTable.id)
+      .notNull(),
+    name: text("name", { enum: MATCH_EVENT_NAMES }).notNull(),
+    data: text("data", { mode: "json" }).notNull(),
+    eventAt: integer("eventAt", { mode: "timestamp" }).notNull(),
+    createdAt: createdAt,
+  },
+  (table) => [index("match_event_match_id_idx").on(table.matchId)],
+);
 
 export const matchEventRelations = relations(matchEventTable, ({ one }) => ({
   match: one(matchTable, {

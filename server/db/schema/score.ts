@@ -1,25 +1,29 @@
 import { relations } from "drizzle-orm";
-import { integer, sqliteTable } from "drizzle-orm/sqlite-core";
+import { index, integer, sqliteTable } from "drizzle-orm/sqlite-core";
 import { createdAt } from "./partials/createdAt";
 import { ruleTable } from "./rule";
 import { userTable } from "./user";
 import { weeklyScoreTable } from "./weeklyScore";
 
-export const scoreTable = sqliteTable("score", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  place: integer("place"),
-  userId: integer("user_id")
-    .references(() => userTable.id)
-    .notNull(),
-  time: integer("time").notNull(),
-  score: integer("score").notNull(),
-  attempts: integer("attempts"),
-  ruleId: integer("rule_id"),
-  characterId: integer("character_id"),
-  subWeaponId: integer("sub_weapon_id"),
-  setAt: integer("set_at"),
-  createdAt: createdAt,
-});
+export const scoreTable = sqliteTable(
+  "score",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    place: integer("place"),
+    userId: integer("user_id")
+      .references(() => userTable.id)
+      .notNull(),
+    time: integer("time").notNull(),
+    score: integer("score").notNull(),
+    attempts: integer("attempts"),
+    ruleId: integer("rule_id"),
+    characterId: integer("character_id"),
+    subWeaponId: integer("sub_weapon_id"),
+    setAt: integer("set_at"),
+    createdAt: createdAt,
+  },
+  (table) => [index("score_user_id_idx").on(table.userId)],
+);
 
 export const scoreRelations = relations(scoreTable, ({ one }) => ({
   user: one(userTable, {
