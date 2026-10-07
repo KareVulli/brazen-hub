@@ -21,22 +21,26 @@
       }"
       :pt="{
         body: {
-          class: highlightPlayer && match.endedAt !== null ? 'pl-0' : null,
+          class:
+            highlightPlayer && match.endedAt !== null ? 'pl-0 h-full' : null,
+        },
+        content: {
+          class: 'h-full',
         },
       }"
     >
       <template #content>
-        <div class="flex w-full">
+        <div class="flex w-full h-full items-center">
           <div
             v-if="highlightPlayer && !!match.endedAt"
-            class="w-1 mr-4 my-5 rounded-sm shrink-0"
+            class="w-1 mr-4 h-16 rounded-sm shrink-0"
             :class="{
               'bg-green-500 dark:bg-green-600':
                 isHighlightPlayerWinner === true,
               'bg-red-500 dark:bg-red-600': isHighlightPlayerWinner === false,
             }"
           />
-          <div class="grow">
+          <div class="grow h-full">
             <div
               class="flex justify-between lg:items-center flex-col lg:flex-row"
             >

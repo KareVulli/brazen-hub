@@ -1,8 +1,8 @@
 <template>
-  <NuxtLink :to="`/matches/${match.id}`" class="group w-full flex">
+  <NuxtLink :to="`/matches/${match.id}`" class="group w-full flex items-center">
     <div
       v-if="highlightPlayer && !!match.endedAt"
-      class="w-1 my-1 mr-4 rounded-sm shrink-0"
+      class="w-1 mr-4 h-14 rounded-sm shrink-0"
       :class="{
         'bg-green-500 dark:bg-green-600': isHighlightPlayerWinner === true,
         'bg-red-500 dark:bg-red-600': isHighlightPlayerWinner === false,
