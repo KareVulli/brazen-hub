@@ -18,6 +18,12 @@ export default defineEventHandler(async (event): Promise<void> => {
       message: `Match not found`,
     });
   }
+  if (match.endedAt) {
+    throw createError({
+      statusCode: 400,
+      message: `Match already ended`,
+    });
+  }
 
   await updateMatchStats(id, data);
 });
