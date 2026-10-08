@@ -1,5 +1,9 @@
 # Brazen Hub changelog
 
+### 2026-10-08
+
+- Fix issues with **StatsBot** failing to join room after a match by making **StatsBot** always join the room first and give host to the first real player joining back to the room. 
+
 ### 2026-10-07
 
 - Highlight win or loss next to matches in **User Page** an **User Match History** page.

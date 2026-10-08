@@ -1,3 +1,7 @@
+### 2026-10-08
+
+- Fix issues with **StatsBot** failing to join room after a match by making **StatsBot** always join the room first and give host to the first real player joining back to the room. 
+
 ### 2026-10-07
 
 - Highlight win or loss next to matches in **User Page** an **User Match History** page.
@@ -15,11 +19,3 @@
 ### 2026-09-28
 
 - Add toggleable maintenance alert.
-
-### 2026-09-27
-
-- Add indication to incomplete match recordings in **Custom Matches** list page.
-
-### 2026-09-26
-
-- Fix spacing issues in mobile browsers where short labels are used.
