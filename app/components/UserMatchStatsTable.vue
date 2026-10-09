@@ -117,6 +117,11 @@
           Ultimate used: {{ data.ultimate }}
           <InfoButton message="How many times the player used their ultimate" />
         </p>
+        <Divider class="hidden lg:block" layout="vertical" />
+        <p class="flex items-baseline lg:ml-3">
+          Time alive: {{ data.aliveDuration }} seconds
+          <InfoButton message="How long did the player survive in seconds" />
+        </p>
       </div>
     </template>
   </DataTable>
