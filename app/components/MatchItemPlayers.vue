@@ -27,7 +27,7 @@
   </div>
   <div
     v-else-if="match.gameRule.gameRuleType === 'Survival'"
-    class="grid grid-cols-3 gap-x-2"
+    class="grid grid-cols-1 gap-x-2 sm:grid-cols-3"
   >
     <div
       v-for="(team, index) in match.teams"
@@ -51,7 +51,7 @@
       </p>
     </div>
   </div>
-  <div v-else class="grid grid-cols-3 gap-x-2">
+  <div v-else class="grid grid-cols-1 gap-x-2 sm:grid-cols-3">
     <div
       v-for="(player, index) in playersByKills"
       :key="index"

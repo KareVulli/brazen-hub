@@ -8,7 +8,7 @@
         'bg-red-500 dark:bg-red-600': isHighlightPlayerWinner === false,
       }"
     />
-    <div class="grow">
+    <div class="grow min-w-0">
       <div class="flex justify-between items-center mb-2">
         <p class="font-semibold group-hover:underline truncate">
           <Tag

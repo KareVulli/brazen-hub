@@ -40,7 +40,7 @@
               'bg-red-500 dark:bg-red-600': isHighlightPlayerWinner === false,
             }"
           />
-          <div class="grow h-full">
+          <div class="grow h-full min-w-0">
             <div
               class="flex justify-between lg:items-center flex-col lg:flex-row"
             >
@@ -57,7 +57,7 @@
                 />
                 Match #{{ match.id }}
               </p>
-              <p>
+              <p class="truncate">
                 <NuxtTime
                   :datetime="new Date(match.createdAt * 1000)"
                   date-style="medium"

@@ -1,7 +1,10 @@
 <template>
   <Panel
     header="Recent recorded matches"
-    :pt="{ contentWrapper: { class: 'min-w-0' } }"
+    :pt="{
+      contentWrapper: { class: 'min-w-0' },
+      headerActions: { class: 'whitespace-nowrap' },
+    }"
   >
     <template #icons>
       <AppLink class="text-sm" :to="{ path: `/users/${userKey}/matches` }">
