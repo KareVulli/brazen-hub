@@ -1,3 +1,7 @@
+### 2026-10-21
+
+- [Add **win rate** charts to **User Page**.]{.text-primary-500}
+
 ### 2026-10-14
 
 - Fix overflow issues with **match lists**.
@@ -14,8 +18,3 @@
 
 - Highlight win or loss next to matches in **User Page** an **User Match History** page.
 - Optimize some database queries.
-
-### 2026-10-06
-
-- [Collect and show **healing received** stat (behind **Show more stats** toggle).]{.text-primary-500}
-- [Collect and show **healing done** stat (behind **Show more stats** toggle).]{.text-primary-500}

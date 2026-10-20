@@ -7,7 +7,12 @@ import {
   sum,
 } from "drizzle-orm";
 import { alias } from "drizzle-orm/sqlite-core";
+import {
+  MULTIPLAYER_GAMERULES,
+  TEAM_BASED_GAMERULE_TYPES,
+} from "~~/shared/constants";
 import type { UserStatGraphItem } from "~~/shared/types/UserStatGraphItem";
+import type { UserStatWinRateItem } from "~~/shared/types/UserStatWinRateItem";
 import type { MatchSchema } from "~~/validation/matchSchema";
 import type { MatchUpdateSchema } from "~~/validation/matchUpdateSchema";
 import { buildConflictUpdateColumns } from "../db/buildConflictUpdateColumns";
@@ -26,11 +31,11 @@ import {
 import { getLatestCharacters } from "./character";
 import type { DBRoomSession, DBTeamUserInsert } from "./drizzle";
 import { getLatestGameRules, type GameRule } from "./gameRule";
+import { getLatestItems } from "./item";
 import type { PaginatedResponse, PaginationOptions } from "./pagination";
 import { paginateResults } from "./pagination";
 import type { Team, TeamDto } from "./team";
 import { teamToDto } from "./team";
-import { getLatestItems } from "./item";
 
 export interface SimpleMatch {
   id: number;
@@ -467,6 +472,10 @@ export interface UserMatchStats {
   mostUsedItems: UserStatGraphItem[];
   mostPlayedStages: UserStatGraphItem[];
   mostPlayedGameRules: UserStatGraphItem[];
+  characterWinRate: UserStatWinRateItem[];
+  itemWinRate: UserStatWinRateItem[];
+  stageWinRate: UserStatWinRateItem[];
+  gameRuleWinRate: UserStatWinRateItem[];
 }
 
 async function getMostUsedCharacters(
@@ -490,15 +499,9 @@ async function getMostUsedCharacters(
       const stat = stats.find(
         (item) => item.characterId === character.characterId,
       );
-      if (!stat) {
-        return {
-          label: character.displayName,
-          value: 0,
-        };
-      }
       return {
         label: character.displayName,
-        value: stat.value,
+        value: stat?.value || 0,
       };
     })
     .sort((a, b) => b.value - a.value);
@@ -520,15 +523,9 @@ async function getMostUsedItems(userId: number): Promise<UserStatGraphItem[]> {
   return subWeapons
     .map((subWeapon) => {
       const stat = stats.find((item) => item.subWeaponId === subWeapon.itemId);
-      if (!stat) {
-        return {
-          label: subWeapon.name,
-          value: 0,
-        };
-      }
       return {
         label: subWeapon.name,
-        value: stat.value,
+        value: stat?.value || 0,
       };
     })
     .sort((a, b) => b.value - a.value);
@@ -553,15 +550,9 @@ async function getMostPlayedStages(
   return stages
     .map((stage) => {
       const stat = stats.find((item) => item.stageId === stage.id);
-      if (!stat) {
-        return {
-          label: stage.name,
-          value: 0,
-        };
-      }
       return {
         label: stage.name,
-        value: stat.value,
+        value: stat?.value || 0,
       };
     })
     .sort((a, b) => b.value - a.value);
@@ -589,18 +580,165 @@ async function getMostPlayedGameRules(
       const stat = stats.find(
         (item) => item.gameRuleId === gameRule.gameRuleId,
       );
-      if (!stat) {
-        return {
-          label: gameRule.name,
-          value: 0,
-        };
-      }
       return {
         label: gameRule.name,
-        value: stat.value,
+        value: stat?.value || 0,
       };
     })
     .sort((a, b) => b.value - a.value);
+}
+
+function getWinRateSelect() {
+  return {
+    wins: sum(
+      sql`case when ${teamTable.placement} = 1 then 1 else 0 end`,
+    ).mapWith(Number),
+    losses: sum(
+      sql`case when ${teamTable.placement} > 1 then 1 else 0 end`,
+    ).mapWith(Number),
+  };
+}
+
+function getSuccessfulMatchFilter(userId: number) {
+  return and(
+    isNotNull(matchTable.endedAt),
+    eq(teamUserTable.userId, userId),
+    inArray(gameRuleTable.gameRuleId, MULTIPLAYER_GAMERULES),
+    notExists(
+      useDrizzle()
+        .select({
+          matchId: matchEventTable.matchId,
+        })
+        .from(matchEventTable)
+        .where(
+          and(
+            eq(matchEventTable.name, "disconnect"),
+            eq(matchEventTable.matchId, teamTable.matchId),
+          ),
+        )
+        .limit(1),
+    ),
+  );
+}
+
+async function getCharacterWinRate(
+  userId: number,
+): Promise<UserStatWinRateItem[]> {
+  const characters = await getLatestCharacters();
+
+  const stats = await useDrizzle()
+    .select({
+      characterId: characterTable.characterId,
+      ...getWinRateSelect(),
+    })
+    .from(teamUserTable)
+    .innerJoin(characterTable, eq(characterTable.id, teamUserTable.characterId))
+    .innerJoin(teamTable, eq(teamTable.id, teamUserTable.teamId))
+    .innerJoin(matchTable, eq(matchTable.id, teamTable.matchId))
+    .innerJoin(gameRuleTable, eq(gameRuleTable.id, matchTable.gameRuleId))
+    .groupBy(characterTable.characterId)
+    .where(getSuccessfulMatchFilter(userId));
+
+  return Object.values(characters)
+    .filter((character) => character !== undefined)
+    .map((character) => {
+      const stat = stats.find(
+        (item) => item.characterId === character.characterId,
+      );
+      return {
+        label: character.displayName,
+        wins: stat?.wins || 0,
+        losses: stat?.losses || 0,
+      };
+    })
+    .sort((a, b) => b.wins + b.losses - (a.wins + a.losses));
+}
+
+async function getItemWinRate(userId: number): Promise<UserStatWinRateItem[]> {
+  const subWeapons = await getLatestItems(true);
+
+  const stats = await useDrizzle()
+    .select({
+      subWeaponId: itemTable.itemId,
+      ...getWinRateSelect(),
+    })
+    .from(teamUserTable)
+    .innerJoin(itemTable, eq(itemTable.id, teamUserTable.subWeaponId))
+    .innerJoin(teamTable, eq(teamTable.id, teamUserTable.teamId))
+    .innerJoin(matchTable, eq(matchTable.id, teamTable.matchId))
+    .innerJoin(gameRuleTable, eq(gameRuleTable.id, matchTable.gameRuleId))
+    .groupBy(itemTable.itemId)
+    .where(getSuccessfulMatchFilter(userId));
+
+  return Object.values(subWeapons)
+    .map((subWeapon) => {
+      const stat = stats.find((item) => item.subWeaponId === subWeapon.itemId);
+      return {
+        label: subWeapon.name,
+        wins: stat?.wins || 0,
+        losses: stat?.losses || 0,
+      };
+    })
+    .sort((a, b) => b.wins + b.losses - (a.wins + a.losses));
+}
+
+async function getStageWinRate(userId: number): Promise<UserStatWinRateItem[]> {
+  const stages = await getStages(true);
+
+  const stats = await useDrizzle()
+    .select({
+      stageId: matchTable.stageId,
+      ...getWinRateSelect(),
+    })
+    .from(teamUserTable)
+    .innerJoin(teamTable, eq(teamTable.id, teamUserTable.teamId))
+    .innerJoin(matchTable, eq(matchTable.id, teamTable.matchId))
+    .innerJoin(gameRuleTable, eq(gameRuleTable.id, matchTable.gameRuleId))
+    .groupBy(matchTable.stageId)
+    .where(getSuccessfulMatchFilter(userId));
+
+  return stages
+    .map((stage) => {
+      const stat = stats.find((item) => item.stageId === stage.id);
+      return {
+        label: stage.name,
+        wins: stat?.wins || 0,
+        losses: stat?.losses || 0,
+      };
+    })
+    .sort((a, b) => b.wins + b.losses - (a.wins + a.losses));
+}
+
+async function getGameRuleWinRate(
+  userId: number,
+): Promise<UserStatWinRateItem[]> {
+  const gameRules = await getLatestGameRules(true);
+
+  const stats = await useDrizzle()
+    .select({
+      gameRuleId: gameRuleTable.gameRuleId,
+      ...getWinRateSelect(),
+    })
+    .from(teamUserTable)
+    .innerJoin(teamTable, eq(teamTable.id, teamUserTable.teamId))
+    .innerJoin(matchTable, eq(matchTable.id, teamTable.matchId))
+    .innerJoin(gameRuleTable, eq(gameRuleTable.id, matchTable.gameRuleId))
+    .groupBy(gameRuleTable.gameRuleId)
+    .where(getSuccessfulMatchFilter(userId));
+
+  return gameRules
+    .filter((gameRule) => gameRule.gameRuleType !== "PlayGround")
+    .map((gameRule) => {
+      const stat = stats.find(
+        (item) => item.gameRuleId === gameRule.gameRuleId,
+      );
+      return {
+        label: gameRule.name,
+        wins: stat?.wins || 0,
+        losses: stat?.losses || 0,
+      };
+    })
+    .sort((a, b) => b.wins + b.losses - (a.wins + a.losses));
 }
 
 async function getDamagePerRound(userId: number) {
@@ -673,12 +811,20 @@ export async function getUserMatchStats(
     mostUsedItems,
     mostPlayedGameRules,
     mostPlayedStages,
+    characterWinRate,
+    itemWinRate,
+    stageWinRate,
+    gameRuleWinRate,
   ] = await Promise.all([
     getDamagePerRound(userId),
     getMostUsedCharacters(userId),
     getMostUsedItems(userId),
     getMostPlayedGameRules(userId),
     getMostPlayedStages(userId),
+    getCharacterWinRate(userId),
+    getItemWinRate(userId),
+    getStageWinRate(userId),
+    getGameRuleWinRate(userId),
   ]);
 
   return {
@@ -690,5 +836,9 @@ export async function getUserMatchStats(
     mostUsedItems: mostUsedItems,
     mostPlayedGameRules: mostPlayedGameRules,
     mostPlayedStages: mostPlayedStages,
+    characterWinRate: characterWinRate,
+    itemWinRate: itemWinRate,
+    stageWinRate: stageWinRate,
+    gameRuleWinRate: gameRuleWinRate,
   };
 }

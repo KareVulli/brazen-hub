@@ -41,24 +41,59 @@
         />
       </span>
     </p>
-    <div class="grid xl:grid-cols-2">
-      <div>
-        <span>Most used characters</span>
-        <UserStatChart :stats="user.stats.mostUsedCharacters" />
-      </div>
-      <div>
-        <span>Most used sub-weapons</span>
-        <UserStatChart :stats="user.stats.mostUsedItems" />
-      </div>
-      <div>
-        <span>Most played stages</span>
-        <UserStatChart :stats="user.stats.mostPlayedStages" />
-      </div>
-      <div>
-        <span>Most played rulesets</span>
-        <UserStatChart :stats="user.stats.mostPlayedGameRules" />
-      </div>
-    </div>
+    <Tabs lazy value="usage-tab">
+      <TabList>
+        <Tab value="usage-tab">Usage stats</Tab>
+        <Tab value="win-rates-tab">Win rates</Tab>
+      </TabList>
+      <TabPanels>
+        <TabPanel value="usage-tab" class="min-w-0">
+          <div class="grid xl:grid-cols-2">
+            <div>
+              <span>Most used characters</span>
+              <UserStatChart :stats="user.stats.mostUsedCharacters" />
+            </div>
+
+            <div>
+              <span>Most used sub-weapons</span>
+              <UserStatChart :stats="user.stats.mostUsedItems" />
+            </div>
+            <div>
+              <span>Most played stages</span>
+              <UserStatChart :stats="user.stats.mostPlayedStages" />
+            </div>
+            <div>
+              <span>Most played rulesets</span>
+              <UserStatChart :stats="user.stats.mostPlayedGameRules" />
+            </div>
+          </div>
+        </TabPanel>
+        <TabPanel value="win-rates-tab">
+          <div class="grid xl:grid-cols-2">
+            <div>
+              <span>Character win rates</span>
+              <UserWinRateChart :stats="user.stats.characterWinRate" />
+            </div>
+            <div>
+              <span>Sub weapon win rates</span>
+              <UserWinRateChart :stats="user.stats.itemWinRate" />
+            </div>
+            <div>
+              <span>Stage win rates</span>
+              <UserWinRateChart :stats="user.stats.stageWinRate" />
+            </div>
+            <div>
+              <span>Ruleset win rates</span>
+              <UserWinRateChart :stats="user.stats.gameRuleWinRate" />
+            </div>
+          </div>
+          <p class="text-sm opacity-50 pt-2">
+            Win rates exclude data from playground matches, and matches with
+            errors during capture.
+          </p>
+        </TabPanel>
+      </TabPanels>
+    </Tabs>
   </Panel>
   <UserMatches :user-key="user.user.userKey" :matches="user.recentMatches" />
   <Panel

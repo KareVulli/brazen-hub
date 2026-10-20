@@ -1,5 +1,9 @@
 # Brazen Hub changelog
 
+### 2026-10-21
+
+- [Add **win rate** charts to **User Page**.]{.text-primary-500}
+
 ### 2026-10-14
 
 - Fix overflow issues with **match lists**.
