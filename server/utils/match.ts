@@ -7,10 +7,7 @@ import {
   sum,
 } from "drizzle-orm";
 import { alias } from "drizzle-orm/sqlite-core";
-import {
-  MULTIPLAYER_GAMERULES,
-  TEAM_BASED_GAMERULE_TYPES,
-} from "~~/shared/constants";
+import { MULTIPLAYER_GAMERULES } from "~~/shared/constants";
 import type { UserStatGraphItem } from "~~/shared/types/UserStatGraphItem";
 import type { UserStatWinRateItem } from "~~/shared/types/UserStatWinRateItem";
 import type { MatchSchema } from "~~/validation/matchSchema";
