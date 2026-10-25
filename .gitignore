@@ -25,3 +25,5 @@ logs
 !.env.example
 
 data-*.sql
+schema-*.sql
+local-*.sql

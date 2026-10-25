@@ -102,6 +102,10 @@ const items = ref<MenuItem[]>([
     route: "/matches",
   },
   {
+    label: "Ranking",
+    route: "/ranking",
+  },
+  {
     label: "Round Team Match",
     route: "/rtm",
   },
