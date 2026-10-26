@@ -21,6 +21,22 @@
   >
     <p>
       <span>
+        Rating:
+        <template v-if="user.stats.rankedMatches >= 10">
+          {{ user.stats.rating }}<InfoButton message="Global Rating" />
+        </template>
+        <span v-else-if="user.stats.rankedMatches > 0">
+          {{ user.stats.rating }} *
+          <InfoButton message="Preliminary Global Rating" />
+        </span>
+        <template v-else>
+          -
+          <InfoButton message="User has not completed any ranked matches" />
+        </template>
+      </span>
+    </p>
+    <p>
+      <span>
         KDR:
         <template v-if="user.stats.totalDeaths > 0">{{
           (user.stats.totalKills / user.stats.totalDeaths).toFixed(2)

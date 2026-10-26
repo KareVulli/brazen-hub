@@ -463,6 +463,8 @@ export async function setMatchErrored(matchId: number): Promise<void> {
 }
 
 export interface UserMatchStats {
+  rating: number;
+  rankedMatches: number;
   totalKills: number;
   totalDeaths: number;
   damagePerRound: number;
@@ -805,6 +807,7 @@ export async function getUserMatchStats(
   )[0];
 
   const [
+    rating,
     damage,
     mostUsedCharacters,
     mostUsedItems,
@@ -815,6 +818,7 @@ export async function getUserMatchStats(
     stageWinRate,
     gameRuleWinRate,
   ] = await Promise.all([
+    getRating(userId),
     getDamagePerRound(userId),
     getMostUsedCharacters(userId),
     getMostUsedItems(userId),
@@ -827,6 +831,8 @@ export async function getUserMatchStats(
   ]);
 
   return {
+    rating: rating.player.elo,
+    rankedMatches: rating.matches,
     totalKills: totals?.kills ?? 0,
     totalDeaths: totals?.deaths ?? 0,
     damagePerRound: damage?.damagePerRound ?? 0,
