@@ -33,18 +33,6 @@ const chartData = computed((): NuxtPlotlyData => {
   return [
     {
       type: "bar",
-      name: "Losses",
-      x: props.stats.map((item) => item.label),
-      y: props.stats.map((item) => item.losses),
-      text: props.stats.map((item) => item.label),
-      textposition: "none",
-      hovertemplate: "<b>%{text}:</b> %{y}<extra>Losses</extra>",
-      marker: {
-        color: "rgb(220,38,38)",
-      },
-    },
-    {
-      type: "bar",
       name: "Wins",
       x: props.stats.map((item) => item.label),
       y: props.stats.map((item) => item.wins),
@@ -53,6 +41,18 @@ const chartData = computed((): NuxtPlotlyData => {
       hovertemplate: "<b>%{text}:</b> %{y}<extra>Wins</extra>",
       marker: {
         color: "rgb(22,163,74)",
+      },
+    },
+    {
+      type: "bar",
+      name: "Losses",
+      x: props.stats.map((item) => item.label),
+      y: props.stats.map((item) => item.losses),
+      text: props.stats.map((item) => item.label),
+      textposition: "none",
+      hovertemplate: "<b>%{text}:</b> %{y}<extra>Losses</extra>",
+      marker: {
+        color: "rgb(220,38,38)",
       },
     },
   ];
@@ -71,7 +71,6 @@ const chartLayout = computed((): Partial<Plotly.Layout> => {
       orientation: "h",
       bgcolor: "transparent",
     },
-    barmode: "stack",
     height: 250,
     minreducedheight: 150,
     paper_bgcolor: "transparent",
