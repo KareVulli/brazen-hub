@@ -1,4 +1,5 @@
 import z from "zod";
+import { updateRankingByMatchId } from "~~/server/utils/rating";
 import { matchUpdateSchema } from "~~/validation/matchUpdateSchema";
 
 const requestSchema = z.object({
@@ -26,4 +27,8 @@ export default defineEventHandler(async (event): Promise<void> => {
   }
 
   await updateMatchStats(id, data);
+
+  if (match.endedAt) {
+    await updateRankingByMatchId(id);
+  }
 });

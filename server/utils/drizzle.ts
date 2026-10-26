@@ -1,6 +1,7 @@
-import type { ilike as _ilike } from "drizzle-orm";
-import { sql } from "drizzle-orm";
+import type { ilike as _ilike, SQL } from "drizzle-orm";
+import { getTableColumns, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
+import { SQLiteTable } from "drizzle-orm/sqlite-core";
 import * as schema from "../db/schema";
 export { and, asc, desc, eq, gt, lt, or, sql } from "drizzle-orm";
 
@@ -30,6 +31,7 @@ export type DBTeamUser = typeof schema.teamUserTable.$inferSelect;
 export type DBAdditionalEffect =
   typeof schema.additionalEffectTable.$inferSelect;
 export type DBSettings = typeof schema.settingsTable.$inferSelect;
+export type DBRating = typeof schema.ratingTable.$inferSelect;
 
 export type DBScoreInsert = typeof schema.scoreTable.$inferInsert;
 export type DBRoomInsert = typeof schema.roomTable.$inferInsert;
@@ -38,4 +40,21 @@ export type DBTeamUserInsert = typeof schema.teamUserTable.$inferInsert;
 export function contains(column: Parameters<typeof _ilike>[0], value: string) {
   const escapedValue = `%${value.replace(/[\\%_]/g, "\\$&")}%`;
   return sql`${column} LIKE ${escapedValue} ESCAPE '\\'`;
+}
+
+export function buildConflictUpdateColumns<
+  T extends SQLiteTable,
+  Q extends keyof T["_"]["columns"],
+>(table: T, columns: Q[]) {
+  const cls = getTableColumns(table);
+
+  return columns.reduce(
+    (acc, column) => {
+      const colName = cls[column]!.name;
+      acc[column] = sql.raw(`excluded.${colName}`);
+
+      return acc;
+    },
+    {} as Record<Q, SQL>,
+  );
 }

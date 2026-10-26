@@ -131,7 +131,7 @@ export async function getMatches(): Promise<Match[]> {
   );
 }
 
-function getMatchesQuery() {
+export function getMatchesQuery() {
   return useDrizzle()
     .select({
       ...getColumns(matchTable),
@@ -154,7 +154,9 @@ function getMatchesQuery() {
     .$dynamic();
 }
 
-function mergeRows(rows: Awaited<ReturnType<typeof getMatchesQuery>>): Match[] {
+export function mergeRows(
+  rows: Awaited<ReturnType<typeof getMatchesQuery>>,
+): Match[] {
   const results: Match[] = [];
 
   for (const row of rows) {
@@ -596,7 +598,7 @@ function getWinRateSelect() {
   };
 }
 
-function getSuccessfulMatchFilter(userId: number) {
+export function getSuccessfulMatchFilter(userId: number) {
   return and(
     isNotNull(matchTable.endedAt),
     eq(teamUserTable.userId, userId),

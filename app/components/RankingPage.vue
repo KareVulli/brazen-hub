@@ -1,7 +1,7 @@
 <template>
-  <Tabs lazy value="elo">
+  <Tabs lazy value="rating">
     <TabList>
-      <Tab value="elo">Global Ranking</Tab>
+      <Tab value="rating">Global Rating</Tab>
       <Tab value="kdr">KDR</Tab>
       <Tab value="akr">AKR (RTM)</Tab>
       <Tab value="adr">ADR (RTM)</Tab>
@@ -9,8 +9,8 @@
       <Tab value="wlr">W/L</Tab>
     </TabList>
     <TabPanels>
-      <TabPanel value="elo">
-        <PageTitle title="Global Ranking" />
+      <TabPanel value="rating">
+        <RankingRatingTab />
       </TabPanel>
       <TabPanel value="kdr">
         <RankingKDRTab />

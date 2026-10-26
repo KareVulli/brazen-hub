@@ -18,3 +18,4 @@ export * from "./match";
 export * from "./matchEvent";
 export * from "./additionalEffect";
 export * from "./settings";
+export * from "./rating";

@@ -65,6 +65,9 @@ importers:
       tailwindcss-primeui:
         specifier: ^0.3.4
         version: 0.3.4(tailwindcss@3.4.19(tsx@4.23.12)(yaml@2.9.0))
+      teslo:
+        specifier: ^1.0.2
+        version: 1.0.2
       vee-validate:
         specifier: 5.0.0-beta.0
         version: 5.0.0-beta.0(vue@3.5.41(typescript@5.9.3))
@@ -5943,6 +5946,9 @@ packages:
     resolution: {integrity: sha512-CN9BVxWhgS/hRxtUMjtC2uRWSTcSfQFHMDWma6sKKfIivCD91sM+FOPfvwoaRMqCSrUpe1nv3jDamd9eEQ4y+w==}
     engines: {node: '>=10'}
     hasBin: true
+
+  teslo@1.0.2:
+    resolution: {integrity: sha512-h5TdxyIbWfb0BxE1M0KX8SBYeAEP3VO3dqT31BX6EzVbMry/ocqKgmSmw80xcIomA2UT5hbZ/Peh3i2ali8qOg==}
 
   text-decoder@1.2.7:
     resolution: {integrity: sha512-vlLytXkeP4xvEq2otHeJfSQIRyWxo/oZGEbXrtEEF9Hnmrdly59sUbzZ/QgyWuLYHctCHxFF4tRQZNQ9k60ExQ==}
@@ -13278,6 +13284,8 @@ snapshots:
       acorn: 8.18.0
       commander: 2.20.3
       source-map-support: 0.5.21
+
+  teslo@1.0.2: {}
 
   text-decoder@1.2.7:
     dependencies:

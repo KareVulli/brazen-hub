@@ -6,6 +6,7 @@ import { updatedAt } from "./partials/updatedAt";
 import { roomSessionTable } from "./roomSession";
 import { stageTable } from "./stage";
 import { teamTable } from "./team";
+import { matchEventTable } from "./matchEvent";
 
 export const matchTable = sqliteTable(
   "match",
@@ -43,4 +44,5 @@ export const matchRelations = relations(matchTable, ({ one, many }) => ({
     references: [gameRuleTable.id],
   }),
   teams: many(teamTable),
+  matchEvents: many(matchEventTable),
 }));
