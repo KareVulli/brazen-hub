@@ -103,7 +103,7 @@ const items = ref<MenuItem[]>([
   },
   {
     label: "Ranking",
-    route: "/ranking",
+    route: "/ranking/rating",
   },
   {
     label: "Round Team Match",

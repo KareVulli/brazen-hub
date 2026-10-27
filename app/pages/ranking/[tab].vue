@@ -1,5 +1,5 @@
 <template>
-  <Tabs lazy value="rating">
+  <Tabs v-model:value="tab" lazy>
     <TabList>
       <Tab value="rating">Global Rating</Tab>
       <Tab value="kdr">KDR</Tab>
@@ -31,4 +31,19 @@
   </Tabs>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+useHead({
+  title: "Ranking",
+});
+
+const route = useRoute();
+
+const tab = computed({
+  get() {
+    return route.params.tab || "rating";
+  },
+  set(newValue: string) {
+    navigateTo(`/ranking/${newValue}`);
+  },
+});
+</script>

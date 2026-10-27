@@ -134,4 +134,7 @@ export default defineNuxtConfig({
       include: ["plotly.js-dist-min"],
     },
   },
+  experimental: {
+    typedPages: true,
+  },
 });
