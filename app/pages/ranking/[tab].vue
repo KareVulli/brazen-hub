@@ -1,5 +1,5 @@
 <template>
-  <Tabs v-model:value="tab" lazy>
+  <Tabs v-model:value="tab">
     <TabList>
       <Tab value="rating">Global Rating</Tab>
       <Tab value="kdr">KDR</Tab>
@@ -9,22 +9,22 @@
       <Tab value="wlr">W/L</Tab>
     </TabList>
     <TabPanels>
-      <TabPanel value="rating">
+      <TabPanel v-if="tab === 'rating'" value="rating">
         <RankingRatingTab />
       </TabPanel>
-      <TabPanel value="kdr">
+      <TabPanel v-if="tab === 'kdr'" value="kdr">
         <RankingKDRTab />
       </TabPanel>
-      <TabPanel value="akr">
+      <TabPanel v-if="tab === 'akr'" value="akr">
         <RankingAKRTab />
       </TabPanel>
-      <TabPanel value="adr">
+      <TabPanel v-if="tab === 'adr'" value="adr">
         <RankingADRTab />
       </TabPanel>
-      <TabPanel value="ahr">
+      <TabPanel v-if="tab === 'ahr'" value="ahr">
         <RankingAHRTab />
       </TabPanel>
-      <TabPanel value="wlr">
+      <TabPanel v-if="tab === 'wlr'" value="wlr">
         <RankingWLRTab />
       </TabPanel>
     </TabPanels>
