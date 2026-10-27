@@ -4,6 +4,7 @@ import { matchTable, ratingTable } from "../db/schema";
 import { buildConflictUpdateColumns } from "./drizzle";
 import { getMatchesQuery, mergeRows } from "./match";
 import type { UserStat } from "./ranking";
+import { TEAM_BASED_GAMERULE_TYPES } from "~~/shared/constants";
 
 const INITIAL_RATING = 1000;
 
@@ -99,7 +100,7 @@ export async function setRatings(rating: UserRating[]): Promise<void> {
 }
 
 export interface UnrankedMatchRating {
-  state: "unranked" | "unranked_imbalanced";
+  state: "unranked" | "unranked_imbalanced" | "unranked_errored";
 }
 
 export interface RankedMatchRating {
@@ -175,11 +176,15 @@ function simulateRankedMatch(
 export async function getMatchRating(match: Match): Promise<MatchRating> {
   let oldRatings: Record<string, number> = {};
 
-  if (["Duel", "RoundMatch"].includes(match.gameRule.gameRuleType)) {
+  if (TEAM_BASED_GAMERULE_TYPES.includes(match.gameRule.gameRuleType)) {
     const teamA = match.teams[0]!;
     const teamB = match.teams[1]!;
     const teamAPlayers = teamA.teamUsers;
     const teamBPlayers = teamB.teamUsers;
+
+    if (match.errored) {
+      return { state: "unranked_errored" };
+    }
 
     if (teamAPlayers.length !== teamBPlayers.length) {
       return { state: "unranked_imbalanced" };

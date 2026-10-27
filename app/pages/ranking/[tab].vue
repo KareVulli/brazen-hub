@@ -5,7 +5,7 @@
       <Tab value="kdr">KDR</Tab>
       <Tab value="akr">AKR (RTM)</Tab>
       <Tab value="adr">ADR (RTM)</Tab>
-      <Tab value="hpr">AHR (RTM)</Tab>
+      <Tab value="ahr">AHR (RTM)</Tab>
       <Tab value="wlr">W/L</Tab>
     </TabList>
     <TabPanels>
@@ -21,7 +21,7 @@
       <TabPanel value="adr">
         <RankingADRTab />
       </TabPanel>
-      <TabPanel value="hpr">
+      <TabPanel value="ahr">
         <RankingAHRTab />
       </TabPanel>
       <TabPanel value="wlr">
