@@ -1,5 +1,9 @@
 # Brazen Hub changelog
 
+### 2026-10-30
+
+- Fix Ratings not automatically updating on match end.
+
 ### 2026-10-27
 
 - [Add [**Global Rating**](/ranking/rating).]{.text-primary-500}

@@ -291,10 +291,12 @@ export async function recalculateRatings() {
 export async function updateRankingByMatchId(matchId: number): Promise<void> {
   const match = await getMatchById(matchId);
   if (!match || !match.endedAt) {
+    console.log("Could not get match, or match has not ended", matchId);
     return;
   }
 
   const rating = await getMatchRating(match);
+  console.log("Recalculated match", match.id, rating.state);
   if (rating.state === "ranked_finished") {
     await setRatings(rating.ratings);
   }

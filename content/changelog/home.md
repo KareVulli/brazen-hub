@@ -1,3 +1,7 @@
+### 2026-10-30
+
+- Fix Ratings not automatically updating on match end.
+
 ### 2026-10-27
 
 - [Add [**Global Rating**](/ranking/rating).]{.text-primary-500}
@@ -23,7 +27,3 @@
 ### 2026-10-09
 
 - [Collect and show **time alive** stat (behind **Show more stats** toggle).]{.text-primary-500}
-
-### 2026-10-08
-
-- Fix issues with **StatsBot** failing to join room after a match by making **StatsBot** always join the room first and give host to the first real player joining back to the room.

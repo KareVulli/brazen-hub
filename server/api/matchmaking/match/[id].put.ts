@@ -28,7 +28,8 @@ export default defineEventHandler(async (event): Promise<void> => {
 
   await updateMatchStats(id, data);
 
-  if (match.endedAt) {
+  if (data.endedAt) {
+    console.log("Match ended. Updating rankings...");
     await updateRankingByMatchId(id);
   }
 });
