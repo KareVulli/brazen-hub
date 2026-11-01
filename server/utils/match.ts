@@ -39,6 +39,7 @@ export interface SimpleMatch {
   roomSessionId: number;
   gameRule: GameRule;
   stage: Stage;
+  ranked: boolean;
   errored: boolean;
   endedAt: Date | null;
   updatedAt: Date;
@@ -50,6 +51,7 @@ export interface SimpleMatchDto {
   roomSessionId: number;
   gameRule: GameRuleDto;
   stage: StageDto;
+  ranked: boolean;
   errored: boolean;
   endedAt: number | null;
   updatedAt: number;
@@ -70,6 +72,7 @@ export function simpleMatchToDto(match: SimpleMatch): SimpleMatchDto {
     roomSessionId: match.roomSessionId,
     gameRule: gameRuleToDto(match.gameRule),
     stage: match.stage,
+    ranked: match.ranked,
     errored: match.errored,
     endedAt: match.endedAt ? Math.floor(match.endedAt.getTime() / 1000) : null,
     updatedAt: Math.floor(match.updatedAt.getTime() / 1000),

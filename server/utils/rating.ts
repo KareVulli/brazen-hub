@@ -5,6 +5,7 @@ import { buildConflictUpdateColumns } from "./drizzle";
 import { getMatchesQuery, mergeRows } from "./match";
 import type { UserStat } from "./ranking";
 import { TEAM_BASED_GAMERULE_TYPES } from "~~/shared/constants";
+import { setMatchRatings } from "./matchRating";
 
 const INITIAL_RATING = 1000;
 
@@ -118,6 +119,7 @@ export interface CompletedMatchRating {
   diff: {
     userId: number;
     oldRating: number;
+    newRating: number;
     diff: number;
   }[];
   ratings: UserRating[];
@@ -262,6 +264,7 @@ export async function getMatchRating(match: Match): Promise<MatchRating> {
         return {
           userId: Number.parseInt(item.player.id),
           oldRating: oldRating,
+          newRating: item.player.elo,
           diff: item.player.elo - oldRating,
         };
       }),
@@ -279,24 +282,31 @@ export async function recalculateRatings() {
     await getMatchesQuery().orderBy(asc(matchTable.id)),
   );
   for (const match of matches) {
-    const rating = await getMatchRating(match);
-    console.log("Recalculated match", match.id, rating.state);
-    if (rating.state === "ranked_finished") {
-      await setRatings(rating.ratings);
-    }
+    await updateRanking(match);
   }
   console.log("Done!");
 }
 
 export async function updateRankingByMatchId(matchId: number): Promise<void> {
   const match = await getMatchById(matchId);
-  if (!match || !match.endedAt) {
-    console.log("Could not get match, or match has not ended", matchId);
+  if (!match) {
+    console.log("Could not get match", matchId);
+    return;
+  }
+  await updateRanking(match);
+}
+
+async function updateRanking(match: Match): Promise<void> {
+  if (!match.endedAt) {
+    console.log("Match has not ended", match.id);
     return;
   }
 
   const rating = await getMatchRating(match);
   console.log("Recalculated match", match.id, rating.state);
+  if (rating.state !== "ranked_ongoing") {
+    await setMatchRatings(match.id, rating);
+  }
   if (rating.state === "ranked_finished") {
     await setRatings(rating.ratings);
   }

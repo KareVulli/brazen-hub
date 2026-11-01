@@ -17,7 +17,6 @@
       :class="{
         'border-green-400': match.endedAt === null,
         'border-surface-200 dark:border-surface-700': match.endedAt !== null,
-        'opacity-50': match.errored,
       }"
       :pt="{
         body: {
@@ -44,18 +43,14 @@
             <div
               class="flex justify-between lg:items-center flex-col lg:flex-row"
             >
-              <p class="font-semibold">
-                <span
-                  v-if="match.endedAt === null"
-                  class="text-green-500 font-semibold"
-                >
+              <p class="font-semibold mb-0.5">
+                <Tag v-if="match.endedAt === null" severity="success">
                   LIVE!
-                </span>
-                <span
-                  v-if="match.errored"
-                  class="pi pi-times-circle text-gray-500"
-                />
-                Match #{{ match.id }}
+                </Tag>
+                <Tag v-else-if="match.errored" severity="danger">Errored</Tag>
+                <Tag v-else-if="match.ranked" severity="info">Ranked</Tag>
+                <Tag v-else severity="secondary">Unranked</Tag>
+                <span class="ml-2">Match #{{ match.id }}</span>
               </p>
               <p class="truncate">
                 <NuxtTime

@@ -23,6 +23,7 @@ export const matchTable = sqliteTable(
     updatedAt: updatedAt,
     createdAt: createdAt,
     endedAt: integer("ended_at", { mode: "timestamp" }),
+    ranked: integer("ranked", { mode: "boolean" }).notNull().default(false),
   },
   (table) => [
     index("match_room_session_id_idx").on(table.roomSessionId),
