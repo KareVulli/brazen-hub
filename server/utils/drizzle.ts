@@ -1,7 +1,7 @@
 import type { ilike as _ilike, SQL } from "drizzle-orm";
 import { getTableColumns, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
-import { SQLiteTable } from "drizzle-orm/sqlite-core";
+import type { SQLiteTable } from "drizzle-orm/sqlite-core";
 import * as schema from "../db/schema";
 export { and, asc, desc, eq, gt, lt, or, sql } from "drizzle-orm";
 
