@@ -44,12 +44,7 @@
               class="flex justify-between lg:items-center flex-col lg:flex-row"
             >
               <p class="font-semibold mb-0.5">
-                <Tag v-if="match.endedAt === null" severity="success">
-                  LIVE!
-                </Tag>
-                <Tag v-else-if="match.errored" severity="danger">Errored</Tag>
-                <Tag v-else-if="match.ranked" severity="info">Ranked</Tag>
-                <Tag v-else severity="secondary">Unranked</Tag>
+                <MatchStatus :match="match" />
                 <span class="ml-2">Match #{{ match.id }}</span>
               </p>
               <p class="truncate">

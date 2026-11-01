@@ -11,12 +11,10 @@
     <div class="grow min-w-0">
       <div class="flex justify-between items-center mb-2">
         <p class="font-semibold group-hover:underline truncate">
-          <Tag
-            v-if="match.endedAt === null"
-            value="Live!"
-            severity="active"
-            class="mr-2"
-          />{{ match.gameRule.name }} | {{ match.stage.name }}
+          <MatchStatus :match="match" />
+          <span class="ml-2">
+            {{ match.gameRule.name }} | {{ match.stage.name }}
+          </span>
         </p>
         <NuxtTime
           class="whitespace-nowrap"

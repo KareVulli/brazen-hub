@@ -20,11 +20,17 @@
         />
       </template>
     </PageTitle>
-    <Panel :header="match.gameRule.name" class="mb-4">
+    <Panel class="mb-4">
+      <template #header>
+        <div>
+          <MatchStatus :match="match" />
+          <span class="ml-2 font-semibold">{{ match.gameRule.name }}</span>
+        </div>
+      </template>
       <template #icons>
         <p>{{ duration }}</p>
       </template>
-      <p>New York City (Day)</p>
+      <p>{{ match.stage.name }}</p>
       <p v-if="match.endedAt === null" class="text-green-500 font-semibold">
         Match in progress
       </p>
