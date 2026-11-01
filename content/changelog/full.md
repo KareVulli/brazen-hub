@@ -1,5 +1,10 @@
 # Brazen Hub changelog
 
+### 2026-11-01
+
+- Show match ranked status in **match lists** and **Match Details** page.
+- Fix **Match Details** page showning incorrect stage.
+
 ### 2026-10-30
 
 - Fix Ratings not automatically updating on match end.
@@ -116,7 +121,7 @@
 ### 2026-08-24
 
 - [Detect and log player disconnections mid-match.]{.text-primary-500}
-- Add **Copy match link** button to **Match details** for easier sharing in VR/mobile.
+- Add **Copy match link** button to **Match Details** page for easier sharing in VR/mobile.
 - Make **Match log** more compact and mobile friendly.
 - Add **Changelog** to home.
 - Add **Watcher Form** to home page for easier access and renamed watcher to **StatsBot**.

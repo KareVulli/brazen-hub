@@ -1,3 +1,8 @@
+### 2026-11-01
+
+- Show match ranked status in **match lists** and **Match Details** page.
+- Fix **Match Details** page showning incorrect stage.
+
 ### 2026-10-30
 
 - Fix Ratings not automatically updating on match end.
@@ -23,7 +28,3 @@
 ### 2026-10-14
 
 - Fix overflow issues with **match lists**.
-
-### 2026-10-09
-
-- [Collect and show **time alive** stat (behind **Show more stats** toggle).]{.text-primary-500}
